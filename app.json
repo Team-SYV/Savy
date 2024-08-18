@@ -16,6 +16,9 @@
       ]
     ],
     "name": "savy",
-    "slug": "savy"
+    "slug": "savy",
+    "experiments": {
+      "typeRoutes": "true"
+    }
   }
 }
