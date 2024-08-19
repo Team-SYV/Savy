@@ -9,7 +9,8 @@ on:
       - main
 
 jobs:
-  Deploy-Production:
+  build:
+    name: CI
     runs-on: ubuntu-latest
 
     steps:
