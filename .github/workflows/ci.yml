@@ -13,7 +13,7 @@ on:
 jobs:
   build:
     name: Build Expo App
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-lates
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,45 +21,19 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: '18'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Install Expo CLI
-        run: npm install -g expo-cli
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
 
-      - name: Log in to Expo
+      - name: Log in to EAS
         env:
-          EXPO_CLI_USERNAME: ${{ secrets.EXPO_CLI_USERNAME }}
-          EXPO_CLI_PASSWORD: ${{ secrets.EXPO_CLI_PASSWORD }}
-
-        run: expo login -u $EXPO_CLI_USERNAME -p $EXPO_CLI_PASSWORD
+          EAS_ACCOUNT_EMAIL: ${{ secrets.EAS_ACCOUNT_EMAIL }}
+          EAS_ACCOUNT_PASSWORD: ${{ secrets.EAS_ACCOUNT_PASSWORD }}
+        run: eas login --username $EAS_ACCOUNT_EMAIL --password $EAS_ACCOUNT_PASSWORD
 
       - name: Build Expo project
-        env:
-          EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-
-        run: expo build:android --non-interactive
-
-  deploy:
-    name: Deploy to Expo
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-
-      - name: Log in to Expo
-        env:
-          EXPO_CLI_USERNAME: ${{ secrets.EXPO_CLI_USERNAME }}
-          EXPO_CLI_PASSWORD: ${{ secrets.EXPO_CLI_PASSWORD }}
-        run: expo login -u $EXPO_CLI_USERNAME -p $EXPO_CLI_PASSWORD
-
-      - name: Publish to Expo
-        run: expo publish --non-interactive
+        run: eas build --platform android --non-interactive
