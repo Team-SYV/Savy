@@ -17,6 +17,10 @@
     ],
     "name": "savy",
     "slug": "savy",
+    "version": "1.0.0",
+    "android": {
+      "package": "com.syv.savy"  
+    },
     "experiments": {
       "typeRoutes": "true"
     },
