@@ -19,6 +19,15 @@
     "slug": "savy",
     "experiments": {
       "typeRoutes": "true"
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": "https://n"
+      },
+      "eas": {
+        "projectId": "dc7231f8-a1aa-462e-88c9-3891532bffcc"
+      }
+    },
+    "owner": "savy12"
   }
 }
