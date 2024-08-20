@@ -33,7 +33,7 @@ jobs:
         env:
           EAS_ACCOUNT_EMAIL: ${{ secrets.EAS_ACCOUNT_EMAIL }}
           EAS_ACCOUNT_PASSWORD: ${{ secrets.EAS_ACCOUNT_PASSWORD }}
-        run: eas login --username $EAS_ACCOUNT_EMAIL --password $EAS_ACCOUNT_PASSWORD
+        run: eas login -u $EAS_ACCOUNT_EMAIL -p $EAS_ACCOUNT_PASSWORD
 
       - name: Build Expo project
         run: eas build --platform android --non-interactive
