@@ -1,31 +1,84 @@
 name: CI
+
 on:
   push:
     branches:
-      - dev
       - main
+      - dev
   pull_request:
     branches:
       - main
+      - dev
 
 jobs:
-  build:
-    name: CI
+  test:
+    name: Run Tests
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: "18"
+
       - name: Install dependencies
         run: npm install
 
-      - name: Build
+      - name: Run tests
+        run: npm test
+
+  build:
+    name: Build Expo App
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Expo CLI
+        run: npm install -g expo-cli
+
+      - name: Log in to Expo
         env:
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-        run: npx expo export
+          EXPO_CLI_USERNAME: ${{ secrets.EXPO_CLI_USERNAME }}
+          EXPO_CLI_PASSWORD: ${{ secrets.EXPO_CLI_PASSWORD }}
+
+        run: expo login -u $EXPO_CLI_USERNAME -p $EXPO_CLI_PASSWORD
+
+      - name: Build Expo project
+        env:
+          EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+
+        run: expo build:android --non-interactive
+
+  deploy:
+    name: Deploy to Expo
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Log in to Expo
+        env:
+          EXPO_CLI_USERNAME: ${{ secrets.EXPO_CLI_USERNAME }}
+          EXPO_CLI_PASSWORD: ${{ secrets.EXPO_CLI_PASSWORD }}
+        run: expo login -u $EXPO_CLI_USERNAME -p $EXPO_CLI_PASSWORD
+
+      - name: Publish to Expo
+        run: expo publish --non-interactive
