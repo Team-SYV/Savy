@@ -39,6 +39,8 @@ jobs:
 
         run: expo login -u $EXPO_CLI_USERNAME -p $EXPO_CLI_PASSWORD
 
+      - name: Configure Project
+        run: eas init
 
       - name: Build Expo project
         run: eas build --platform android --non-interactive
