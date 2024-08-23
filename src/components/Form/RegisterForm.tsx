@@ -32,6 +32,8 @@ const RegisterForm = () => {
       await signUp.create({
         emailAddress,
         password,
+        firstName,
+        lastName
       });
 
       // Send verification Email
