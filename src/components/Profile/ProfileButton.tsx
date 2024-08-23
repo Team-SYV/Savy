@@ -14,7 +14,7 @@ export const ProfileButton = () => {
   return (
     <Pressable onPress={navigateToProfile} className="mr-2">
       <Image
-        source={{ uri: user?.imageUrl }}
+        source={{ uri: user?.imageUrl || "https://via.placeholder.com/150" }}
         className="w-9 h-9 rounded-full"
       />
     </Pressable>
