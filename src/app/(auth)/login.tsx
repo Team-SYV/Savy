@@ -5,7 +5,7 @@ import { View, Text, Image, ScrollView, SafeAreaView } from "react-native";
 
 const Login = () => {
   return (
-    <SafeAreaView className="top-44 flex-1 bg-transparent p-4">
+    <SafeAreaView className="top-44 flex-1 bg-transparent p-2">
       <ScrollView>
         <Stack.Screen options={{ headerShown: false }} />
 

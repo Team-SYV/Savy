@@ -12,12 +12,15 @@ const CustomButton = ({
   borderRadius,
   marginTop,
   marginBottom,
+  disabled = false,
 }) => {
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={!disabled ? onPress : null}
       className={`${bgColor} ${width} ${height} ${borderRadius} ${marginTop} ${marginBottom} flex items-center justify-center`}
       activeOpacity={0.9}
+      style={{ opacity: disabled ? 0.8 : 1 }}
+      disabled={disabled}
     >
       <Text className={`${textColor} ${textSize} text-center`}>{title}</Text>
     </TouchableOpacity>

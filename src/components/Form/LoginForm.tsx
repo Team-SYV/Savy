@@ -125,6 +125,7 @@ const LoginForm = () => {
         textSize="text-[20px]"
         marginTop="mt-10"
         marginBottom="mb-1"
+        disabled={loading}
       />
     </View>
   );
