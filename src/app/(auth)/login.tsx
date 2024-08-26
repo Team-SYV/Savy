@@ -5,11 +5,11 @@ import { View, Text, Image, ScrollView, SafeAreaView } from "react-native";
 
 const Login = () => {
   return (
-    <SafeAreaView className="top-44 flex-1 bg-transparent p-2">
+    <SafeAreaView className="bg-white min-h-full p-2">
       <ScrollView>
         <Stack.Screen options={{ headerShown: false }} />
 
-        <View className="w-28 h-28 self-center ">
+        <View className="w-28 h-28 self-center mt-44">
           <Image
             source={require("@/assets/images/savy.png")}
             className="w-full h-full"
