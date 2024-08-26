@@ -1,4 +1,3 @@
-// Register.js
 import React from "react";
 import { SafeAreaView, ScrollView, View, Text } from "react-native";
 import { Link, Stack } from "expo-router";
