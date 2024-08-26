@@ -36,57 +36,54 @@ const RegisterForm = () => {
     confirmPassword: "",
   });
 
-  // Handles first name input change and sets validation errors.
-  const handleFirstNameChange = (text: string) => {
-    setFirstName(text);
-    setErrors((prev) => ({
-      ...prev,
-      firstName: text
-        ? validateFirstName(text, submitted)
-        : "First name is required",
-    }));
-  };
-
-  // Handles last name input change and sets validation errors.
-  const handleLastNameChange = (text: string) => {
-    setLastName(text);
-    setErrors((prev) => ({
-      ...prev,
-      lastName: text
-        ? validateLastName(text, submitted)
-        : "Last name is required",
-    }));
-  };
-
-  // Handles email input change and sets validation errors.
-  const handleEmailChange = (text: string) => {
-    setEmailAddress(text);
-    setErrors((prev) => ({
-      ...prev,
-      emailAddress: text ? validateEmail(text, submitted) : "Email is required",
-    }));
-  };
-
-  // Handles password input change and sets validation errors.
-  const handlePasswordChange = (text: string) => {
-    setPassword(text);
-    setErrors((prev) => ({
-      ...prev,
-      password: text
-        ? validatePassword(text, submitted)
-        : "Password is required",
-    }));
-  };
-
-  // Handles confirm password input change and sets validation errors.
-  const handleConfirmPasswordChange = (text: string) => {
-    setConfirmPassword(text);
-    setErrors((prev) => ({
-      ...prev,
-      confirmPassword: text
-        ? validateConfirmPassword(password, text, submitted)
-        : "Confirm password is required",
-    }));
+  const handleInputChange = (text: string, field: keyof typeof errors) => {
+    switch (field) {
+      case "firstName":
+        setFirstName(text);
+        setErrors((prev) => ({
+          ...prev,
+          firstName: text
+            ? validateFirstName(text, submitted)
+            : "First name is required",
+        }));
+        break;
+      case "lastName":
+        setLastName(text);
+        setErrors((prev) => ({
+          ...prev,
+          lastName: text
+            ? validateLastName(text, submitted)
+            : "Last name is required",
+        }));
+        break;
+      case "emailAddress":
+        setEmailAddress(text);
+        setErrors((prev) => ({
+          ...prev,
+          emailAddress: text
+            ? validateEmail(text, submitted)
+            : "Email is required",
+        }));
+        break;
+      case "password":
+        setPassword(text);
+        setErrors((prev) => ({
+          ...prev,
+          password: text
+            ? validatePassword(text, submitted)
+            : "Password is required",
+        }));
+        break;
+      case "confirmPassword":
+        setConfirmPassword(text);
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: text
+            ? validateConfirmPassword(password, text, submitted)
+            : "Confirm password is required",
+        }));
+        break;
+    }
   };
 
   const isFormValid = () => {
@@ -181,7 +178,7 @@ const RegisterForm = () => {
         title="First Name"
         placeholder="First Name"
         value={firstName}
-        onChangeText={handleFirstNameChange}
+        onChangeText={(text) => handleInputChange(text, "firstName")}
         otherStyles="mt-7 mb-1"
       />
       {errors.firstName && (
@@ -192,7 +189,7 @@ const RegisterForm = () => {
         title="Last Name"
         placeholder="Last Name"
         value={lastName}
-        onChangeText={handleLastNameChange}
+        onChangeText={(text) => handleInputChange(text, "lastName")}
         otherStyles="mt-5 mb-1"
       />
       {errors.lastName && (
@@ -203,7 +200,7 @@ const RegisterForm = () => {
         title="Email"
         placeholder="Email"
         value={emailAddress}
-        onChangeText={handleEmailChange}
+        onChangeText={(text) => handleInputChange(text, "emailAddress")}
         otherStyles="mt-5 mb-1"
         keyboardType="email-address"
       />
@@ -215,7 +212,7 @@ const RegisterForm = () => {
         title="Password"
         placeholder="Password"
         value={password}
-        onChangeText={handlePasswordChange}
+        onChangeText={(text) => handleInputChange(text, "password")}
         otherStyles="mt-5 mb-1"
       />
       {errors.password && (
@@ -226,8 +223,8 @@ const RegisterForm = () => {
         title="Password"
         placeholder="Confirm Password"
         value={confirmPassword}
-        onChangeText={handleConfirmPasswordChange}
-        otherStyles="mt-5 mb-5"
+        onChangeText={(text) => handleInputChange(text, "confirmPassword")}
+        otherStyles="mt-5 mb-1"
       />
       {errors.confirmPassword && (
         <Text className="text-red-600 text-sm ml-1">

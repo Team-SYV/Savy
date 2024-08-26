@@ -20,26 +20,24 @@ const LoginForm = () => {
     general: "",
   });
 
-  //Handles email input change and sets validation errors.
-  const handleEmailChange = (text: string) => {
-    setEmailAddress(text);
-    setErrors((prev) => ({
-      ...prev,
-      email: text ? validateEmail(text, submitted) : "Email is required",
-    }));
-  };
-
-  //Handles password input change and sets validation errors.
-  const handlePasswordChange = (text: string) => {
-    setPassword(text);
-    setErrors((prev) => ({
-      ...prev,
-      password: text
+  // Handles input change and sets validation errors based on field type
+  const handleInputChange = (text: string, field: "email" | "password") => {
+    const updatedErrors = { ...errors };
+    if (field === "email") {
+      setEmailAddress(text);
+      updatedErrors.email = text
+        ? validateEmail(text, submitted)
+        : "Email is required";
+    } else {
+      setPassword(text);
+      updatedErrors.password = text
         ? validatePassword(text, submitted)
-        : "Password is required",
-    }));
+        : "Password is required";
+    }
+    setErrors(updatedErrors);
   };
 
+  // Checks if the form is valid
   const isFormValid = () => {
     const emailError = validateEmail(emailAddress, submitted);
     const passwordError = validatePassword(password, submitted);
@@ -53,6 +51,7 @@ const LoginForm = () => {
     return !emailError && !passwordError;
   };
 
+  // Handles sign in button press
   const onSignInPress = async () => {
     setSubmitted(true);
 
@@ -88,7 +87,7 @@ const LoginForm = () => {
         title="Email Address"
         placeholder="Email"
         value={emailAddress}
-        onChangeText={handleEmailChange}
+        onChangeText={(text) => handleInputChange(text, "email")}
         otherStyles="mt-7 mb-1"
         keyboardType="email-address"
       />
@@ -100,7 +99,7 @@ const LoginForm = () => {
         title="Password"
         placeholder="Password"
         value={password}
-        onChangeText={handlePasswordChange}
+        onChangeText={(text) => handleInputChange(text, "password")}
         otherStyles="mt-7 mb-1"
       />
       {errors.password && (
