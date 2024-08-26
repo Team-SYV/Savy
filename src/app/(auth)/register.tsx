@@ -6,12 +6,12 @@ import RegisterForm from "@/components/Form/RegisterForm";
 
 const Register = () => {
   return (
-    <SafeAreaView className="top-44 flex-1 bg-transparent p-4">
+    <SafeAreaView className="top-36 flex-1 bg-transparent p-2">
       <ScrollView>
         <Stack.Screen options={{ headerShown: false }} />
 
-        <Text className="text-3xl font-medium"> Create Account </Text>
-        <Text className="text-lg ml-1">
+        <Text className="text-3xl font-medium "> Create Account </Text>
+        <Text className="text-lg ml-2">
           Create your account by filling the information below
         </Text>
 
