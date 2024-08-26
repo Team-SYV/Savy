@@ -117,15 +117,9 @@ const LoginForm = () => {
       <CustomButton
         title="Sign In"
         onPress={onSignInPress}
-        bgColor="bg-[#00AACE]"
-        textColor="text-white"
-        width="w-full"
-        height="h-16"
-        borderRadius="rounded-2xl"
-        textSize="text-[20px]"
-        marginTop="mt-10"
-        marginBottom="mb-1"
-        disabled={loading}
+        containerStyles="bg-[#00AACE] h-16 w-full rounded-2xl mt-10 mb-1"
+        textStyles="text-white text-[20px]"
+        isLoading={loading}
       />
     </View>
   );

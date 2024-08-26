@@ -29,7 +29,7 @@ function BottomHalfModal({
         <View
           testID="modal-menus"
           style={{ alignSelf: "center" }}
-          className="-mt-2 h-2 w-12 rounded-2xl bg-slate-300"
+          className="-mt-2 h-2 w-12 rounded-2xl bg-gray-600"
         />
         {children}
       </View>

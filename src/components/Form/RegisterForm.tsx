@@ -239,15 +239,9 @@ const RegisterForm = () => {
       <CustomButton
         title="Sign Up"
         onPress={onSignUpPress}
-        bgColor="bg-[#00AACE]"
-        textColor="text-white"
-        width="w-full"
-        height="h-16"
-        borderRadius="rounded-2xl"
-        textSize="text-[20px]"
-        marginTop="mt-5"
-        marginBottom="mb-1"
-        disabled={loading}
+        containerStyles="bg-[#00AACE] h-16 w-full rounded-2xl mt-6 mb-1"
+        textStyles="text-white text-[20px]"
+        isLoading={loading}
       />
 
       {/* Verification Modal */}
@@ -276,15 +270,9 @@ const RegisterForm = () => {
           <CustomButton
             title="Verify Email"
             onPress={onPressVerify}
-            bgColor="bg-[#00AACE]"
-            textColor="text-white"
-            width="w-full"
-            height="h-16"
-            borderRadius="rounded-2xl"
-            textSize="text-[20px]"
-            marginTop="mt-6"
-            marginBottom="mb-1"
-            disabled={loading}
+            containerStyles="bg-[#00AACE] h-16 w-full rounded-2xl mt-6 mb-1"
+            textStyles="text-white text-[20px]"
+            isLoading={loading}
           />
         </BottomHalfModal>
       )}
