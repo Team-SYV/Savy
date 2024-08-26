@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { View, Text } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useSignIn } from "@clerk/clerk-expo";
-import CustomInput from "../FormInput/CustomFormInput";
+import CustomFormField from "../FormField/CustomFormField";
 import CustomButton from "../Button/CustomButton";
-import PasswordInput from "../FormInput/PasswordInput";
 import { validateEmail, validatePassword } from "@/utils/validateLogin";
 
 const LoginForm = () => {
@@ -85,24 +84,24 @@ const LoginForm = () => {
     <View className="flex-1 justify-center p-4">
       <Spinner visible={loading} />
 
-      <CustomInput
+      <CustomFormField
+        title="Email Address"
         placeholder="Email"
         value={emailAddress}
         onChangeText={handleEmailChange}
-        marginTop="mt-7"
-        marginBottom="mb-1"
+        otherStyles="mt-7 mb-1"
         keyboardType="email-address"
       />
       {errors.email && (
         <Text className="text-red-600 text-sm ml-1">{errors.email}</Text>
       )}
 
-      <PasswordInput
-        value={password}
+      <CustomFormField
+        title="Password"
         placeholder="Password"
+        value={password}
         onChangeText={handlePasswordChange}
-        marginTop="mt-7"
-        marginBottom="mb-1"
+        otherStyles="mt-7 mb-1"
       />
       {errors.password && (
         <Text className="text-red-500 text-sm ml-1">{errors.password}</Text>

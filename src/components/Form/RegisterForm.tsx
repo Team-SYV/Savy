@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { View, Text } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useSignUp } from "@clerk/clerk-expo";
-import CustomInput from "../FormInput/CustomFormInput";
-import PasswordInput from "../FormInput/PasswordInput";
 import CustomButton from "../Button/CustomButton";
 import BottomHalfModal from "../Modal/BottomHalfModal";
 import OTPTextInput from "react-native-otp-textinput";
+import CustomFormField from "../FormField/CustomFormField";
 import {
   validateFirstName,
   validateLastName,
@@ -178,57 +177,57 @@ const RegisterForm = () => {
     <View className="flex-1 justify-center p-2">
       <Spinner visible={loading} />
 
-      <CustomInput
+      <CustomFormField
+        title="First Name"
         placeholder="First Name"
         value={firstName}
         onChangeText={handleFirstNameChange}
-        marginTop="mt-6"
-        marginBottom="mb-1"
+        otherStyles="mt-7 mb-1"
       />
       {errors.firstName && (
         <Text className="text-red-600 text-sm ml-1">{errors.firstName}</Text>
       )}
 
-      <CustomInput
+      <CustomFormField
+        title="Last Name"
         placeholder="Last Name"
         value={lastName}
         onChangeText={handleLastNameChange}
-        marginTop="mt-5"
-        marginBottom="mb-1"
+        otherStyles="mt-5 mb-1"
       />
       {errors.lastName && (
         <Text className="text-red-600 text-sm ml-1">{errors.lastName}</Text>
       )}
 
-      <CustomInput
+      <CustomFormField
+        title="Email"
         placeholder="Email"
         value={emailAddress}
         onChangeText={handleEmailChange}
-        marginTop="mt-5"
-        marginBottom="mb-1"
+        otherStyles="mt-5 mb-1"
         keyboardType="email-address"
       />
       {errors.emailAddress && (
         <Text className="text-red-600 text-sm ml-1">{errors.emailAddress}</Text>
       )}
 
-      <PasswordInput
-        value={password}
+      <CustomFormField
+        title="Password"
         placeholder="Password"
+        value={password}
         onChangeText={handlePasswordChange}
-        marginTop="mt-5"
-        marginBottom="mb-1"
+        otherStyles="mt-5 mb-1"
       />
       {errors.password && (
         <Text className="text-red-600 text-sm ml-1">{errors.password}</Text>
       )}
 
-      <PasswordInput
-        value={confirmPassword}
+      <CustomFormField
+        title="Password"
         placeholder="Confirm Password"
+        value={confirmPassword}
         onChangeText={handleConfirmPasswordChange}
-        marginTop="mt-5"
-        marginBottom="mb-5"
+        otherStyles="mt-5 mb-5"
       />
       {errors.confirmPassword && (
         <Text className="text-red-600 text-sm ml-1">
