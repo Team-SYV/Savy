@@ -19,12 +19,22 @@ const TabLayout = () => {
         tabBarActiveTintColor: "#008FAE",
         tabBarInactiveTintColor: "#7F7F7F",
         tabBarStyle: {
-          height: 60,
-          padding: 5,
+          height: 62,
+          position: "absolute",
+          bottom: 10,
+          left: 10,
+          right: 10,
+          borderRadius: 15,
+          borderTopWidth: 0,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 5 },
+          shadowOpacity: 0.5,
+          elevation: 5,
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          marginBottom: 5,
+          bottom: 7,
+          borderRadius: 20,
         },
       }}
     >
@@ -50,23 +60,6 @@ const TabLayout = () => {
             <MaterialIcons name="history" size={size} color={color} />
           ),
           tabBarLabel: "History",
-        }}
-        redirect={!isSignedIn}
-      />
-
-      <Tabs.Screen
-        name="get-pro"
-        options={{
-          headerTitle: "Savy",
-          headerRight: () => <ProfileButton />,
-          tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons
-              name="crown-outline"
-              size={size}
-              color={color}
-            />
-          ),
-          tabBarLabel: "GetPro",
         }}
         redirect={!isSignedIn}
       />
