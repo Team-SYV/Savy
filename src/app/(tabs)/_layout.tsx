@@ -3,7 +3,6 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useAuth } from "@clerk/clerk-expo";
 import { ProfileButton } from "@/components/Profile/ProfileButton";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
 const TabLayout = () => {
@@ -27,13 +26,11 @@ const TabLayout = () => {
           borderRadius: 15,
           borderTopWidth: 0,
           shadowColor: "#000",
-          shadowOffset: { width: 0, height: 5 },
-          shadowOpacity: 0.5,
           elevation: 5,
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          bottom: 7,
+          bottom: 10,
           borderRadius: 20,
         },
       }}
