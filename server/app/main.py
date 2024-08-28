@@ -1,7 +1,7 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from models import Base, engine, User, SessionLocal
-from passlib.context import CryptContext  # Import passlib context for hashing passwords
+from passlib.context import CryptContext  
 
 Base.metadata.create_all(bind=engine)
 
