@@ -5,7 +5,6 @@ import { ProfileButton } from "@/components/Profile/ProfileButton";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { Text } from "react-native";
 
 const TabLayout = () => {
   const { isSignedIn } = useAuth();
@@ -17,6 +16,16 @@ const TabLayout = () => {
           backgroundColor: "#008FAE",
         },
         headerTintColor: "#fff",
+        tabBarActiveTintColor: "#008FAE",
+        tabBarInactiveTintColor: "#7F7F7F",
+        tabBarStyle: {
+          height: 60,
+          padding: 5,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          marginBottom: 5,
+        },
       }}
     >
       <Tabs.Screen
@@ -24,23 +33,10 @@ const TabLayout = () => {
         options={{
           headerTitle: "Savy",
           headerRight: () => <ProfileButton />,
-          tabBarActiveTintColor: "#008FAE",
           tabBarIcon: ({ size, color }) => (
-            <FontAwesome name="home" size={size} color={color} marginTop={4} />
+            <FontAwesome name="home" size={size} color={color} />
           ),
-
-          tabBarLabel: ({ focused }) => (
-            <Text
-              style={{
-                color: focused ? "#008FAE" : "gray",
-                fontSize: 11,
-                padding: 2,
-              }}
-              className=""
-            >
-              Home
-            </Text>
-          ),
+          tabBarLabel: "Home",
         }}
         redirect={!isSignedIn}
       />
@@ -50,27 +46,10 @@ const TabLayout = () => {
         options={{
           headerTitle: "Savy",
           headerRight: () => <ProfileButton />,
-          tabBarActiveTintColor: "#008FAE",
           tabBarIcon: ({ size, color }) => (
-            <MaterialIcons
-              name="history"
-              size={size}
-              color={color}
-              marginTop={4}
-            />
+            <MaterialIcons name="history" size={size} color={color} />
           ),
-
-          tabBarLabel: ({ focused }) => (
-            <Text
-              style={{
-                color: focused ? "#008FAE" : "gray",
-                fontSize: 11,
-                padding: 2,
-              }}
-            >
-              History
-            </Text>
-          ),
+          tabBarLabel: "History",
         }}
         redirect={!isSignedIn}
       />
@@ -80,27 +59,14 @@ const TabLayout = () => {
         options={{
           headerTitle: "Savy",
           headerRight: () => <ProfileButton />,
-          tabBarActiveTintColor: "#008FAE",
           tabBarIcon: ({ size, color }) => (
             <MaterialCommunityIcons
               name="crown-outline"
               size={size}
               color={color}
-              marginTop={4}
             />
           ),
-
-          tabBarLabel: ({ focused }) => (
-            <Text
-              style={{
-                color: focused ? "#008FAE" : "gray",
-                fontSize: 11,
-                padding: 2,
-              }}
-            >
-              GetPro
-            </Text>
-          ),
+          tabBarLabel: "GetPro",
         }}
         redirect={!isSignedIn}
       />
@@ -110,27 +76,10 @@ const TabLayout = () => {
         options={{
           headerTitle: "Savy",
           headerRight: () => <ProfileButton />,
-          tabBarActiveTintColor: "#008FAE",
           tabBarIcon: ({ size, color }) => (
-            <MaterialIcons
-              name="leaderboard"
-              size={size}
-              color={color}
-              marginTop={4}
-            />
+            <MaterialIcons name="leaderboard" size={size} color={color} />
           ),
-
-          tabBarLabel: ({ focused }) => (
-            <Text
-              style={{
-                color: focused ? "#008FAE" : "gray",
-                fontSize: 11,
-                padding: 2,
-              }}
-            >
-              Leaderboard
-            </Text>
-          ),
+          tabBarLabel: "Leaderboard",
         }}
         redirect={!isSignedIn}
       />
@@ -140,27 +89,10 @@ const TabLayout = () => {
         options={{
           headerTitle: "Savy",
           headerRight: () => <ProfileButton />,
-          tabBarActiveTintColor: "#008FAE",
           tabBarIcon: ({ size, color }) => (
-            <AntDesign
-              name="barschart"
-              size={size}
-              color={color}
-              marginTop={4}
-            />
+            <AntDesign name="barschart" size={size} color={color} />
           ),
-
-          tabBarLabel: ({ focused }) => (
-            <Text
-              style={{
-                color: focused ? "#008FAE" : "gray",
-                fontSize: 11,
-                padding: 2,
-              }}
-            >
-              Progress
-            </Text>
-          ),
+          tabBarLabel: "Progress",
         }}
         redirect={!isSignedIn}
       />

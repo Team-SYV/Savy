@@ -1,16 +1,23 @@
 import React, { useState } from "react";
 import { View, Text } from "react-native";
-import { useSignUp } from "@clerk/clerk-expo";
 import Spinner from "react-native-loading-spinner-overlay";
-import CustomInput from "../FormInput/CustomFormInput";
-import PasswordInput from "../FormInput/PasswordInput";
+import { useSignUp } from "@clerk/clerk-expo";
 import CustomButton from "../Button/CustomButton";
 import BottomHalfModal from "../Modal/BottomHalfModal";
 import OTPTextInput from "react-native-otp-textinput";
+import CustomFormField from "../FormField/CustomFormField";
+import {
+  validateFirstName,
+  validateLastName,
+  validateEmail,
+  validatePassword,
+  validateConfirmPassword,
+} from "@/utils/validateRegister";
 
 const RegisterForm = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -21,37 +28,126 @@ const RegisterForm = () => {
   const [pendingVerification, setPendingVerification] = useState(false);
   const [code, setCode] = useState("");
 
-  const onSignUpPress = async () => {
-    if (!isLoaded) {
-      return;
+  const [errors, setErrors] = useState({
+    firstName: "",
+    lastName: "",
+    emailAddress: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleInputChange = (text: string, field: keyof typeof errors) => {
+    switch (field) {
+      case "firstName":
+        setFirstName(text);
+        setErrors((prev) => ({
+          ...prev,
+          firstName: text
+            ? validateFirstName(text, submitted)
+            : "First name is required",
+        }));
+        break;
+      case "lastName":
+        setLastName(text);
+        setErrors((prev) => ({
+          ...prev,
+          lastName: text
+            ? validateLastName(text, submitted)
+            : "Last name is required",
+        }));
+        break;
+      case "emailAddress":
+        setEmailAddress(text);
+        setErrors((prev) => ({
+          ...prev,
+          emailAddress: text
+            ? validateEmail(text, submitted)
+            : "Email is required",
+        }));
+        break;
+      case "password":
+        setPassword(text);
+        setErrors((prev) => ({
+          ...prev,
+          password: text
+            ? validatePassword(text, submitted)
+            : "Password is required",
+        }));
+        break;
+      case "confirmPassword":
+        setConfirmPassword(text);
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: text
+            ? validateConfirmPassword(password, text, submitted)
+            : "Confirm password is required",
+        }));
+        break;
     }
+  };
+
+  const isFormValid = () => {
+    const firstNameError = validateFirstName(firstName, submitted);
+    const lastNameError = validateLastName(lastName, submitted);
+    const emailError = validateEmail(emailAddress, submitted);
+    const passwordError = validatePassword(password, submitted);
+    const confirmPasswordError = validateConfirmPassword(
+      password,
+      confirmPassword,
+      submitted
+    );
+
+    setErrors({
+      firstName: firstNameError,
+      lastName: lastNameError,
+      emailAddress: emailError,
+      password: passwordError,
+      confirmPassword: confirmPasswordError,
+    });
+
+    return (
+      !firstNameError &&
+      !lastNameError &&
+      !emailError &&
+      !passwordError &&
+      !confirmPasswordError
+    );
+  };
+
+  const onSignUpPress = async () => {
+    setSubmitted(true);
+
+    if (!isLoaded || !isFormValid()) return;
+
     setLoading(true);
+    setErrors((prev) => ({ ...prev, general: "" }));
 
     try {
-      // Create the user on Clerk
       await signUp.create({
         emailAddress,
         password,
         firstName,
-        lastName
+        lastName,
       });
 
-      // Send verification Email
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-
       setPendingVerification(true);
     } catch (err) {
-      alert(err.errors[0].message);
+      setErrors((prev) => ({
+        ...prev,
+        general: err.errors?.[0]?.message || "An unknown error occurred",
+      }));
+      setTimeout(() => {
+        setErrors((prev) => ({ ...prev, general: "" }));
+      }, 3000);
     } finally {
       setLoading(false);
     }
   };
 
-  // Verify the email address
   const onPressVerify = async () => {
-    if (!isLoaded) {
-      return;
-    }
+    if (!isLoaded) return;
+
     setLoading(true);
 
     try {
@@ -61,7 +157,13 @@ const RegisterForm = () => {
 
       await setActive({ session: completeSignUp.createdSessionId });
     } catch (err) {
-      alert(err.errors[0].message);
+      setErrors((prev) => ({
+        ...prev,
+        general: err.errors?.[0]?.message || "An unknown error occurred",
+      }));
+      setTimeout(() => {
+        setErrors((prev) => ({ ...prev, general: "" }));
+      }, 3000);
     } finally {
       setLoading(false);
       setPendingVerification(false);
@@ -69,60 +171,73 @@ const RegisterForm = () => {
   };
 
   return (
-    <View>
+    <View className="flex-1 justify-center p-2">
       <Spinner visible={loading} />
 
-      <CustomInput
+      <CustomFormField
+        title="First Name"
         placeholder="First Name"
         value={firstName}
-        onChangeText={setFirstName}
-        marginTop="mt-10"
-        marginBottom="mb-3"
+        onChangeText={(text) => handleInputChange(text, "firstName")}
+        otherStyles="mt-7 mb-1"
       />
+      {errors.firstName && (
+        <Text className="text-red-600 text-sm ml-1">{errors.firstName}</Text>
+      )}
 
-      <CustomInput
+      <CustomFormField
+        title="Last Name"
         placeholder="Last Name"
         value={lastName}
-        onChangeText={setLastName}
-        marginTop="mt-2"
-        marginBottom="mb-3"
+        onChangeText={(text) => handleInputChange(text, "lastName")}
+        otherStyles="mt-5 mb-1"
       />
+      {errors.lastName && (
+        <Text className="text-red-600 text-sm ml-1">{errors.lastName}</Text>
+      )}
 
-      <CustomInput
+      <CustomFormField
+        title="Email"
         placeholder="Email"
         value={emailAddress}
-        onChangeText={setEmailAddress}
-        marginTop="mt-2"
-        marginBottom="mb-3"
+        onChangeText={(text) => handleInputChange(text, "emailAddress")}
+        otherStyles="mt-5 mb-1"
+        keyboardType="email-address"
       />
+      {errors.emailAddress && (
+        <Text className="text-red-600 text-sm ml-1">{errors.emailAddress}</Text>
+      )}
 
-      <PasswordInput
-        value={password}
+      <CustomFormField
+        title="Password"
         placeholder="Password"
-        onChangeText={setPassword}
-        marginTop="mt-2"
-        marginBottom="mb-3"
+        value={password}
+        onChangeText={(text) => handleInputChange(text, "password")}
+        otherStyles="mt-5 mb-1"
       />
+      {errors.password && (
+        <Text className="text-red-600 text-sm ml-1">{errors.password}</Text>
+      )}
 
-      <PasswordInput
-        value={confirmPassword}
+      <CustomFormField
+        title="Password"
         placeholder="Confirm Password"
-        onChangeText={setConfirmPassword}
-        marginTop="mt-2"
-        marginBottom="mb-5"
+        value={confirmPassword}
+        onChangeText={(text) => handleInputChange(text, "confirmPassword")}
+        otherStyles="mt-5 mb-1"
       />
+      {errors.confirmPassword && (
+        <Text className="text-red-600 text-sm ml-1">
+          {errors.confirmPassword}
+        </Text>
+      )}
 
       <CustomButton
         title="Sign Up"
         onPress={onSignUpPress}
-        bgColor="bg-[#00AACE]"
-        textColor="text-white"
-        width="w-full"
-        height="h-16"
-        borderRadius="rounded-2xl"
-        textSize="text-[20px]"
-        marginTop="mt-6"
-        marginBottom="mb-1"
+        containerStyles="bg-[#00AACE] h-16 w-full rounded-2xl mt-6 mb-1"
+        textStyles="text-white text-[20px]"
+        isLoading={loading}
       />
 
       {/* Verification Modal */}
@@ -151,14 +266,9 @@ const RegisterForm = () => {
           <CustomButton
             title="Verify Email"
             onPress={onPressVerify}
-            bgColor="bg-[#00AACE]"
-            textColor="text-white"
-            width="w-full"
-            height="h-16"
-            borderRadius="rounded-2xl"
-            textSize="text-[20px]"
-            marginTop="mt-6"
-            marginBottom="mb-1"
+            containerStyles="bg-[#00AACE] h-16 w-full rounded-2xl mt-6 mb-1"
+            textStyles="text-white text-[20px]"
+            isLoading={loading}
           />
         </BottomHalfModal>
       )}

@@ -1,25 +1,32 @@
 import React from "react";
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Text, TouchableOpacityProps } from "react-native";
 
-const CustomButton = ({
+interface CustomButtonProps extends TouchableOpacityProps {
+  title: string;
+  isLoading?: boolean;
+  containerStyles?: string;
+  textStyles?: string;
+  onPress?: () => void;
+}
+
+const CustomButton: React.FC<CustomButtonProps> = ({
   title,
   onPress,
-  bgColor,
-  textColor,
-  textSize,
-  width,
-  height,
-  borderRadius,
-  marginTop,
-  marginBottom,
+  containerStyles,
+  textStyles,
+  isLoading,
+  ...props
 }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`${bgColor} ${width} ${height} ${borderRadius} ${marginTop} ${marginBottom} flex items-center justify-center`}
-      activeOpacity={0.9}
+      className={`${containerStyles} flex items-center justify-center ${
+        isLoading ? "opacity-80" : ""
+      }`}
+      disabled={isLoading}
+      {...props}
     >
-      <Text className={`${textColor} ${textSize} text-center`}>{title}</Text>
+      <Text className={`${textStyles} text-center`}>{title}</Text>
     </TouchableOpacity>
   );
 };

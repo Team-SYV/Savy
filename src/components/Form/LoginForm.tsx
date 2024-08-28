@@ -2,21 +2,64 @@ import React, { useState } from "react";
 import { View, Text } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useSignIn } from "@clerk/clerk-expo";
-import CustomInput from "../FormInput/CustomFormInput";
+import CustomFormField from "../FormField/CustomFormField";
 import CustomButton from "../Button/CustomButton";
-import PasswordInput from "../FormInput/PasswordInput";
+import { validateEmail, validatePassword } from "@/utils/validateLogin";
 
 const LoginForm = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const onSignInPress = async () => {
-    if (!isLoaded) {
-      return;
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+    general: "",
+  });
+
+  // Handles input change and sets validation errors based on field type
+  const handleInputChange = (text: string, field: "email" | "password") => {
+    const updatedErrors = { ...errors };
+    if (field === "email") {
+      setEmailAddress(text);
+      updatedErrors.email = text
+        ? validateEmail(text, submitted)
+        : "Email is required";
+    } else {
+      setPassword(text);
+      updatedErrors.password = text
+        ? validatePassword(text, submitted)
+        : "Password is required";
     }
+    setErrors(updatedErrors);
+  };
+
+  // Checks if the form is valid
+  const isFormValid = () => {
+    const emailError = validateEmail(emailAddress, submitted);
+    const passwordError = validatePassword(password, submitted);
+
+    setErrors({
+      email: emailError,
+      password: passwordError,
+      general: "",
+    });
+
+    return !emailError && !passwordError;
+  };
+
+  // Handles sign in button press
+  const onSignInPress = async () => {
+    setSubmitted(true);
+
+    if (!isLoaded || !isFormValid()) return;
+
     setLoading(true);
+    setErrors((prev) => ({ ...prev, general: "" }));
+
     try {
       const completeSignIn = await signIn.create({
         identifier: emailAddress,
@@ -24,7 +67,13 @@ const LoginForm = () => {
       });
       await setActive({ session: completeSignIn.createdSessionId });
     } catch (err) {
-      alert(err.errors[0].message);
+      setErrors((prev) => ({
+        ...prev,
+        general: err.errors?.[0]?.message || "An unknown error occurred",
+      }));
+      setTimeout(() => {
+        setErrors((prev) => ({ ...prev, general: "" }));
+      }, 3000);
     } finally {
       setLoading(false);
     }
@@ -34,33 +83,41 @@ const LoginForm = () => {
     <View className="flex-1 justify-center p-4">
       <Spinner visible={loading} />
 
-      <CustomInput
+      <CustomFormField
+        title="Email Address"
         placeholder="Email"
         value={emailAddress}
-        onChangeText={setEmailAddress}
-        marginTop="mt-6"
-        marginBottom="mb-2"
+        onChangeText={(text) => handleInputChange(text, "email")}
+        otherStyles="mt-7 mb-1"
+        keyboardType="email-address"
       />
+      {errors.email && (
+        <Text className="text-red-600 text-sm ml-1">{errors.email}</Text>
+      )}
 
-      <PasswordInput
-        value={password}
+      <CustomFormField
+        title="Password"
         placeholder="Password"
-        onChangeText={setPassword}
-        marginTop="mt-6"
-        marginBottom="mb-5"
+        value={password}
+        onChangeText={(text) => handleInputChange(text, "password")}
+        otherStyles="mt-7 mb-1"
       />
+      {errors.password && (
+        <Text className="text-red-500 text-sm ml-1">{errors.password}</Text>
+      )}
+
+      {errors.general && (
+        <Text className="text-red-500 text-sm text-center mt-2">
+          {errors.general}
+        </Text>
+      )}
 
       <CustomButton
         title="Sign In"
         onPress={onSignInPress}
-        bgColor="bg-[#00AACE]"
-        textColor="text-white"
-        width="w-full"
-        height="h-16"
-        borderRadius="rounded-2xl"
-        textSize="text-[20px]"
-        marginTop="mt-8"
-        marginBottom="mb-1"
+        containerStyles="bg-[#00AACE] h-16 w-full rounded-2xl mt-10 mb-1"
+        textStyles="text-white text-[20px]"
+        isLoading={loading}
       />
     </View>
   );
