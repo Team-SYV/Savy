@@ -6,7 +6,15 @@ import CustomFormField from "@/components/FormField/CustomFormField";
 import CustomButton from "@/components/Button/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { View, Image, Text, TouchableOpacity } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
 
 const EditProfile = () => {
@@ -75,76 +83,87 @@ const EditProfile = () => {
   };
 
   return (
-    <View className="flex pt-12 bg-white min-h-full">
-      <View className="flex items-center justify-center">
-        <Image
-          source={{ uri: imageUri || "https://via.placeholder.com/150" }}
-          className="h-32 w-32 rounded-full border-2 border-[#008FAE]"
-          style={{ resizeMode: "cover" }}
-        />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View className="flex pt-12 bg-white min-h-full">
+          <View className="flex items-center justify-center">
+            <Image
+              source={{ uri: imageUri || "https://via.placeholder.com/150" }}
+              className="h-32 w-32 rounded-full border-2 border-[#008FAE]"
+              style={{ resizeMode: "cover" }}
+            />
 
-        <TouchableOpacity
-          onPress={handleImagePicker}
-          disabled={loading}
-          className="mt-2"
-          style={{ alignItems: "center", justifyContent: "center" }}
-        >
-          <View className="border border-[#008FAE] py-2 px-2 rounded-lg flex-row items-center">
-            <MaterialCommunityIcons name="pencil" size={16} color="#008FAE" />
-            <Text className="ml-1 font-medium text-gray-700">
-              Change avatar
-            </Text>
+            <TouchableOpacity
+              onPress={handleImagePicker}
+              disabled={loading}
+              className="mt-2"
+              style={{ alignItems: "center", justifyContent: "center" }}
+            >
+              <View className="border border-[#008FAE] py-2 px-2 rounded-lg flex-row items-center">
+                <MaterialCommunityIcons
+                  name="pencil"
+                  size={16}
+                  color="#008FAE"
+                />
+                <Text className="ml-1 font-medium text-gray-700">
+                  Change avatar
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
-      </View>
 
-      <Text className="mt-10 mx-5 mb-1 text-sm font-semibold text-gray-800">
-        First Name
-      </Text>
-      <CustomFormField
-        title="firstName"
-        placeholder="First Name"
-        value={firstName}
-        onChangeText={setFirstName}
-        otherStyles="mx-4"
-      />
-      <Text className="mt-6 mx-5 mb-1 text-sm font-semibold text-gray-800">
-        Last Name
-      </Text>
-      <CustomFormField
-        title="lastName"
-        placeholder="Last Name"
-        value={lastName}
-        onChangeText={setLastName}
-        otherStyles="mx-4 mb-12"
-      />
+          <Text className="mt-10 mx-5 mb-1 text-sm font-semibold text-gray-800">
+            First Name
+          </Text>
+          <CustomFormField
+            title="firstName"
+            placeholder="First Name"
+            value={firstName}
+            onChangeText={setFirstName}
+            otherStyles="mx-4"
+          />
+          <Text className="mt-6 mx-5 mb-1 text-sm font-semibold text-gray-800">
+            Last Name
+          </Text>
+          <CustomFormField
+            title="lastName"
+            placeholder="Last Name"
+            value={lastName}
+            onChangeText={setLastName}
+            otherStyles="mx-4 mb-12"
+          />
 
-      <View className="absolute bottom-1 left-0 right-0 flex-row flex items-center justify-center px-4">
-        <CustomButton
-          title="Cancel"
-          onPress={() => navigation.goBack()}
-          containerStyles={`border border-[#00AACE] h-14 rounded-xl mb-4 mx-1 w-1/2`}
-          textStyles="text-[#00AACE] text-[16px] font-semibold"
-          disabled={loading}
-        />
+          <View className="absolute bottom-1 left-0 right-0 flex-row flex items-center justify-center px-4">
+            <CustomButton
+              title="Cancel"
+              onPress={() => navigation.goBack()}
+              containerStyles={`border border-[#00AACE] h-14 rounded-xl mb-4 mx-1 w-1/2`}
+              textStyles="text-[#00AACE] text-[16px] font-semibold"
+              disabled={loading}
+            />
 
-        <CustomButton
-          title="SAVE"
-          onPress={handleSaveUser}
-          containerStyles={`bg-[#00AACE] h-14 rounded-xl mb-4 w-1/2 mx-1`}
-          textStyles="text-white text-[16px] font-semibold"
-          disabled={loading}
-        />
-      </View>
+            <CustomButton
+              title="SAVE"
+              onPress={handleSaveUser}
+              containerStyles={`bg-[#00AACE] h-14 rounded-xl mb-4 w-1/2 mx-1`}
+              textStyles="text-white text-[16px] font-semibold"
+              disabled={loading}
+            />
+          </View>
 
-      {loading && <LoadingSpinner />}
+          {loading && <LoadingSpinner />}
 
-      {message && (
-        <View className="absolute bottom-24 left-0 right-0 z-10 bg-gray-600 rounded-full py-3 px-1 mx-28">
-          <Text className="text-center text-white">{message}</Text>
+          {message && (
+            <View className="absolute bottom-24 left-0 right-0 z-10 bg-gray-600 rounded-full py-3 px-1 mx-28">
+              <Text className="text-center text-white">{message}</Text>
+            </View>
+          )}
         </View>
-      )}
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
