@@ -13,7 +13,7 @@ import {
   validatePassword,
   validateConfirmPassword,
 } from "@/utils/validateRegister";
-
+import { registerUser } from "src/api.js";
 const RegisterForm = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [loading, setLoading] = useState(false);
@@ -123,6 +123,16 @@ const RegisterForm = () => {
     setErrors((prev) => ({ ...prev, general: "" }));
 
     try {
+      const user = await registerUser({
+        firstName: firstName,
+        lastName: lastName,
+        email: emailAddress,
+        password: password,
+      });
+
+      console.log(user)
+
+      //clerk
       await signUp.create({
         emailAddress,
         password,
