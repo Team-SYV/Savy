@@ -4,6 +4,17 @@ import { useAuth } from "@clerk/clerk-expo";
 import { ProfileButton } from "@/components/Profile/ProfileButton";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { Image, View, Text } from "react-native";
+
+const HeaderLeft = () => (
+  <View className="flex-row items-center">
+    <Image
+      source={require("@/assets/images/svy.png")}
+      className="w-10 h-10 ml-2"
+    />
+    <Text className="text-white text-xl font-bold"> Savy </Text>
+  </View>
+);
 
 const TabLayout = () => {
   const { isSignedIn } = useAuth();
@@ -33,13 +44,14 @@ const TabLayout = () => {
           bottom: 10,
           borderRadius: 20,
         },
+        headerRight: () => <ProfileButton />,
+        headerTitle: () => null,
+        headerLeft: () => <HeaderLeft />,
       }}
     >
       <Tabs.Screen
         name="home"
         options={{
-          headerTitle: "Savy",
-          headerRight: () => <ProfileButton />,
           tabBarIcon: ({ size, color }) => (
             <FontAwesome name="home" size={size} color={color} />
           ),
@@ -51,8 +63,6 @@ const TabLayout = () => {
       <Tabs.Screen
         name="history"
         options={{
-          headerTitle: "Savy",
-          headerRight: () => <ProfileButton />,
           tabBarIcon: ({ size, color }) => (
             <MaterialIcons name="history" size={size} color={color} />
           ),
@@ -64,8 +74,6 @@ const TabLayout = () => {
       <Tabs.Screen
         name="leaderboard"
         options={{
-          headerTitle: "Savy",
-          headerRight: () => <ProfileButton />,
           tabBarIcon: ({ size, color }) => (
             <MaterialIcons name="leaderboard" size={size} color={color} />
           ),
@@ -77,8 +85,6 @@ const TabLayout = () => {
       <Tabs.Screen
         name="progress"
         options={{
-          headerTitle: "Savy",
-          headerRight: () => <ProfileButton />,
           tabBarIcon: ({ size, color }) => (
             <AntDesign name="barschart" size={size} color={color} />
           ),
