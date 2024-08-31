@@ -4,8 +4,10 @@ import React from "react";
 const History = () => {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text> History 🎉</Text>
+      <Text> Historyyy 🎉</Text>
     </View>
+
+
   );
 };
 
