@@ -1,8 +1,10 @@
 from flask.cli import load_dotenv
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
 import os
+import cuid
 
 
 load_dotenv()
@@ -15,7 +17,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String, primary_key=True, index=True, default=lambda: cuid.cuid())    
     firstName = Column(String, index=True)
     lastName = Column(String, index=True)
     email = Column(String, unique=True, index=True)
