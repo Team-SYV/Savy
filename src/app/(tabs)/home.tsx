@@ -2,6 +2,7 @@ import { View, Text, Image } from "react-native";
 import React from "react";
 import Card from "@/components/Card/Card";
 import HorizontalCard from "@/components/Card/HorizontalCard";
+import { Link } from "expo-router";
 
 const Home = () => {
   return (
@@ -27,10 +28,13 @@ const Home = () => {
           text="Talk with Virtual Interviewer"
           cardClassName="mr-4"
         />
-        <Card
-          imageSource={require("@/assets/images/record-yourself.png")}
-          text="Record Yourself"
-        />
+
+        <Link href="/record-yourself">
+          <Card
+            imageSource={require("@/assets/images/record-yourself.png")}
+            text="Record Yourself"
+          />
+        </Link>
       </View>
 
       <Text className="text-base font-medium mt-12 mb-3">
