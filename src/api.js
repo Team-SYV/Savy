@@ -15,10 +15,7 @@ export const registerUser = async (userData) => {
 
 export const updateUser = async (userId, userData) => {
   try {
-    const response = await api.post(`/users/edit/`, {
-      user_id: userId,
-      ...userData,
-    });
+    const response = await api.post(`/users/edit/${userId}`, userData);
     return response.data;
   } catch (error) {
     throw error.response.data;
