@@ -88,7 +88,7 @@ const LoginForm = () => {
         placeholder="Email"
         value={emailAddress}
         onChangeText={(text) => handleInputChange(text, "email")}
-        otherStyles="mt-7 mb-1"
+        otherStyles="mt-5 mb-1"
         keyboardType="email-address"
       />
       {errors.email && (
@@ -100,7 +100,7 @@ const LoginForm = () => {
         placeholder="Password"
         value={password}
         onChangeText={(text) => handleInputChange(text, "password")}
-        otherStyles="mt-7 mb-1"
+        otherStyles="mt-5 mb-1"
       />
       {errors.password && (
         <Text className="text-red-500 text-sm ml-1">{errors.password}</Text>
@@ -115,7 +115,7 @@ const LoginForm = () => {
       <CustomButton
         title="Sign In"
         onPress={onSignInPress}
-        containerStyles="bg-[#00AACE] h-16 w-full rounded-2xl mt-10 mb-1"
+        containerStyles="bg-[#00AACE] h-16 w-full rounded-2xl mt-6"
         textStyles="text-white text-[20px]"
         isLoading={loading}
       />
