@@ -12,8 +12,6 @@ load_dotenv()
 url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_KEY")
 
-if not url or not key:
-    raise ValueError("Supabase URL and Key must be set in environment variables.")
 supabase: Client = create_client(url, key)
 
 app = FastAPI()
@@ -47,35 +45,49 @@ class UserUpdate(BaseModel):
 
 @app.post("/users/create/")
 async def create_user(user: UserCreate):
+    existing_user_response = supabase.table('users').select('email').eq('email', user.email).execute()
+
+    if existing_user_response.data:
+        raise HTTPException(status_code=400, detail="Email already in use")
+
     hashed_password = pwd_context.hash(user.password)
-    try:
-        response = supabase.table('users').insert({
+    supabase.table('users').insert({
             'firstName': user.firstName,
             'lastName': user.lastName,
             'email': user.email,
             'password': hashed_password,
             'image': user.image
         }).execute()
-
-        if response.status_code == 201:
-            return {"message": "User created successfully"}
-        else:
-            error_message = response.model_dump_json()
-            print(f"Supabase API error: {error_message}")
-            raise HTTPException(status_code=response.status_code, detail=error_message)
-    except Exception as e:
-        print(f"Unexpected error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-
-@app.post("/users/edit/")
-async def update_user(user_id: str, user: UserUpdate):
-    update_data = {k: v for k, v in user.model_dump().items() if v is not None}
     
-    response = supabase.table('users').update(update_data).eq('id', user_id).execute()
-    
-    if response.status_code == 200:
-        return {"message": "User updated successfully"}
-    else:
-        raise HTTPException(status_code=response.status_code, detail=response.model_dump_json())
+    return {"message": "User Created Succesfully"}
+
+
+@app.post("/users/edit/{user_id}")
+async def edit_user(user_id: str, user_update: UserUpdate):
+    # Retrieve the current user data from the database
+    user_response = supabase.table('users').select('*').eq('id', user_id).execute()
+
+    if not user_response.data:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user_data = user_response.data[0]
+
+    # Prepare the updated fields
+    updated_data = {**user_data}  # Start with the current data
+    if user_update.firstName is not None:
+        updated_data['firstName'] = user_update.firstName
+    if user_update.lastName is not None:
+        updated_data['lastName'] = user_update.lastName
+    if user_update.email is not None:
+        # Check if new email is already in use
+        email_check_response = supabase.table('users').select('id').eq('email', user_update.email).execute()
+        if email_check_response.data and email_check_response.data[0]['id'] != user_id:
+            raise HTTPException(status_code=400, detail="Email already in use")
+        updated_data['email'] = user_update.email
+    if user_update.image is not None:
+        updated_data['image'] = user_update.image
+
+    # Update the user data in the database
+    supabase.table('users').update(updated_data).eq('id', user_id).execute()
+
+    return {"message": "User updated successfully"}
