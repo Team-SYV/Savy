@@ -1,8 +1,7 @@
 import React from "react";
-import { Stack } from "expo-router";
-import { Text, TouchableOpacity } from "react-native";
+import { Stack, useRouter } from "expo-router";
+import { TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 
 const ProfileLayout = () => {
   const router = useRouter();
@@ -10,25 +9,13 @@ const ProfileLayout = () => {
   return (
     <Stack
       screenOptions={{
-        headerTitle: () => (
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: "bold",
-              textAlign: "center",
-              color: "white",
-            }}
-          >
-            Profile
-          </Text>
-        ),
         headerStyle: {
           backgroundColor: "#008FAE",
         },
         headerTitleAlign: "center",
         headerLeft: () => (
           <TouchableOpacity
-            style={{ padding: 10 }}
+            style={{ padding: 1 }}
             onPress={() => router.back()}
           >
             <Ionicons name="arrow-back" size={24} color="white" />
@@ -36,7 +23,16 @@ const ProfileLayout = () => {
         ),
       }}
     >
-      <Stack.Screen name="index" />
+      <Stack.Screen
+        name="record-yourself"
+        options={{
+          headerTitle: () => (
+            <Text className="text-center text-xl font-bold text-white">
+              Record Yourself
+            </Text>
+          ),
+        }}
+      />
     </Stack>
   );
 };
