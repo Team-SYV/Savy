@@ -128,6 +128,7 @@ const RegisterForm = () => {
         lastName: lastName,
         email: emailAddress,
         password: password,
+        image: "",
       });
 
       console.log(user)
