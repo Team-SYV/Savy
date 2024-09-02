@@ -36,12 +36,14 @@ class UserCreate(BaseModel):
     lastName: str
     email: str
     password: str
+    image: str
 
 class UserUpdate(BaseModel):
     firstName: Optional[str] = None
     lastName: Optional[str] = None
     email: Optional[str] = None
     password: Optional[str] = None
+    image: Optional[str] = None
 
 @app.post("/users/create/")
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
@@ -54,7 +56,8 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
         firstName=user.firstName, 
         lastName=user.lastName, 
         email=user.email, 
-        password=hashed_password
+        password=hashed_password,
+        image=user.image,
     )
     db.add(new_user)
     db.commit()
@@ -75,6 +78,8 @@ def edit_user(user_id: int, user: UserUpdate, db: Session = Depends(get_db)):
         db_user.email = user.email
     if user.password:
         db_user.password = pwd_context.hash(user.password)
+    if user.image:
+        db_user.image = user.image
     
     db.commit()
     db.refresh(db_user)
