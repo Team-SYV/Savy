@@ -42,7 +42,6 @@ class UserUpdate(BaseModel):
     firstName: Optional[str] = None
     lastName: Optional[str] = None
     email: Optional[str] = None
-    password: Optional[str] = None
     image: Optional[str] = None
 
 @app.post("/users/create/")
@@ -65,7 +64,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 @app.post("/users/edit/")
-def edit_user(user_id: int, user: UserUpdate, db: Session = Depends(get_db)):
+def edit_user(user_id: str, user: UserUpdate, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.id == user_id).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -76,8 +75,6 @@ def edit_user(user_id: int, user: UserUpdate, db: Session = Depends(get_db)):
         db_user.lastName = user.lastName
     if user.email:
         db_user.email = user.email
-    if user.password:
-        db_user.password = pwd_context.hash(user.password)
     if user.image:
         db_user.image = user.image
     

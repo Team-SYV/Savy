@@ -18,8 +18,8 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(String, primary_key=True, index=True, default=lambda: cuid.cuid())    
-    firstName = Column(String, index=True)
-    lastName = Column(String, index=True)
+    firstName = Column(String, index=True, name='firstName')
+    lastName = Column(String, index=True, name='lastName')
     email = Column(String, unique=True, index=True)
     password = Column(String, index=True)
     image = Column(String, index=True)
