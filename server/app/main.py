@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Response, status
 from passlib.context import CryptContext  
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -6,11 +6,14 @@ from typing import Optional
 from supabase import Client, create_client
 from dotenv import load_dotenv
 import os
+from svix.webhooks import Webhook, WebhookVerificationError
+import json
 
 load_dotenv()
 
 url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_KEY")
+webhook_secret = os.getenv("WEBHOOK_SECRET")
 
 supabase: Client = create_client(url, key)
 
@@ -30,64 +33,123 @@ app.add_middleware(
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-class UserCreate(BaseModel):
-    firstName: str
-    lastName: str
+class ClerkUserCreate(BaseModel):
+    id: str
+    first_name: str
+    last_name: str
     email: str
-    password: str
-    image: str
+    image_url: Optional[str] = None
 
-class UserUpdate(BaseModel):
-    firstName: Optional[str] = None
-    lastName: Optional[str] = None
+class ClerkUserUpdate(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     email: Optional[str] = None
-    image: Optional[str] = None
+    image_url: Optional[str] = None
 
-@app.post("/users/create/")
-async def create_user(user: UserCreate):
+@app.post("/api/webhooks/", status_code=status.HTTP_204_NO_CONTENT)
+async def clerk_webhook_handler(request: Request, response: Response):
+    headers = dict(request.headers)  # Convert headers to a dict
+    payload = await request.body()  # Get the raw request body
+    payload_str = payload.decode('utf-8')  # Convert bytes to string
+
+    # Log or print payload and headers for debugging
+    print("Headers:", headers)
+    print("Payload:", payload_str)
+
+    # Ensure required headers are present
+    required_headers = ["svix-id", "svix-signature", "svix-timestamp"]
+    for header in required_headers:
+        if header not in headers:
+            response.status_code = status.HTTP_400_BAD_REQUEST
+            return {"error": "Missing required headers"}
+
+    try:
+        wh = Webhook(webhook_secret)
+        wh.verify(payload_str, headers)  # Verify with the payload string and headers dict
+    except WebhookVerificationError as e:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": "Invalid webhook signature", "details": str(e)}
+
+    event = json.loads(payload_str)
+    event_type = event.get("type")
+    data = event.get("data")
+
+    if event_type == "user.created":
+        await handle_user_created(data)
+    elif event_type == "user.updated":
+        await handle_user_updated(data)
+    elif event_type == "user.deleted":
+        await handle_user_deleted(data)
+
+    return {"message": "Webhook handled"}
+
+
+async def handle_user_created(data: dict):
+    # Extract the email addresses list
+    email_addresses = data.get("email_addresses", [])
+    
+    # Check if there is at least one email address
+    if not email_addresses:
+        raise HTTPException(status_code=400, detail="No email address found")
+
+    # Get the email address from the first item in the list
+    email_address = email_addresses[0].get("email_address")
+    
+    if not email_address:
+        raise HTTPException(status_code=400, detail="Email address is missing")
+
+    user = ClerkUserCreate(
+        id=data.get("id", ""),
+        first_name=data.get("first_name", ""),
+        last_name=data.get("last_name", ""),
+        email=email_address,
+        image_url=data.get("profile_image_url")
+    )
+
     existing_user_response = supabase.table('users').select('email').eq('email', user.email).execute()
 
     if existing_user_response.data:
         raise HTTPException(status_code=400, detail="Email already in use")
 
-    hashed_password = pwd_context.hash(user.password)
     supabase.table('users').insert({
-            'firstName': user.firstName,
-            'lastName': user.lastName,
+            'id': user.id,
+            'firstName': user.first_name,
+            'lastName': user.last_name,
             'email': user.email,
-            'password': hashed_password,
-            'image': user.image
+            'image': user.image_url
         }).execute()
-    
-    return {"message": "User Created Succesfully"}
 
+async def handle_user_updated(data: dict):
+    user_id = data["id"]
+    user_update = ClerkUserUpdate(
+        first_name=data.get("first_name"),
+        last_name=data.get("last_name"),
+        email=data.get("email_address"),
+        image_url=data.get("profile_image_url")
+    )
 
-@app.post("/users/edit/{user_id}")
-async def edit_user(user_id: str, user_update: UserUpdate):
-    # Retrieve the current user data from the database
     user_response = supabase.table('users').select('*').eq('id', user_id).execute()
 
     if not user_response.data:
         raise HTTPException(status_code=404, detail="User not found")
 
     user_data = user_response.data[0]
+    updated_data = {**user_data}
 
-    # Prepare the updated fields
-    updated_data = {**user_data}  # Start with the current data
-    if user_update.firstName is not None:
-        updated_data['firstName'] = user_update.firstName
-    if user_update.lastName is not None:
-        updated_data['lastName'] = user_update.lastName
-    if user_update.email is not None:
-        # Check if new email is already in use
+    if user_update.first_name:
+        updated_data['firstName'] = user_update.first_name
+    if user_update.last_name:
+        updated_data['lastName'] = user_update.last_name
+    if user_update.email:
         email_check_response = supabase.table('users').select('id').eq('email', user_update.email).execute()
         if email_check_response.data and email_check_response.data[0]['id'] != user_id:
             raise HTTPException(status_code=400, detail="Email already in use")
         updated_data['email'] = user_update.email
-    if user_update.image is not None:
-        updated_data['image'] = user_update.image
+    if user_update.image_url:
+        updated_data['image'] = user_update.image_url
 
-    # Update the user data in the database
     supabase.table('users').update(updated_data).eq('id', user_id).execute()
 
-    return {"message": "User updated successfully"}
+async def handle_user_deleted(data: dict):
+    user_id = data["id"]
+    supabase.table('users').delete().eq('id', user_id).execute()
