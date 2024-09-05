@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, Stack } from "expo-router";
 import LoginForm from "@/components/Form/LoginForm";
-import { View, Text, Image, ScrollView, SafeAreaView } from "react-native";
+import { View, Text, Image, ScrollView, SafeAreaView, Platform } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import { useOAuth } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
@@ -9,14 +9,14 @@ import GoogleButton from "@/components/Button/GoogleButton";
 
 export const useWarmUpBrowser = () => {
   React.useEffect(() => {
-    // Warm up the android browser to improve UX
-    void WebBrowser.warmUpAsync();
-    return () => {
-      void WebBrowser.coolDownAsync();
-    };
+    if (Platform.OS !== "web") {
+      void WebBrowser.warmUpAsync();
+      return () => {
+        void WebBrowser.coolDownAsync();
+      };
+    }
   }, []);
 };
-
 WebBrowser.maybeCompleteAuthSession();
 
 const Login = () => {
