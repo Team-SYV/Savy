@@ -13,6 +13,7 @@ import {
   validatePassword,
   validateConfirmPassword,
 } from "@/utils/validateRegister";
+
 const RegisterForm = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
   const [loading, setLoading] = useState(false);
@@ -33,6 +34,7 @@ const RegisterForm = () => {
     emailAddress: "",
     password: "",
     confirmPassword: "",
+    general: "",
   });
 
   const handleInputChange = (text: string, field: keyof typeof errors) => {
@@ -102,6 +104,7 @@ const RegisterForm = () => {
       emailAddress: emailError,
       password: passwordError,
       confirmPassword: confirmPasswordError,
+      general: "",
     });
 
     return (
@@ -181,7 +184,7 @@ const RegisterForm = () => {
         otherStyles="mt-7 mb-1"
       />
       {errors.firstName && (
-        <Text className="text-red-600 text-sm ml-1">{errors.firstName}</Text>
+        <Text className="text-red-500 text-sm ml-1">{errors.firstName}</Text>
       )}
 
       <CustomFormField
@@ -192,7 +195,7 @@ const RegisterForm = () => {
         otherStyles="mt-5 mb-1"
       />
       {errors.lastName && (
-        <Text className="text-red-600 text-sm ml-1">{errors.lastName}</Text>
+        <Text className="text-red-500 text-sm ml-1">{errors.lastName}</Text>
       )}
 
       <CustomFormField
@@ -204,7 +207,7 @@ const RegisterForm = () => {
         keyboardType="email-address"
       />
       {errors.emailAddress && (
-        <Text className="text-red-600 text-sm ml-1">{errors.emailAddress}</Text>
+        <Text className="text-red-500 text-sm ml-1">{errors.emailAddress}</Text>
       )}
 
       <CustomFormField
@@ -215,7 +218,7 @@ const RegisterForm = () => {
         otherStyles="mt-5 mb-1"
       />
       {errors.password && (
-        <Text className="text-red-600 text-sm ml-1">{errors.password}</Text>
+        <Text className="text-red-500 text-sm ml-1">{errors.password}</Text>
       )}
 
       <CustomFormField
@@ -226,8 +229,14 @@ const RegisterForm = () => {
         otherStyles="mt-5 mb-1"
       />
       {errors.confirmPassword && (
-        <Text className="text-red-600 text-sm ml-1">
+        <Text className="text-red-500 text-sm ml-1">
           {errors.confirmPassword}
+        </Text>
+      )}
+
+      {errors.general && (
+        <Text className="text-red-500 text-sm ml-1 text-center mt-2">
+          {errors.general}
         </Text>
       )}
 
