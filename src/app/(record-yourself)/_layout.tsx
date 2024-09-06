@@ -24,6 +24,17 @@ const ProfileLayout = () => {
       }}
     >
       <Stack.Screen
+        name="job-information"
+        options={{
+          headerTitle: () => (
+            <Text className="text-center text-xl font-bold text-white">
+              Record Yourself
+            </Text>
+          ),
+        }}
+      />
+
+      <Stack.Screen
         name="record-yourself"
         options={{
           headerTitle: () => (

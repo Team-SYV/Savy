@@ -29,7 +29,7 @@ const Home = () => {
           cardClassName="mr-4"
         />
 
-        <Link href="/record-yourself">
+        <Link href="/(record-yourself)/job-information">
           <Card
             imageSource={require("@/assets/images/record-yourself.png")}
             text="Record Yourself"
