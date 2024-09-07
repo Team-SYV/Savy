@@ -70,6 +70,7 @@ const Logout = () => {
                   onPress={confirmLogout}
                   containerStyles="bg-red-500 py-2 px-3 rounded-lg"
                   textStyles="text-white text-lg"
+                  testID="signout-button"
                 />
               </View>
             )}
