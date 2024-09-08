@@ -24,6 +24,7 @@ const CustomFormField: React.FC<CustomInputProps> = ({
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const isPasswordField = title === "Password" || title === "ConfirmPassword";
 
   return (
     <View className={`space-y-2 ${otherStyles}`}>
@@ -32,13 +33,12 @@ const CustomFormField: React.FC<CustomInputProps> = ({
           placeholder={placeholder}
           value={value}
           onChangeText={onChangeText}
-          keyboardType="default"
-          secureTextEntry={title === "Password" && !showPassword}
+          secureTextEntry={isPasswordField && !showPassword}
           className="flex-1 px-2 bg-white text-base text-[#5D5D5D] placeholder:text-[#5D5D5D]"
           {...props}
         />
 
-        {title === "Password" && (
+        {isPasswordField && (
           <TouchableOpacity
             onPress={() => setShowPassword(!showPassword)}
             className="absolute right-4"
