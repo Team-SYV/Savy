@@ -27,9 +27,8 @@ const CustomFormField: React.FC<CustomInputProps> = ({
 
   return (
     <View className={`space-y-2 ${otherStyles}`}>
-      <View className="relative w-full h-16 px-1 rounded-2xl border border-[#5D5D5D] flex flex-row items-center">
+      <View className="relative w-full h-[55px] px-1 rounded-2xl border border-[#5D5D5D] flex flex-row items-center">
         <TextInput
-          autoCapitalize="none"
           placeholder={placeholder}
           value={value}
           onChangeText={onChangeText}

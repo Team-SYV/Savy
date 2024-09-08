@@ -205,6 +205,7 @@ const RegisterForm = () => {
         onChangeText={(text) => handleInputChange(text, "emailAddress")}
         otherStyles="mt-5 mb-1"
         keyboardType="email-address"
+        autoCapitalize="none"
       />
       {errors.emailAddress && (
         <Text className="text-red-500 text-sm ml-1">{errors.emailAddress}</Text>
