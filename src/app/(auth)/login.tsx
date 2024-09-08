@@ -1,7 +1,14 @@
 import React from "react";
 import { Link, Stack } from "expo-router";
 import LoginForm from "@/components/Form/LoginForm";
-import { View, Text, Image, ScrollView, SafeAreaView, Platform } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  SafeAreaView,
+  Platform,
+} from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import { useOAuth } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
@@ -46,7 +53,7 @@ const Login = () => {
       <ScrollView>
         <Stack.Screen options={{ headerShown: false }} />
 
-        <View className="w-28 h-28 self-center mt-36">
+        <View className="w-24 h-24 self-center mt-32">
           <Image
             source={require("@/assets/images/savy.png")}
             className="w-full h-full"
