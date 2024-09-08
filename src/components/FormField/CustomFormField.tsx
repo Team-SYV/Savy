@@ -30,6 +30,9 @@ const CustomFormField: React.FC<CustomInputProps> = ({
     <View className={`space-y-2 ${otherStyles}`}>
       <View className="relative w-full h-[55px] px-1 rounded-2xl border border-[#5D5D5D] flex flex-row items-center">
         <TextInput
+          key={
+            isPasswordField ? (showPassword ? "text" : "password") : undefined
+          }
           placeholder={placeholder}
           value={value}
           onChangeText={onChangeText}

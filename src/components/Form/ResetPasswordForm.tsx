@@ -158,7 +158,7 @@ const ResetPasswordForm = () => {
             </Text>
 
             <Text className="text-center mt-2">
-              Enter your email account to reset password and
+              Enter your email account to reset password
             </Text>
 
             <CustomFormField
