@@ -2,8 +2,8 @@ import { View, Text, Image } from "react-native";
 import { useUser } from "@clerk/clerk-expo";
 import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import LogoutButton from "@/components/Profile/LogoutButton";
 import { Link } from "expo-router";
+import Logout from "@/components/Profile/Logout";
 
 const Profile = () => {
   const { user } = useUser();
@@ -55,7 +55,7 @@ const Profile = () => {
         />
       </View>
 
-      <LogoutButton />
+      <Logout />
     </View>
   );
 };
