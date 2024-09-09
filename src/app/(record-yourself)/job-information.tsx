@@ -1,23 +1,15 @@
 import React, { useState, useCallback } from "react";
 import CustomButton from "@/components/Button/CustomButton";
-import InterviewTypeCard from "@/components/Card/InterviewTypeCard";
-import Dropdown from "@/components/Dropdown/Dropdown";
-import CompanyFormField from "@/components/FormField/CompanyFormField";
 import Stepper from "@/components/Stepper/Stepper";
 import TextArea from "@/components/TextArea/TextArea";
 import { createJobDescription } from "../../api";
-import {
-  getErrorMessage,
-  validateStep,
-  FormData,
-} from "@/utils/validateJobInfo";
+import { getErrorMessage, validateStep } from "@/utils/validateJobInfo";
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, useRouter } from "expo-router";
+import ConfirmationModal from "@/components/Modal/ConfirmationModal";
+import { JobInfoData } from "@/types/JobInfo";
 import * as Haptics from "expo-haptics";
-import {
-  experienceLevel,
-  industry,
-  jobRole,
-  steps,
-} from "@/constants/constants";
+import { steps } from "@/constants/constants";
 import {
   View,
   SafeAreaView,
@@ -26,26 +18,38 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
+import StepContent from "@/components/JobInfo/StepContent";
 
 const JobInformation = () => {
-  const [activeStep, setActiveStep] = useState<number>(0);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<JobInfoData>({
     selectedIndustry: null,
     selectedJobRole: null,
-    selectedInterviewType: null,
+    selectedInterviewType: "Behavioral",
     selectedExperienceLevel: null,
     companyName: "",
     jobDescription: "",
   });
+
+  const [activeStep, setActiveStep] = useState<number>(0);
   const [errors, setErrors] = useState<{ [key: number]: string }>({});
   const [loading, setLoading] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const router = useRouter();
 
   const handleStepPress = useCallback((index: number) => {
     setActiveStep(index);
   }, []);
 
   const handleNextStep = useCallback(async () => {
+    if (activeStep === steps.length - 1) {
+      handleSubmit();
+      router.push("/(record-yourself)/record");
+      return;
+    }
+
     if (!validateStep(activeStep, formData)) {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       setErrors((prevErrors) => ({
@@ -61,8 +65,6 @@ const JobInformation = () => {
 
     if (activeStep < steps.length - 1) {
       setActiveStep((prevStep) => prevStep + 1);
-    } else {
-      handleSubmit();
     }
   }, [activeStep, formData]);
 
@@ -107,11 +109,10 @@ const JobInformation = () => {
 
       return updatedFormData;
     });
-
+    setHasChanges(true);
     if (callback) {
       callback();
     }
-
     if (errors[activeStep]) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -120,121 +121,18 @@ const JobInformation = () => {
     }
   };
 
-  const renderStepContent = () => {
-    switch (activeStep) {
-      case 0:
-        return (
-          <Dropdown
-            placeholder="Industry"
-            data={industry}
-            defaultOption={{
-              key: formData.selectedIndustry,
-              value: formData.selectedIndustry || "",
-            }}
-            onSelect={(value) => {
-              updateFormData("selectedIndustry", value, () => {
-                updateFormData("selectedJobRole", null);
-              });
-            }}
-          />
-        );
-      case 1:
-        return (
-          formData.selectedIndustry && (
-            <Dropdown
-              placeholder="Job Role"
-              data={jobRole[formData.selectedIndustry] || []}
-              defaultOption={{
-                key: formData.selectedJobRole,
-                value: formData.selectedJobRole || "",
-              }}
-              onSelect={(value) => {
-                updateFormData("selectedJobRole", value);
-              }}
-            />
-          )
-        );
-      case 2:
-        return (
-          <View className="flex-row items-center justify-center">
-            <InterviewTypeCard
-              imageSource={require("@/assets/icons/technical.png")}
-              title="Technical"
-              description="Involves coding challenges, technical problem-solving scenarios, and discussions about specific technologies, tools, or methodologies."
-              isSelected={formData.selectedInterviewType === "Technical"}
-              onPress={() =>
-                updateFormData("selectedInterviewType", "Technical")
-              }
-            />
-            <InterviewTypeCard
-              imageSource={require("@/assets/icons/behavioral.png")}
-              title="Behavioral"
-              description="Involves soft skills, interpersonal interactions, problem-solving approaches, and past experiences."
-              isSelected={formData.selectedInterviewType === "Behavioral"}
-              onPress={() =>
-                updateFormData("selectedInterviewType", "Behavioral")
-              }
-            />
-          </View>
-        );
-      case 3:
-        return (
-          <Dropdown
-            placeholder="Experience Level"
-            data={experienceLevel}
-            defaultOption={{
-              key: formData.selectedExperienceLevel,
-              value: formData.selectedExperienceLevel || "",
-            }}
-            onSelect={(value) => {
-              updateFormData("selectedExperienceLevel", value);
-            }}
-          />
-        );
-      case 4:
-        return (
-          <CompanyFormField
-            title="Company Name"
-            placeholder="Company Name"
-            value={formData.companyName}
-            onChangeText={(text) => updateFormData("companyName", text)}
-            otherStyles="ml-12 mb-1"
-          />
-        );
-      case 5:
-        return (
-          <TextArea
-            value={formData.jobDescription}
-            onChangeText={(text) => updateFormData("jobDescription", text)}
-            placeholder="Fill in your job description"
-          />
-        );
-      case 6:
-        return (
-          <View>
-            <Text className="ml-12 mr-3 text-base">
-              Do you wish to customize your interview based on your resume by
-              uploading a file? If not, please skip.
-            </Text>
-            <View className="flex-row items-center justify-center px-6 mt-4 ml-7">
-              <CustomButton
-                title="Skip"
-                onPress={handleNextStep}
-                containerStyles="bg-gray-200 h-12 rounded-xl mb-4 mx-2 w-1/2"
-                textStyles="text-[#00AACE] text-[16px] font-semibold text-base"
-              />
-              <CustomButton
-                title="Proceed"
-                onPress={handleNextStep}
-                containerStyles="bg-[#00AACE] h-12 rounded-xl mb-4 w-1/2 mx-2"
-                textStyles="text-white text-[16px] font-semibold text-base"
-              />
-            </View>
-          </View>
-        );
-      default:
-        return null;
+  const handleBackButtonPress = () => {
+    if (hasChanges) {
+      setModalVisible(true);
+    } else {
+      router.back();
     }
+  };
+
+  const handleDiscardChanges = () => {
+    setModalVisible(false);
+    setHasChanges(false);
+    router.back();
   };
 
   return (
@@ -243,6 +141,15 @@ const JobInformation = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
+        <Stack.Screen
+          options={{
+            headerLeft: () => (
+              <TouchableOpacity onPress={handleBackButtonPress}>
+                <Ionicons name="arrow-back" size={24} color="white" />
+              </TouchableOpacity>
+            ),
+          }}
+        />
         <ScrollView
           contentContainerStyle={styles.scrollViewContent}
           keyboardShouldPersistTaps="handled"
@@ -260,7 +167,13 @@ const JobInformation = () => {
                 />
                 {index === activeStep && (
                   <>
-                    {renderStepContent()}
+                    <StepContent
+                      activeStep={activeStep}
+                      formData={formData}
+                      updateFormData={updateFormData}
+                      handleNextStep={handleNextStep}
+                      handleSubmit={handleSubmit}
+                    />
                     {errors[activeStep] && (
                       <Text className="text-red-500 ml-12">
                         {errors[activeStep]}
@@ -287,6 +200,16 @@ const JobInformation = () => {
             textStyles="text-white text-[16px] font-semibold text-base"
           />
         </View>
+
+        <ConfirmationModal
+          isVisible={isModalVisible}
+          onClose={() => setModalVisible(false)}
+          onConfirm={handleDiscardChanges}
+          title="Discard Changes"
+          message="Are you sure you want to discard your changes?"
+          cancelText="Cancel"
+          confirmText="Discard"
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

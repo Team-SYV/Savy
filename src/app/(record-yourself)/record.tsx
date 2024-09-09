@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 
-const RecordYourself = () => {
+const Record = () => {
   return (
     <View>
       <Text className="text-lg"> Record Yourself </Text>
@@ -9,4 +9,4 @@ const RecordYourself = () => {
   );
 };
 
-export default RecordYourself;
+export default Record;
