@@ -24,11 +24,16 @@ const CustomFormField: React.FC<CustomInputProps> = ({
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const isPasswordField = title === "Password" || title === "ConfirmPassword";
 
   return (
     <View className={`space-y-2 ${otherStyles}`}>
-      <View className="relative w-full h-[55px] px-1 rounded-2xl border border-[#5D5D5D] flex flex-row items-center">
+      <View
+        className={`relative w-full h-[55px] px-1 rounded-2xl border ${
+          isFocused ? 'border-[#00AACE]' : 'border-[#5D5D5D]'
+        } flex flex-row items-center`}
+      >
         <TextInput
           key={
             isPasswordField ? (showPassword ? "text" : "password") : undefined
@@ -38,6 +43,8 @@ const CustomFormField: React.FC<CustomInputProps> = ({
           onChangeText={onChangeText}
           secureTextEntry={isPasswordField && !showPassword}
           className="flex-1 px-2 bg-white text-base text-[#5D5D5D] placeholder:text-[#5D5D5D]"
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           {...props}
         />
 
