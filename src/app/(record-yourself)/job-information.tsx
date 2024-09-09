@@ -41,6 +41,12 @@ const JobInformation = () => {
   }, []);
 
   const handleNextStep = useCallback(async () => {
+    if (activeStep === steps.length - 1) {
+      handleSubmit();
+      router.push("/(record-yourself)/record");
+      return;
+    }
+
     if (!validateStep(activeStep, formData)) {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
       setErrors((prevErrors) => ({
@@ -56,8 +62,6 @@ const JobInformation = () => {
 
     if (activeStep < steps.length - 1) {
       setActiveStep((prevStep) => prevStep + 1);
-    } else {
-      handleSubmit();
     }
   }, [activeStep, formData]);
 
@@ -88,17 +92,6 @@ const JobInformation = () => {
     }
   };
 
-  const renderStepContent = () => {
-    return (
-      <StepContent
-        activeStep={activeStep}
-        formData={formData}
-        updateFormData={updateFormData}
-        handleNextStep={handleNextStep}
-      />
-    );
-  };
-
   const handleBackButtonPress = () => {
     if (hasChanges) {
       setModalVisible(true);
@@ -115,6 +108,8 @@ const JobInformation = () => {
 
   const handleSubmit = () => {
     console.log("Submitting data:", formData);
+    // Simulate form submission (e.g., send data to an API)
+    // After submitting, you can navigate to another route
   };
 
   return (
@@ -149,7 +144,13 @@ const JobInformation = () => {
                 />
                 {index === activeStep && (
                   <>
-                    {renderStepContent()}
+                    <StepContent
+                      activeStep={activeStep}
+                      formData={formData}
+                      updateFormData={updateFormData}
+                      handleNextStep={handleNextStep}
+                      handleSubmit={handleSubmit}
+                    />
                     {errors[activeStep] && (
                       <Text className="text-red-500 ml-12">
                         {errors[activeStep]}

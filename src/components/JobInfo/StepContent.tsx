@@ -7,20 +7,34 @@ import { experienceLevel, jobRole, industry } from "@/constants/constants";
 import { JobInfoData } from "@/types/JobInfo";
 import CustomButton from "../Button/CustomButton";
 import { View, Text } from "react-native";
+import { useRouter } from "expo-router";
 
 interface StepContentProps {
   activeStep: number;
   formData: JobInfoData;
   updateFormData: (key: string, value: any, callback?: () => void) => void;
   handleNextStep: () => void;
+  handleSubmit: () => void;
 }
 
 const StepContent: React.FC<StepContentProps> = ({
   activeStep,
   formData,
   updateFormData,
-  handleNextStep,
+  handleSubmit,
 }) => {
+  const router = useRouter();
+
+  const onProceed = async () => {
+    handleSubmit();
+    router.push("/(record-yourself)/file-upload");
+  };
+
+  const onSkip = async () => {
+    handleSubmit();
+    router.push("/(record-yourself)/record");
+  };
+
   switch (activeStep) {
     case 0:
       return (
@@ -117,13 +131,13 @@ const StepContent: React.FC<StepContentProps> = ({
           <View className="flex-row items-center justify-center px-6 mt-4 ml-7">
             <CustomButton
               title="Skip"
-              onPress={handleNextStep}
+              onPress={onSkip}
               containerStyles="bg-gray-200 h-12 rounded-xl mb-4 mx-2 w-1/2"
               textStyles="text-[#00AACE] text-[16px] font-semibold text-base"
             />
             <CustomButton
               title="Proceed"
-              onPress={handleNextStep}
+              onPress={onProceed}
               containerStyles="bg-[#00AACE] h-12 rounded-xl mb-4 w-1/2 mx-2"
               textStyles="text-white text-[16px] font-semibold text-base"
             />
