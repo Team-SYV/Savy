@@ -1,11 +1,3 @@
-export interface FormData {
-  selectedIndustry: string | null;
-  selectedJobRole: string | null;
-  selectedInterviewType: string | null;
-  selectedExperienceLevel: string | null;
-  companyName: string;
-  jobDescription: string;
-}
 
 export const validateStep = (step: number, formData: any) => {
   switch (step) {
@@ -34,8 +26,6 @@ export const getErrorMessage = (step: number) => {
       return "Please select an industry.";
     case 1:
       return "Please select a job role.";
-    case 2:
-      return "Please select an interview type.";
     case 3:
       return "Please select an experience level.";
     case 4:

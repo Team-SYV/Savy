@@ -10,7 +10,6 @@ interface ConfirmationModalProps {
   message: string;
   confirmText?: string;
   cancelText?: string;
-  confirmButtonColor?: string;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -21,7 +20,6 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   message,
   confirmText = "Confirm",
   cancelText = "Cancel",
-  confirmButtonColor = "#FF6347",
 }) => {
   return (
     <Modal
@@ -44,7 +42,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <CustomButton
               title={confirmText}
               onPress={onConfirm}
-              containerStyles={`bg-[${confirmButtonColor}] h-12 rounded-xl w-[45%]`}
+              containerStyles={`bg-[#FF6347] h-12 rounded-xl w-[45%]`}
               textStyles="text-white text-base font-semibold"
             />
           </View>
