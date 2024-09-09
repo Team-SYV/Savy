@@ -5,6 +5,7 @@ import Dropdown from "@/components/Dropdown/Dropdown";
 import CompanyFormField from "@/components/FormField/CompanyFormField";
 import Stepper from "@/components/Stepper/Stepper";
 import TextArea from "@/components/TextArea/TextArea";
+import { createJobDescription } from "../../api";
 import {
   getErrorMessage,
   validateStep,
@@ -38,6 +39,7 @@ const JobInformation = () => {
     jobDescription: "",
   });
   const [errors, setErrors] = useState<{ [key: number]: string }>({});
+  const [loading, setLoading] = useState(false);
 
   const handleStepPress = useCallback((index: number) => {
     setActiveStep(index);
@@ -70,10 +72,32 @@ const JobInformation = () => {
     }
   }, [activeStep]);
 
-  const handleSubmit = () => {
-    console.log("Submitting data:", formData);
-  };
+  const handleSubmit = async () => {
+    try {
+      setLoading(true); // Start loading
+      console.log("Submitting data:", formData);
 
+      const jobData = {
+        user_id: "someUserId", // Replace this with the actual user ID if available
+        industry: formData.selectedIndustry,
+        role: formData.selectedJobRole,
+        type: formData.selectedInterviewType,
+        experience: formData.selectedExperienceLevel,
+        company_name: formData.companyName,
+        job_description: formData.jobDescription,
+      };
+
+      // Call API to create job description
+      const response = await createJobDescription(jobData);
+      console.log("Job description created:", response);
+
+      // Optionally handle success
+    } catch (error) {
+      console.error("Error creating job description:", error.message);
+    } finally {
+      setLoading(false); // Stop loading
+    }
+  };
   const updateFormData = (key: string, value: any, callback?: () => void) => {
     setFormData((prevState) => {
       const updatedFormData = {

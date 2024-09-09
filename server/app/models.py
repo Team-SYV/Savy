@@ -13,3 +13,16 @@ class ClerkUserUpdate(BaseModel):
     last_name: Optional[str] = None
     email: Optional[str] = None
     image_url: Optional[str] = None
+
+class JobInformation(BaseModel):
+    user_id: str
+    industry: str
+    role: str
+    type: str
+    experience: str
+    company_name: str
+    job_description: str
+
+class Resume(BaseModel):
+    user_id: str
+    file: str
