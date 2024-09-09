@@ -1,9 +1,11 @@
 import React, { useState, useCallback } from "react";
 import CustomButton from "@/components/Button/CustomButton";
 import Stepper from "@/components/Stepper/Stepper";
+import TextArea from "@/components/TextArea/TextArea";
+import { createJobDescription } from "../../api";
+import { getErrorMessage, validateStep } from "@/utils/validateJobInfo";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
-import { getErrorMessage, validateStep } from "@/utils/validateJobInfo";
 import ConfirmationModal from "@/components/Modal/ConfirmationModal";
 import { JobInfoData } from "@/types/JobInfo";
 import * as Haptics from "expo-haptics";
@@ -32,6 +34,7 @@ const JobInformation = () => {
 
   const [activeStep, setActiveStep] = useState<number>(0);
   const [errors, setErrors] = useState<{ [key: number]: string }>({});
+  const [loading, setLoading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const router = useRouter();
@@ -71,6 +74,32 @@ const JobInformation = () => {
     }
   }, [activeStep]);
 
+  const handleSubmit = async () => {
+    try {
+      setLoading(true); // Start loading
+      console.log("Submitting data:", formData);
+
+      const jobData = {
+        user_id: "someUserId", // Replace this with the actual user ID if available
+        industry: formData.selectedIndustry,
+        role: formData.selectedJobRole,
+        type: formData.selectedInterviewType,
+        experience: formData.selectedExperienceLevel,
+        company_name: formData.companyName,
+        job_description: formData.jobDescription,
+      };
+
+      // Call API to create job description
+      const response = await createJobDescription(jobData);
+      console.log("Job description created:", response);
+
+      // Optionally handle success
+    } catch (error) {
+      console.error("Error creating job description:", error.message);
+    } finally {
+      setLoading(false); // Stop loading
+    }
+  };
   const updateFormData = (key: string, value: any, callback?: () => void) => {
     setFormData((prevState) => {
       const updatedFormData = {
@@ -104,12 +133,6 @@ const JobInformation = () => {
     setModalVisible(false);
     setHasChanges(false);
     router.back();
-  };
-
-  const handleSubmit = () => {
-    console.log("Submitting data:", formData);
-    // Simulate form submission (e.g., send data to an API)
-    // After submitting, you can navigate to another route
   };
 
   return (
