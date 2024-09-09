@@ -5,6 +5,7 @@ import { useSignIn } from "@clerk/clerk-expo";
 import CustomFormField from "../FormField/CustomFormField";
 import CustomButton from "../Button/CustomButton";
 import { validateEmail, validatePassword } from "@/utils/validateLogin";
+import { Link } from "expo-router";
 
 const LoginForm = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -90,6 +91,7 @@ const LoginForm = () => {
         onChangeText={(text) => handleInputChange(text, "email")}
         otherStyles="mt-5 mb-1"
         keyboardType="email-address"
+        autoCapitalize="none"
       />
       {errors.email && (
         <Text className="text-red-600 text-sm ml-1">{errors.email}</Text>
@@ -102,9 +104,18 @@ const LoginForm = () => {
         onChangeText={(text) => handleInputChange(text, "password")}
         otherStyles="mt-5 mb-1"
       />
-      {errors.password && (
-        <Text className="text-red-500 text-sm ml-1">{errors.password}</Text>
-      )}
+
+      <View className="flex-row items-center justify-between mt-1 mb-1">
+        <View className="flex-grow">
+          {errors.password && (
+            <Text className="text-red-500 text-sm">{errors.password}</Text>
+          )}
+        </View>
+
+        <Link href="/(auth)/reset-password" className="text-right text-sm ml-2">
+          Forgot Password?
+        </Link>
+      </View>
 
       {errors.general && (
         <Text className="text-red-500 text-sm text-center mt-2">
@@ -115,7 +126,7 @@ const LoginForm = () => {
       <CustomButton
         title="Sign In"
         onPress={onSignInPress}
-        containerStyles="bg-[#00AACE] h-16 w-full rounded-2xl mt-6"
+        containerStyles="bg-[#00AACE] h-[55px] w-full rounded-2xl mt-6"
         textStyles="text-white text-[20px]"
         isLoading={loading}
       />

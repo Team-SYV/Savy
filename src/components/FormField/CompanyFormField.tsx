@@ -20,7 +20,6 @@ const CompanyFormField: React.FC<CompanyInputProps> = ({
     <View className={`space-y-2 ${otherStyles}`}>
       <View className="h-[45px] mr-4 relative px-1 rounded-xl border border-[#5D5D5D] flex flex-row items-center">
         <TextInput
-          autoCapitalize="none"
           placeholder={placeholder}
           value={value}
           onChangeText={onChangeText}

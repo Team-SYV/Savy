@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, Image, Alert } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 import { useSignUp } from "@clerk/clerk-expo";
 import CustomButton from "../Button/CustomButton";
@@ -158,17 +158,20 @@ const RegisterForm = () => {
       });
 
       await setActive({ session: completeSignUp.createdSessionId });
+      setPendingVerification(false);
     } catch (err) {
+      const errorMessage =
+        err.errors?.[0]?.message || "An unknown error occurred";
       setErrors((prev) => ({
         ...prev,
-        general: err.errors?.[0]?.message || "An unknown error occurred",
+        general: errorMessage,
       }));
+      Alert.alert("Verification Failed", "Invalid code. Please try again.");
       setTimeout(() => {
         setErrors((prev) => ({ ...prev, general: "" }));
       }, 3000);
     } finally {
       setLoading(false);
-      setPendingVerification(false);
     }
   };
 
@@ -205,6 +208,7 @@ const RegisterForm = () => {
         onChangeText={(text) => handleInputChange(text, "emailAddress")}
         otherStyles="mt-5 mb-1"
         keyboardType="email-address"
+        autoCapitalize="none"
       />
       {errors.emailAddress && (
         <Text className="text-red-500 text-sm ml-1">{errors.emailAddress}</Text>
@@ -222,7 +226,7 @@ const RegisterForm = () => {
       )}
 
       <CustomFormField
-        title="Password"
+        title="ConfirmPassword"
         placeholder="Confirm Password"
         value={confirmPassword}
         onChangeText={(text) => handleInputChange(text, "confirmPassword")}
@@ -256,28 +260,37 @@ const RegisterForm = () => {
             setPendingVerification(false);
           }}
         >
-          <View className="items-center">
-            <Text className="mt-3 text-2xl font-bold">Email Verification</Text>
-            <Text className="mt-5 text-center text-lg">
-              Please enter the 6-digit code that {"\n"}
-              was sent to your email.
-            </Text>
-          </View>
-          <View className="mt-3 items-center">
-            <OTPTextInput
-              tintColor={"#00AACE"}
-              inputCount={6}
-              handleTextChange={(code) => setCode(code)}
+          <View className="mt-4">
+            <View className="w-32 h-32 self-center">
+              <Image
+                source={require("@/assets/icons/email.png")}
+                className="w-full h-full"
+                resizeMode="contain"
+              />
+            </View>
+            <View className="items-center">
+              <Text className="text-2xl font-semibold">Email Verification</Text>
+              <Text className="mt-2 text-center text-lg">
+                Please enter the 6-digit code that {"\n"}
+                was sent to your email.
+              </Text>
+            </View>
+            <View className="mt-2 items-center">
+              <OTPTextInput
+                tintColor={"#00AACE"}
+                inputCount={6}
+                handleTextChange={(code) => setCode(code)}
+              />
+            </View>
+
+            <CustomButton
+              title="Verify Email"
+              onPress={onPressVerify}
+              containerStyles="bg-[#00AACE] h-16 mx-4 rounded-2xl mt-6 "
+              textStyles="text-white text-[18px] font-medium"
+              isLoading={loading}
             />
           </View>
-
-          <CustomButton
-            title="Verify Email"
-            onPress={onPressVerify}
-            containerStyles="bg-[#00AACE] h-16 w-full rounded-2xl mt-6 mb-1"
-            textStyles="text-white text-[20px]"
-            isLoading={loading}
-          />
         </BottomHalfModal>
       )}
     </View>
