@@ -42,6 +42,7 @@ const ProfileLayout = () => {
               Record Yourself
             </Text>
           ),
+          headerBackVisible: false,
         }}
       />
 
