@@ -11,10 +11,10 @@ import { useUser } from "@clerk/clerk-expo";
 
 const FileUpload = () => {
   const router = useRouter();
+  const { user, isLoaded, isSignedIn } = useUser();
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
-  const user = useUser()
 
   const handleFilePick = async () => {
     try {
@@ -43,6 +43,11 @@ const FileUpload = () => {
   };
 
   const handleStartInterview = async () => {
+    if (!isLoaded || !isSignedIn || !user) {
+      Alert.alert("Error", "User not authenticated.");
+      return;
+    }
+
     if (!selectedFile) {
       Alert.alert(
         "No file uploaded",
@@ -54,7 +59,6 @@ const FileUpload = () => {
     try {
       setUploadProgress(0);
 
-      // Simulate upload progress
       let progress = 0;
       const interval = setInterval(() => {
         progress += 0.1;
@@ -65,10 +69,8 @@ const FileUpload = () => {
         }
       }, 100);
 
-      // Upload resume
-      const result = await uploadResume(selectedFile, ); 
+      const result = await uploadResume(selectedFile, user.id);
       Alert.alert("Success", result.message);
-
       router.push("/(record-yourself)/record");
     } catch (error) {
       Alert.alert("Upload Failed", error.message);
