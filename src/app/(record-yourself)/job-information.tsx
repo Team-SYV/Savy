@@ -21,6 +21,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import StepContent from "@/components/JobInfo/StepContent";
+import { useUser } from "@clerk/clerk-expo";
 
 const JobInformation = () => {
   const [formData, setFormData] = useState<JobInfoData>({
@@ -38,6 +39,7 @@ const JobInformation = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const router = useRouter();
+  const user = useUser();
 
   const handleStepPress = useCallback((index: number) => {
     setActiveStep(index);
@@ -80,7 +82,7 @@ const JobInformation = () => {
       console.log("Submitting data:", formData);
 
       const jobData = {
-        user_id: "someUserId", // Replace this with the actual user ID if available
+        user_id: user.user.id,
         industry: formData.selectedIndustry,
         role: formData.selectedJobRole,
         type: formData.selectedInterviewType,

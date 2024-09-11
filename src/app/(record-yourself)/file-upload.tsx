@@ -6,12 +6,15 @@ import { Ionicons } from "@expo/vector-icons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import ProgressBar from "react-native-progress/Bar";
 import { useRouter } from "expo-router";
+import { uploadResume } from "@/api";
+import { useUser } from "@clerk/clerk-expo";
 
 const FileUpload = () => {
   const router = useRouter();
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const user = useUser()
 
   const handleFilePick = async () => {
     try {
@@ -24,16 +27,6 @@ const FileUpload = () => {
       } else if (result.assets && result.assets.length > 0) {
         setSelectedFile(result.assets[0]);
         setFileName(result.assets[0].name);
-
-        let progress = 0;
-        const interval = setInterval(() => {
-          progress += 0.1;
-          setUploadProgress(progress);
-          if (progress >= 1) {
-            clearInterval(interval);
-            setUploadProgress(1);
-          }
-        }, 100);
       } else {
         Alert.alert("Error", "There was an issue picking the file.");
       }
@@ -49,7 +42,7 @@ const FileUpload = () => {
     setUploadProgress(0);
   };
 
-  const handleStartInterview = () => {
+  const handleStartInterview = async () => {
     if (!selectedFile) {
       Alert.alert(
         "No file uploaded",
@@ -58,9 +51,28 @@ const FileUpload = () => {
       return;
     }
 
-    // Simulate API call or file processing
+    try {
+      setUploadProgress(0);
 
-    router.push("/(record-yourself)/record");
+      // Simulate upload progress
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 0.1;
+        setUploadProgress(progress);
+        if (progress >= 1) {
+          clearInterval(interval);
+          setUploadProgress(1);
+        }
+      }, 100);
+
+      // Upload resume
+      const result = await uploadResume(selectedFile, ); 
+      Alert.alert("Success", result.message);
+
+      router.push("/(record-yourself)/record");
+    } catch (error) {
+      Alert.alert("Upload Failed", error.message);
+    }
   };
 
   return (
