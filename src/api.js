@@ -9,24 +9,42 @@ export const createJobDescription = async (jobData) => {
     const response = await api.post("/api/job_information/create/", jobData);
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.detail || "Failed to create job description");
+    throw new Error(
+      error.response?.data?.detail || "Failed to create job description"
+    );
   }
 };
 
-export const uploadResume = async (file, userId) => {
+export const uploadResume = async (fileUri, userId, onUploadProgress) => {
+  const formData = new FormData();
+
   try {
-    const formData = new FormData();
-    formData.append("file", file);
+    const response = await fetch(fileUri);
+    const blob = await response.blob();
+    const contentType = blob.type || "application/pdf";
+
+    // Extract file name from URI and truncate if needed
+    const fileName = fileUri.split("/").pop();
+    const truncatedFileName =
+      fileName.length > 50 ? fileName.slice(0, 50) : fileName;
+
+    formData.append("file", blob, truncatedFileName);
     formData.append("user_id", userId);
-    
-    const response = await api.post("/api/resumes/upload/", formData, {
+
+    console.log("Form data:", formData); // Debug: Check what is sent
+
+    const result = await api.post("/api/resumes/upload/", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
+      onUploadProgress,
     });
-    
-    return response.data;
+
+    return result.data;
   } catch (error) {
-    throw new Error(error.response?.data?.detail || "Failed to upload resume");
+    if (error.response?.status === 422) {
+      throw new Error("Validation Error: Please check your file and user ID.");
+    }
+    throw new Error(error.response?.data?.detail || "Upload failed.");
   }
 };

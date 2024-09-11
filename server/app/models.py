@@ -22,7 +22,5 @@ class JobInformation(BaseModel):
     experience: str
     company_name: str
     job_description: str
+    resume: Optional[str] = None
 
-class Resume(BaseModel):
-    user_id: str
-    file: str

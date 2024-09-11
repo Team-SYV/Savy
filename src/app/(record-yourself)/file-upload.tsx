@@ -1,4 +1,4 @@
-import { Text, View, Image, TouchableOpacity, Alert } from "react-native";
+import { Text, View, TouchableOpacity, Alert } from "react-native";
 import React, { useState } from "react";
 import CustomButton from "@/components/Button/CustomButton";
 import * as DocumentPicker from "expo-document-picker";
@@ -8,8 +8,9 @@ import ProgressBar from "react-native-progress/Bar";
 import { useRouter } from "expo-router";
 import { uploadResume } from "@/api";
 import { useUser } from "@clerk/clerk-expo";
+import { Image } from "react-native";
 
-const FileUpload = () => {
+const FileUpload = ({ jobId }: { jobId: string }) => {
   const router = useRouter();
   const { user, isLoaded, isSignedIn } = useUser();
   const [selectedFile, setSelectedFile] = useState(null);
@@ -25,6 +26,7 @@ const FileUpload = () => {
       if (result.canceled) {
         Alert.alert("File Selection", "You did not select any file.");
       } else if (result.assets && result.assets.length > 0) {
+        console.log("yesss", result.assets[0]);
         setSelectedFile(result.assets[0]);
         setFileName(result.assets[0].name);
       } else {
@@ -59,21 +61,35 @@ const FileUpload = () => {
     try {
       setUploadProgress(0);
 
-      let progress = 0;
-      const interval = setInterval(() => {
-        progress += 0.1;
-        setUploadProgress(progress);
-        if (progress >= 1) {
-          clearInterval(interval);
-          setUploadProgress(1);
+      const onUploadProgress = (progressEvent) => {
+        if (progressEvent.total) {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setUploadProgress(progress / 100);
         }
-      }, 100);
+      };
 
-      const result = await uploadResume(selectedFile, user.id);
+      console.log("Selected file:", selectedFile.uri, user.id);
+      const result = await uploadResume(
+        selectedFile.uri,
+        user.id,
+        onUploadProgress
+      );
       Alert.alert("Success", result.message);
       router.push("/(record-yourself)/record");
     } catch (error) {
-      Alert.alert("Upload Failed", error.message);
+      console.log(error.message);
+
+      if (error.message.includes("Validation Error")) {
+        Alert.alert(
+          "Validation Error",
+          "There was a validation issue with your file or user ID."
+        );
+        console.log(error);
+      } else {
+        Alert.alert("Upload Failed", error.message);
+      }
     }
   };
 
