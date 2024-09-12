@@ -2,7 +2,6 @@ import React, { useState, useCallback } from "react";
 import CustomButton from "@/components/Button/CustomButton";
 import Stepper from "@/components/Stepper/Stepper";
 import TextArea from "@/components/TextArea/TextArea";
-import { createJobDescription } from "../../api";
 import { getErrorMessage, validateStep } from "@/utils/validateJobInfo";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
@@ -21,6 +20,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import StepContent from "@/components/JobInfo/StepContent";
+import { createJobInformation } from "@/api";
 import { useUser } from "@clerk/clerk-expo";
 
 const JobInformation = () => {
@@ -38,6 +38,7 @@ const JobInformation = () => {
   const [loading, setLoading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [jobInformationId, setJobInformationId] = useState<string | null>(null);
   const router = useRouter();
   const user = useUser();
 
@@ -78,8 +79,7 @@ const JobInformation = () => {
 
   const handleSubmit = async () => {
     try {
-      setLoading(true); // Start loading
-      console.log("Submitting data:", formData);
+      setLoading(true);
 
       const jobData = {
         user_id: user.user.id,
@@ -90,16 +90,14 @@ const JobInformation = () => {
         company_name: formData.companyName,
         job_description: formData.jobDescription,
       };
-
-      // Call API to create job description
-      const response = await createJobDescription(jobData);
-      console.log("Job description created:", response);
-
-      // Optionally handle success
+      
+      const response = await createJobInformation(jobData);
+      console.log(response)
+      setJobInformationId(response);
     } catch (error) {
       console.error("Error creating job description:", error.message);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
   const updateFormData = (key: string, value: any, callback?: () => void) => {
@@ -175,6 +173,7 @@ const JobInformation = () => {
                       updateFormData={updateFormData}
                       handleNextStep={handleNextStep}
                       handleSubmit={handleSubmit}
+                      jobInformationId = {jobInformationId}
                     />
                     {errors[activeStep] && (
                       <Text className="text-red-500 ml-12">

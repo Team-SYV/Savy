@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from supabase import Client
-from .models import JobInformation
+from .models import JobInformationCreate, JobInformationUpdate
 
 def create_job_information(job_data: dict, supabase: Client):
     required_fields = ['user_id', 'industry', 'role', 'type', 'experience', 'company_name', 'job_description']
@@ -8,7 +8,7 @@ def create_job_information(job_data: dict, supabase: Client):
         if not job_data.get(field):
             raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
 
-    job_info = JobInformation(
+    job_info = JobInformationCreate(
         user_id=job_data['user_id'],
         industry=job_data['industry'],
         role=job_data['role'],
@@ -31,14 +31,25 @@ def create_job_information(job_data: dict, supabase: Client):
     if hasattr(response, 'error') and response.error:
         raise HTTPException(status_code=500, detail="Failed to create job description")
 
-    return {"message": "Job information created successfully"}
+    return {"message": "Job information created successfully", "id": response.data[0]['id']}
 
-def update_job_information_with_resume(job_id: str, resume_url: str, supabase: Client):
-    try:
-        response = supabase.table('job_information').update({'resume': resume_url}).eq('id', job_id).execute()
-        if hasattr(response, 'error') and response.error:
-            raise HTTPException(status_code=500, detail="Failed to update job information")
+def update_job_information_with_resume(resume_data: dict, supabase: Client):
+    required_fields = ['id', 'resume']
+    for field in required_fields:
+        if not resume_data.get(field):
+            raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
 
-        return {"message": "Job information updated successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    # Ensure you're passing the correct key for the resume URL
+    job_update = JobInformationUpdate(
+        id=resume_data['id'],
+        resume=resume_data['resume']  # Ensure that 'resume' key exists in resume_data
+    )
+
+    response = supabase.table('job_information').update({
+        'resume': job_update.resume
+    }).eq('id', job_update.id).execute()
+
+    if hasattr(response, 'error') and response.error:
+        raise HTTPException(status_code=500, detail="Failed to update resume")
+
+    return {"message": "Resume updated successfully"}

@@ -5,17 +5,19 @@ import * as DocumentPicker from "expo-document-picker";
 import { Ionicons } from "@expo/vector-icons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import ProgressBar from "react-native-progress/Bar";
-import { useRouter } from "expo-router";
-import { uploadResume } from "@/api";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Image } from "react-native";
+import { supabase } from "@/utils/supabase";
+import { createResume } from "@/api";
 
-const FileUpload = ({ jobId }: { jobId: string }) => {
+const FileUpload = () => {
   const router = useRouter();
   const { user, isLoaded, isSignedIn } = useUser();
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const { jobId } = useLocalSearchParams();
 
   const handleFilePick = async () => {
     try {
@@ -26,7 +28,6 @@ const FileUpload = ({ jobId }: { jobId: string }) => {
       if (result.canceled) {
         Alert.alert("File Selection", "You did not select any file.");
       } else if (result.assets && result.assets.length > 0) {
-        console.log("yesss", result.assets[0]);
         setSelectedFile(result.assets[0]);
         setFileName(result.assets[0].name);
       } else {
@@ -61,38 +62,49 @@ const FileUpload = ({ jobId }: { jobId: string }) => {
     try {
       setUploadProgress(0);
 
-      const onUploadProgress = (progressEvent) => {
-        if (progressEvent.total) {
-          const progress = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setUploadProgress(progress / 100);
-        }
+      // Create a unique filename for the file
+      const fileName = `${user.id}/${Date.now()}_${selectedFile.name}`;
+
+      // Read the file as a blob
+      const fileBlob = await (await fetch(selectedFile.uri)).blob();
+
+      // Upload the file to the 'resumes' bucket in Supabase
+      const { data, error } = await supabase.storage
+        .from("resumes")
+        .upload(fileName, fileBlob, {
+          contentType: "application/pdf",
+        });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Get the public URL for the uploaded file
+      const { data: publicUrlData } = supabase.storage
+        .from("resumes")
+        .getPublicUrl(fileName);
+
+      if (!publicUrlData.publicUrl) {
+        throw new Error("Unable to retrieve public URL for the uploaded file.");
+      }
+
+      const publicUrl = publicUrlData.publicUrl;
+
+      const resumeData = {
+        id: jobId, 
+        resume: publicUrl, 
       };
 
-      console.log("Selected file:", selectedFile.uri, user.id);
-      const result = await uploadResume(
-        selectedFile.uri,
-        user.id,
-        onUploadProgress
-      );
-      Alert.alert("Success", result.message);
+      await createResume(resumeData);
+
+      Alert.alert("Success", "Resume uploaded successfully.");
+
+      // Proceed with the interview
       router.push("/(record-yourself)/record");
     } catch (error) {
-      console.log(error.message);
-
-      if (error.message.includes("Validation Error")) {
-        Alert.alert(
-          "Validation Error",
-          "There was a validation issue with your file or user ID."
-        );
-        console.log(error);
-      } else {
-        Alert.alert("Upload Failed", error.message);
-      }
+      Alert.alert("Upload Failed", error.message);
     }
   };
-
   return (
     <View className="flex-1 bg-white">
       <View className="flex-1 mt-28 px-4">

@@ -15,6 +15,7 @@ interface StepContentProps {
   updateFormData: (key: string, value: any, callback?: () => void) => void;
   handleNextStep: () => void;
   handleSubmit: () => void;
+  jobInformationId: string | null;
 }
 
 const StepContent: React.FC<StepContentProps> = ({
@@ -22,12 +23,15 @@ const StepContent: React.FC<StepContentProps> = ({
   formData,
   updateFormData,
   handleSubmit,
+  jobInformationId,
 }) => {
   const router = useRouter();
 
   const onProceed = async () => {
     handleSubmit();
-    router.push("/(record-yourself)/file-upload");
+    if (jobInformationId) {
+      router.push(`/(record-yourself)/file-upload?jobId=${jobInformationId}`); 
+    }
   };
 
   const onSkip = async () => {
