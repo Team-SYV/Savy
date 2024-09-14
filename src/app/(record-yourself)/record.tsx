@@ -1,118 +1,126 @@
-import { CameraView, useCameraPermissions } from "expo-camera";
-import { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { Camera, CameraView } from "expo-camera";
+import { Video } from "expo-av";
+import * as MediaLibrary from "expo-media-library";
+import { Stack } from "expo-router";
 import {
-  Button,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
+  Button,
+  SafeAreaView,
+  TouchableOpacity,
   Image,
 } from "react-native";
-import { Audio } from "expo-av";
-import { Stack } from "expo-router";
 
-const Record = () => {
-  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
-  const [audioPermission, requestAudioPermission] = Audio.usePermissions();
-  
-  const [recording, setRecording] = useState<Audio.Recording | null>(null);
-  const [playbackUri, setPlaybackUri] = useState<string | null>(null);
-  const [playing, setPlaying] = useState(false);
-
+const Record: React.FC = () => {
   const cameraRef = useRef(null);
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [video, setVideo] = useState(undefined);
 
-  if (!cameraPermission) {
-    return <View />;
+  // Permissions
+  const [hasCameraPermission, setHasCameraPermission] = useState<
+    boolean | null
+  >(null);
+  const [hasMicrophonePermission, setHasMicrophonePermission] = useState<
+    boolean | null
+  >(null);
+  const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState<
+    boolean | null
+  >(null);
+
+  useEffect(() => {
+    (async () => {
+      const cameraPermission = await Camera.requestCameraPermissionsAsync();
+      const microphonePermission =
+        await Camera.requestMicrophonePermissionsAsync();
+      const mediaLibraryPermission =
+        await MediaLibrary.requestPermissionsAsync();
+
+      setHasCameraPermission(cameraPermission.status === "granted");
+      setHasMicrophonePermission(microphonePermission.status === "granted");
+      setHasMediaLibraryPermission(mediaLibraryPermission.status === "granted");
+    })();
+  }, []);
+
+  if (hasCameraPermission === null || hasMicrophonePermission === null) {
+    return <Text>Requesting permissions...</Text>;
+  } else if (!hasCameraPermission) {
+    return <Text>Permission for camera not granted.</Text>;
+  } else if (!hasMicrophonePermission) {
+    return <Text>Permission for microphone not granted.</Text>;
   }
 
-  if (!cameraPermission.granted) {
+  const recordVideo = async () => {
+    if (cameraRef.current) {
+      setIsRecording(true);
+
+      try {
+        const recordedVideo = await cameraRef.current.recordAsync();
+        console.log("Recorded Video:", recordedVideo);
+        setVideo(recordedVideo);
+      } catch (error) {
+        console.error("Error recording video:", error);
+      } finally {
+        setIsRecording(false);
+      }
+    } else {
+      console.error("Camera reference is null or undefined.");
+    }
+  };
+
+  let stopRecording = () => {
+    setIsRecording(false);
+    cameraRef.current.stopRecording();
+  };
+
+  if (video) {
+    const saveVideo = async () => {
+      try {
+        await MediaLibrary.saveToLibraryAsync(video.uri);
+        setVideo(undefined);
+      } catch (error) {
+        console.error("Error saving video:", error);
+      }
+    };
+
     return (
-      <View>
-        <Text>We need your permission to show the camera</Text>
-        <Button onPress={requestCameraPermission} title="Grant Permission" />
-      </View>
+      <SafeAreaView className="flex-1 justify-center">
+        <Video
+          style={styles.video}
+          source={{ uri: video.uri }}
+          useNativeControls
+          isLooping
+        />
+        {hasMediaLibraryPermission && (
+          <Button title="Save" onPress={saveVideo} />
+        )}
+        <Button title="Discard" onPress={() => setVideo(undefined)} />
+      </SafeAreaView>
     );
   }
 
-  async function startRecording() {
-    try {
-      if (audioPermission.status !== "granted") {
-        console.log("Requesting permission..");
-        await requestAudioPermission();
-      }
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      });
-
-      if (cameraRef.current) {
-        console.log("Starting recording..");
-        const { recording } = await Audio.Recording.createAsync(
-          Audio.RecordingOptionsPresets.HIGH_QUALITY
-        );
-        setRecording(recording);
-        console.log("Recording started");
-      }
-    } catch (err) {
-      console.error("Failed to start recording", err);
-    }
-  }
-
-  async function stopRecording() {
-    console.log("Stopping recording..");
-    if (recording) {
-      await recording.stopAndUnloadAsync();
-      const uri = recording.getURI();
-      setPlaybackUri(uri);
-      setRecording(null);
-      setPlaying(false);
-      console.log("Recording stopped and stored at", uri);
-    }
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-    });
-  }
-
-  async function playRecording() {
-    if (playbackUri) {
-      setPlaying(true);
-      const { sound } = await Audio.Sound.createAsync({ uri: playbackUri });
-      await sound.playAsync();
-      sound.setOnPlaybackStatusUpdate((status) => {
-        if (status.isLoaded && !status.isPlaying) {
-          setPlaying(false);
-        }
-      });
-    }
-  }
-
   return (
-    <View style={styles.container}>
+    <View className="flex-1 justify-center">
       <Stack.Screen options={{ headerShown: false }} />
       <CameraView
+        mode="video"
         style={styles.camera}
-        facing="front" // Adjust to your preferred camera type
+        facing="front"
         ref={cameraRef}
       >
-        <View style={styles.controls}>
-          <TouchableOpacity
-            onPress={recording ? stopRecording : startRecording}
-          >
+        <View className="absolute bottom-10 left-0 right-0 items-center">
+          <TouchableOpacity onPress={isRecording ? stopRecording : recordVideo}>
             <Image
               source={
-                recording
+                isRecording
                   ? require("@/assets/icons/stop.png")
                   : require("@/assets/icons/record.png")
               }
-              style={styles.icon}
+              className="w-24 h-24"
               resizeMode="contain"
             />
           </TouchableOpacity>
-          {playbackUri && !playing && (
-            <TouchableOpacity onPress={playRecording}>
-              <Text style={styles.playButton}>Play Recording</Text>
-            </TouchableOpacity>
-          )}
         </View>
       </CameraView>
     </View>
@@ -121,28 +129,11 @@ const Record = () => {
 
 export default Record;
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
   camera: {
     flex: 1,
   },
-  controls: {
-    position: "absolute",
-    bottom: 10,
-    left: 0,
-    right: 0,
-    marginHorizontal: 16,
-    alignItems: "center",
-  },
-  icon: {
-    width: 96,
-    height: 96,
-  },
-  playButton: {
-    fontSize: 20,
-    color: "blue",
-    marginTop: 10,
+  video: {
+    flex: 1,
+    alignSelf: "stretch",
   },
 });
