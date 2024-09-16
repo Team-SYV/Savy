@@ -33,14 +33,14 @@ const JobInformation = () => {
     jobDescription: "",
   });
 
+  const router = useRouter();
+  const user = useUser();
   const [activeStep, setActiveStep] = useState<number>(0);
   const [errors, setErrors] = useState<{ [key: number]: string }>({});
   const [loading, setLoading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [jobInformationId, setJobInformationId] = useState<string | null>(null);
-  const router = useRouter();
-  const user = useUser();
+  const [jobInformationId, setJobInformationId] = useState<string | null>(null);  
 
   // Updates the active step in a multi-step process when a step is pressed
   const handleStepPress = useCallback((index: number) => {
@@ -83,17 +83,18 @@ const JobInformation = () => {
   //Updates form data, marks changes.
   const updateFormData = (key: string, value: string, callback?: () => void) => {
     setFormData((prevState) => {
-      const updatedFormData = {
+      const newState = {
         ...prevState,
         [key]: value,
       };
 
-      return updatedFormData;
+      if (callback) {
+        callback();
+      }
+      return newState;
     });
     setHasChanges(true);
-    if (callback) {
-      callback();
-    }
+    
     if (errors[activeStep]) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -101,7 +102,7 @@ const JobInformation = () => {
       }));
     }
   };
-
+  
   // Button to show a confirmation modal if there are unsaved changes
   const handleBackButtonPress = () => {
     if (hasChanges) {
