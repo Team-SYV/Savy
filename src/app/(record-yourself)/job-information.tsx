@@ -10,8 +10,9 @@ import * as Haptics from "expo-haptics";
 import { steps } from "@/constants/constants";
 import { createJobInformation } from "@/api";
 import { useUser } from "@clerk/clerk-expo";
-import LoadingSpinner from "@/components/Loading/LoadingSpinner";
 import RecordStepContent from "@/components/JobInfo/RecordStepContent";
+import Spinner from "react-native-loading-spinner-overlay";
+
 import {
   View,
   SafeAreaView,
@@ -40,7 +41,7 @@ const JobInformation = () => {
   const [loading, setLoading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [jobInformationId, setJobInformationId] = useState<string | null>(null);  
+  const [jobInformationId, setJobInformationId] = useState<string | null>(null);
 
   // Updates the active step in a multi-step process when a step is pressed
   const handleStepPress = useCallback((index: number) => {
@@ -81,7 +82,11 @@ const JobInformation = () => {
   }, [activeStep]);
 
   //Updates form data, marks changes.
-  const updateFormData = (key: string, value: string, callback?: () => void) => {
+  const updateFormData = (
+    key: string,
+    value: string,
+    callback?: () => void
+  ) => {
     setFormData((prevState) => {
       const newState = {
         ...prevState,
@@ -94,7 +99,7 @@ const JobInformation = () => {
       return newState;
     });
     setHasChanges(true);
-    
+
     if (errors[activeStep]) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -102,7 +107,7 @@ const JobInformation = () => {
       }));
     }
   };
-  
+
   // Button to show a confirmation modal if there are unsaved changes
   const handleBackButtonPress = () => {
     if (hasChanges) {
@@ -146,6 +151,8 @@ const JobInformation = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <Spinner visible={loading} color="#00AACE" />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
@@ -196,20 +203,20 @@ const JobInformation = () => {
           })}
         </ScrollView>
 
-        {loading && <LoadingSpinner />}
-
         <View className="absolute bottom-1 left-0 right-0 flex-row items-center justify-center px-6">
           <CustomButton
             title="Prev"
             onPress={handlePrevStep}
             containerStyles="border border-[#00AACE] h-14 rounded-xl mb-4 w-1/2 mx-2"
             textStyles="text-[#00AACE] text-[16px] font-semibold text-base"
+            isLoading={loading}
           />
           <CustomButton
             title={activeStep === steps.length - 1 ? "Submit" : "Next"}
             onPress={handleNextStep}
             containerStyles="bg-[#00AACE] h-14 rounded-xl mb-4 w-1/2 mx-2"
             textStyles="text-white text-[16px] font-semibold text-base"
+            isLoading={loading}
           />
         </View>
 
