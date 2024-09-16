@@ -10,7 +10,6 @@ import * as Haptics from "expo-haptics";
 import { steps } from "@/constants/constants";
 import { createJobInformation } from "@/api";
 import { useUser } from "@clerk/clerk-expo";
-import LoadingSpinner from "@/components/Loading/LoadingSpinner";
 import VirtualInterviewStepContent from "@/components/JobInfo/VirtualInterviewStepContent";
 import {
   View,
@@ -22,6 +21,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const JobInformation = () => {
   const [formData, setFormData] = useState<JobInfoData>({
@@ -199,7 +199,7 @@ const JobInformation = () => {
           })}
         </ScrollView>
 
-        {loading && <LoadingSpinner />}
+        <Spinner visible={loading} color="#00AACE" /> 
 
         <View className="absolute bottom-1 left-0 right-0 flex-row items-center justify-center px-6">
           <CustomButton
@@ -207,12 +207,14 @@ const JobInformation = () => {
             onPress={handlePrevStep}
             containerStyles="border border-[#00AACE] h-14 rounded-xl mb-4 w-1/2 mx-2"
             textStyles="text-[#00AACE] text-[16px] font-semibold text-base"
+            isLoading={loading}
           />
           <CustomButton
             title={activeStep === steps.length - 1 ? "Submit" : "Next"}
             onPress={handleNextStep}
             containerStyles="bg-[#00AACE] h-14 rounded-xl mb-4 w-1/2 mx-2"
             textStyles="text-white text-[16px] font-semibold text-base"
+            isLoading={loading}
           />
         </View>
 
