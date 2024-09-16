@@ -41,4 +41,3 @@ jobs:
       - name: Build Expo project
         env:
           EXPO_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN2 }}
-        run: eas build --platform android --non-interactive

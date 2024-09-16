@@ -1,17 +1,23 @@
-import { Text, View, Image, TouchableOpacity, Alert } from "react-native";
+import { Text, View, TouchableOpacity, Alert } from "react-native";
 import React, { useState } from "react";
 import CustomButton from "@/components/Button/CustomButton";
 import * as DocumentPicker from "expo-document-picker";
 import { Ionicons } from "@expo/vector-icons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import ProgressBar from "react-native-progress/Bar";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { useUser } from "@clerk/clerk-expo";
+import { Image } from "react-native";
+import { supabase } from "@/utils/supabase";
+import { createResume } from "@/api";
 
 const FileUpload = () => {
   const router = useRouter();
+  const { user, isLoaded, isSignedIn } = useUser();
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const { jobId } = useLocalSearchParams();
 
   const handleFilePick = async () => {
     try {
@@ -24,16 +30,6 @@ const FileUpload = () => {
       } else if (result.assets && result.assets.length > 0) {
         setSelectedFile(result.assets[0]);
         setFileName(result.assets[0].name);
-
-        let progress = 0;
-        const interval = setInterval(() => {
-          progress += 0.1;
-          setUploadProgress(progress);
-          if (progress >= 1) {
-            clearInterval(interval);
-            setUploadProgress(1);
-          }
-        }, 100);
       } else {
         Alert.alert("Error", "There was an issue picking the file.");
       }
@@ -49,7 +45,12 @@ const FileUpload = () => {
     setUploadProgress(0);
   };
 
-  const handleStartInterview = () => {
+  const handleStartInterview = async () => {
+    if (!isLoaded || !isSignedIn || !user) {
+      Alert.alert("Error", "User not authenticated.");
+      return;
+    }
+
     if (!selectedFile) {
       Alert.alert(
         "No file uploaded",
@@ -58,11 +59,52 @@ const FileUpload = () => {
       return;
     }
 
-    // Simulate API call or file processing
+    try {
+      setUploadProgress(0);
 
-    router.push("/(record-yourself)/record");
+      // Create a unique filename for the file
+      const fileName = `${user.id}/${Date.now()}_${selectedFile.name}`;
+
+      // Read the file as a blob
+      const fileBlob = await (await fetch(selectedFile.uri)).blob();
+
+      // Upload the file to the 'resumes' bucket in Supabase
+      const { data, error } = await supabase.storage
+        .from("resumes")
+        .upload(fileName, fileBlob, {
+          contentType: "application/pdf",
+        });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Get the public URL for the uploaded file
+      const { data: publicUrlData } = supabase.storage
+        .from("resumes")
+        .getPublicUrl(fileName);
+
+      if (!publicUrlData.publicUrl) {
+        throw new Error("Unable to retrieve public URL for the uploaded file.");
+      }
+
+      const publicUrl = publicUrlData.publicUrl;
+
+      const resumeData = {
+        id: jobId, 
+        resume: publicUrl, 
+      };
+
+      await createResume(resumeData);
+
+      Alert.alert("Success", "Resume uploaded successfully.");
+
+      // Proceed with the interview
+      router.push("/(record-yourself)/record");
+    } catch (error) {
+      Alert.alert("Upload Failed", error.message);
+    }
   };
-
   return (
     <View className="flex-1 bg-white">
       <View className="flex-1 mt-28 px-4">

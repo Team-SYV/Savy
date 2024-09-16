@@ -14,7 +14,7 @@ class ClerkUserUpdate(BaseModel):
     email: Optional[str] = None
     image_url: Optional[str] = None
 
-class JobInformation(BaseModel):
+class JobInformationCreate(BaseModel):
     user_id: str
     industry: str
     role: str
@@ -22,7 +22,8 @@ class JobInformation(BaseModel):
     experience: str
     company_name: str
     job_description: str
+    resume: Optional[str] = None
 
-class Resume(BaseModel):
-    user_id: str
-    file: str
+class JobInformationUpdate(BaseModel):
+    id: str
+    resume: str
