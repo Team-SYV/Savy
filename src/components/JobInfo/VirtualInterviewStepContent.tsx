@@ -4,30 +4,25 @@ import InterviewTypeCard from "@/components/Card/InterviewTypeCard";
 import CompanyFormField from "@/components/FormField/CompanyFormField";
 import TextArea from "@/components/TextArea/TextArea";
 import { experienceLevel, jobRole, industry } from "@/constants/constants";
-import { JobInfoData } from "@/types/JobInfo";
 import CustomButton from "../Button/CustomButton";
 import { View, Text } from "react-native";
 import { useRouter } from "expo-router";
-
-interface StepContentProps {
-  activeStep: number;
-  formData: JobInfoData;
-  updateFormData: (key: string, value: any, callback?: () => void) => void;
-  handleNextStep: () => void;
-  handleSubmit: () => void;
-}
+import { StepContentProps } from "@/types/StepContent";
 
 const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
   activeStep,
   formData,
   updateFormData,
   handleSubmit,
+  jobInformationId,
 }) => {
   const router = useRouter();
 
   const onProceed = async () => {
     handleSubmit();
-    router.push("/(virtual-interview)/file-upload");
+    if (jobInformationId) {
+      router.push(`/(virtual-interview)/file-upload?jobId=${jobInformationId}`);
+    }
   };
 
   const onSkip = async () => {
