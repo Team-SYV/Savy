@@ -1,19 +1,11 @@
 import React from "react";
 import { Link, Stack } from "expo-router";
 import LoginForm from "@/components/Form/LoginForm";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  SafeAreaView,
-  Platform,
-} from "react-native";
+import { View, Text, Image, ScrollView, SafeAreaView,Platform } from "react-native";
 import * as WebBrowser from "expo-web-browser";
-import { useOAuth } from "@clerk/clerk-expo";
-import * as Linking from "expo-linking";
-import GoogleButton from "@/components/Button/GoogleButton";
+import GoogleSignInButton from "@/components/Button/GoogleSignInButton";
 
+// hook to warm up and cool down the web browser for authentication.
 export const useWarmUpBrowser = () => {
   React.useEffect(() => {
     if (Platform.OS !== "web") {
@@ -28,25 +20,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 const Login = () => {
   useWarmUpBrowser();
-  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
   const [isLoading, setIsLoading] = React.useState(false);
-
-  const onPress = React.useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const { createdSessionId, setActive } = await startOAuthFlow({
-        redirectUrl: Linking.createURL("/(tabs)/home", { scheme: "savy" }),
-      });
-
-      if (createdSessionId) {
-        setActive!({ session: createdSessionId });
-      }
-    } catch (err) {
-      console.error("OAuth error", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
 
   return (
     <SafeAreaView className="bg-white min-h-full p-2">
@@ -84,11 +58,9 @@ const Login = () => {
           <View className="flex-1 h-[1px] bg-gray-300" />
         </View>
 
-        <GoogleButton
-          title="Sign in with Google"
-          onPress={onPress}
-          containerStyles=" mx-4 py-4"
+        <GoogleSignInButton
           isLoading={isLoading}
+          setIsLoading={setIsLoading} 
         />
       </ScrollView>
     </SafeAreaView>
