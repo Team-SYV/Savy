@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from "react";
 import CustomButton from "@/components/Button/CustomButton";
 import Stepper from "@/components/Stepper/Stepper";
-import TextArea from "@/components/TextArea/TextArea";
 import { getErrorMessage, validateStep } from "@/utils/validateJobInfo";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
@@ -9,6 +8,10 @@ import ConfirmationModal from "@/components/Modal/ConfirmationModal";
 import { JobInfoData } from "@/types/JobInfo";
 import * as Haptics from "expo-haptics";
 import { steps } from "@/constants/constants";
+import { createJobInformation } from "@/api";
+import { useUser } from "@clerk/clerk-expo";
+import LoadingSpinner from "@/components/Loading/LoadingSpinner";
+import RecordStepContent from "@/components/JobInfo/RecordStepContent";
 import {
   View,
   SafeAreaView,
@@ -19,9 +22,6 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import StepContent from "@/components/JobInfo/StepContent";
-import { createJobInformation } from "@/api";
-import { useUser } from "@clerk/clerk-expo";
 
 const JobInformation = () => {
   const [formData, setFormData] = useState<JobInfoData>({
@@ -42,10 +42,12 @@ const JobInformation = () => {
   const router = useRouter();
   const user = useUser();
 
+  // Updates the active step in a multi-step process when a step is pressed
   const handleStepPress = useCallback((index: number) => {
     setActiveStep(index);
   }, []);
 
+  // Move to next step
   const handleNextStep = useCallback(async () => {
     if (activeStep === steps.length - 1) {
       handleSubmit();
@@ -71,36 +73,15 @@ const JobInformation = () => {
     }
   }, [activeStep, formData]);
 
+  // Moves to previous step.
   const handlePrevStep = useCallback(() => {
     if (activeStep > 0) {
       setActiveStep(activeStep - 1);
     }
   }, [activeStep]);
 
-  const handleSubmit = async () => {
-    try {
-      setLoading(true);
-
-      const jobData = {
-        user_id: user.user.id,
-        industry: formData.selectedIndustry,
-        role: formData.selectedJobRole,
-        type: formData.selectedInterviewType,
-        experience: formData.selectedExperienceLevel,
-        company_name: formData.companyName,
-        job_description: formData.jobDescription,
-      };
-      
-      const response = await createJobInformation(jobData);
-      console.log(response)
-      setJobInformationId(response);
-    } catch (error) {
-      console.error("Error creating job description:", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const updateFormData = (key: string, value: any, callback?: () => void) => {
+  //Updates form data, marks changes.
+  const updateFormData = (key: string, value: string, callback?: () => void) => {
     setFormData((prevState) => {
       const updatedFormData = {
         ...prevState,
@@ -121,6 +102,7 @@ const JobInformation = () => {
     }
   };
 
+  // Button to show a confirmation modal if there are unsaved changes
   const handleBackButtonPress = () => {
     if (hasChanges) {
       setModalVisible(true);
@@ -129,10 +111,36 @@ const JobInformation = () => {
     }
   };
 
+  // Closes the confirmation modal, navigates back.
   const handleDiscardChanges = () => {
     setModalVisible(false);
     setHasChanges(false);
     router.back();
+  };
+
+  // Submits the job information
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+
+      const jobData = {
+        user_id: user.user.id,
+        industry: formData.selectedIndustry,
+        role: formData.selectedJobRole,
+        type: formData.selectedInterviewType,
+        experience: formData.selectedExperienceLevel,
+        company_name: formData.companyName,
+        job_description: formData.jobDescription,
+      };
+
+      const response = await createJobInformation(jobData);
+      console.log(response);
+      setJobInformationId(response);
+    } catch (error) {
+      console.error("Error creating job description:", error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -167,13 +175,13 @@ const JobInformation = () => {
                 />
                 {index === activeStep && (
                   <>
-                    <StepContent
+                    <RecordStepContent
                       activeStep={activeStep}
                       formData={formData}
                       updateFormData={updateFormData}
                       handleNextStep={handleNextStep}
                       handleSubmit={handleSubmit}
-                      jobInformationId = {jobInformationId}
+                      jobInformationId={jobInformationId}
                     />
                     {errors[activeStep] && (
                       <Text className="text-red-500 ml-12">
@@ -186,6 +194,8 @@ const JobInformation = () => {
             );
           })}
         </ScrollView>
+
+        {loading && <LoadingSpinner />}
 
         <View className="absolute bottom-1 left-0 right-0 flex-row items-center justify-center px-6">
           <CustomButton
