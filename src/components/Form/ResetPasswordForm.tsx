@@ -145,7 +145,7 @@ const ResetPasswordForm = () => {
     <View>
       <ScrollView>
         <Stack.Screen options={{ headerShown: false }} />
-        <Spinner visible={loading} />
+        <Spinner visible={loading} color="#00AACE" />
 
         {!successfulCreation ? (
           <View className="mt-32">
