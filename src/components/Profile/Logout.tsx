@@ -14,6 +14,7 @@ const Logout = () => {
     setIsModalVisible(true);
   };
 
+  // Logout confirmation
   const confirmLogout = async () => {
     setIsLoading(true);
     try {
@@ -43,7 +44,6 @@ const Logout = () => {
         <AntDesign name="right" size={18} />
       </Pressable>
 
-      {/* Modal for confirmation */}
       <Modal
         transparent={true}
         animationType="none"

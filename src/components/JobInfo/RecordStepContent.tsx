@@ -4,21 +4,12 @@ import InterviewTypeCard from "@/components/Card/InterviewTypeCard";
 import CompanyFormField from "@/components/FormField/CompanyFormField";
 import TextArea from "@/components/TextArea/TextArea";
 import { experienceLevel, jobRole, industry } from "@/constants/constants";
-import { JobInfoData } from "@/types/JobInfo";
 import CustomButton from "../Button/CustomButton";
 import { View, Text } from "react-native";
 import { useRouter } from "expo-router";
+import { StepContentProps } from "@/types/StepContent";
 
-interface StepContentProps {
-  activeStep: number;
-  formData: JobInfoData;
-  updateFormData: (key: string, value: any, callback?: () => void) => void;
-  handleNextStep: () => void;
-  handleSubmit: () => void;
-  jobInformationId: string | null;
-}
-
-const StepContent: React.FC<StepContentProps> = ({
+const RecordStepContent: React.FC<StepContentProps> = ({
   activeStep,
   formData,
   updateFormData,
@@ -153,4 +144,4 @@ const StepContent: React.FC<StepContentProps> = ({
   }
 };
 
-export default StepContent;
+export default RecordStepContent;

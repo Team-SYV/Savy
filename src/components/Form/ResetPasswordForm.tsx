@@ -31,6 +31,7 @@ const ResetPasswordForm = () => {
     general: "",
   });
 
+  // Handles input change and sets validation errors based on field type
   const handleInputChange = (text: string, field: keyof typeof errors) => {
     switch (field) {
       case "password":
@@ -54,6 +55,7 @@ const ResetPasswordForm = () => {
     }
   };
 
+  // Checks if the form is valid
   const isFormValid = () => {
     const passwordError = validatePassword(password, submitted);
     const confirmPasswordError = validateConfirmPassword(
@@ -71,6 +73,7 @@ const ResetPasswordForm = () => {
     return !passwordError && !confirmPasswordError;
   };
 
+  // Handles password reset request
   const onRequestReset = async () => {
     if (!emailAddress) {
       setErrors((prev) => ({
@@ -99,6 +102,7 @@ const ResetPasswordForm = () => {
     }
   };
 
+  // Handles the actual password reset process
   const onReset = async () => {
     setSubmitted(true);
     if (!isLoaded) return;

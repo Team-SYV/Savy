@@ -3,7 +3,7 @@ import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const RecordLayout = () => {
+const VILayout = () => {
   const router = useRouter();
 
   return (
@@ -27,8 +27,8 @@ const RecordLayout = () => {
         name="job-information"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-white">
-              Record Yourself
+            <Text className="text-center text-lg font-medium text-white">
+              Talk with Virtual Interviewer
             </Text>
           ),
         }}
@@ -38,8 +38,8 @@ const RecordLayout = () => {
         name="file-upload"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-white">
-              Record Yourself
+            <Text className="text-center text-lg font-medium text-white">
+              Talk with Virtual Interviewer
             </Text>
           ),
           headerBackVisible: false,
@@ -47,11 +47,11 @@ const RecordLayout = () => {
       />
 
       <Stack.Screen
-        name="record"
+        name="virtual-interview"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-white">
-              Record Yourself
+            <Text className="text-center text-lg font-medium text-white">
+              Practice Area
             </Text>
           ),
           headerBackVisible: false,
@@ -61,4 +61,4 @@ const RecordLayout = () => {
   );
 };
 
-export default RecordLayout;
+export default VILayout;

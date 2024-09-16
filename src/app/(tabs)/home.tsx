@@ -23,11 +23,12 @@ const Home = () => {
         Practice Interview
       </Text>
       <View className="flex flex-row items-center justify-center">
-        <Card
-          imageSource={require("@/assets/images/virtual-interview.png")}
-          text="Talk with Virtual Interviewer"
-          cardClassName="mr-4"
-        />
+        <Link href="/(virtual-interview)/job-information" className="mr-4">
+          <Card
+            imageSource={require("@/assets/images/virtual-interview.png")}
+            text="Talk with Virtual Interviewer"
+          />
+        </Link>
 
         <Link href="/(record-yourself)/job-information">
           <Card

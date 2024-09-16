@@ -37,6 +37,7 @@ const RegisterForm = () => {
     general: "",
   });
 
+  // Handles input change and sets validation errors based on field type
   const handleInputChange = (text: string, field: keyof typeof errors) => {
     switch (field) {
       case "firstName":
@@ -87,6 +88,7 @@ const RegisterForm = () => {
     }
   };
 
+   // Checks if the form is valid
   const isFormValid = () => {
     const firstNameError = validateFirstName(firstName, submitted);
     const lastNameError = validateLastName(lastName, submitted);
@@ -116,6 +118,7 @@ const RegisterForm = () => {
     );
   };
 
+    // Handles sign up 
   const onSignUpPress = async () => {
     setSubmitted(true);
 
@@ -147,6 +150,7 @@ const RegisterForm = () => {
     }
   };
 
+  // Handles email verification for sign-up
   const onPressVerify = async () => {
     if (!isLoaded) return;
 

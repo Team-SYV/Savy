@@ -11,7 +11,7 @@ import { steps } from "@/constants/constants";
 import { createJobInformation } from "@/api";
 import { useUser } from "@clerk/clerk-expo";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
-import RecordStepContent from "@/components/JobInfo/RecordStepContent";
+import VirtualInterviewStepContent from "@/components/JobInfo/VirtualInterviewStepContent";
 import {
   View,
   SafeAreaView,
@@ -51,7 +51,7 @@ const JobInformation = () => {
   const handleNextStep = useCallback(async () => {
     if (activeStep === steps.length - 1) {
       handleSubmit();
-      router.push("/(record-yourself)/record");
+      router.push("/(virtual-interview)/virtual-interview");
       return;
     }
 
@@ -81,7 +81,11 @@ const JobInformation = () => {
   }, [activeStep]);
 
   //Updates form data, marks changes.
-  const updateFormData = (key: string, value: string, callback?: () => void) => {
+  const updateFormData = (
+    key: string,
+    value: string,
+    callback?: () => void
+  ) => {
     setFormData((prevState) => {
       const updatedFormData = {
         ...prevState,
@@ -175,7 +179,7 @@ const JobInformation = () => {
                 />
                 {index === activeStep && (
                   <>
-                    <RecordStepContent
+                    <VirtualInterviewStepContent
                       activeStep={activeStep}
                       formData={formData}
                       updateFormData={updateFormData}
