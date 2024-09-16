@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - main
-      - dev
   pull_request:
     branches:
       - main
-      - dev
 
 jobs:
   build:
@@ -27,22 +25,20 @@ jobs:
         run: npm install
         
       - name: Install EXPO CLI
-        run:  npm install -g expo-cli
+        run: npm install -g expo-cli
         
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
-      - name: Log in to Expo
+      - name: Log in to EAS
         env:
-          EXPO_CLI_USERNAME: ${{ secrets.EAS_ACCOUNT_EMAIL }}
-          EXPO_CLI_PASSWORD: ${{ secrets.EAS_ACCOUNT_PASSWORD }}
-
-        run: expo login -u $EXPO_CLI_USERNAME -p $EXPO_CLI_PASSWORD
+          EAS_ACCESS_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN2 }}
+        run: eas login --token $EAS_ACCESS_TOKEN
 
       - name: Configure Project
-        run: eas init
+        run: eas init --non-interactive
 
       - name: Build Expo project
         env:
-          EXPO_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN }}  
+          EXPO_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN2 }}
         run: eas build --platform android --non-interactive
