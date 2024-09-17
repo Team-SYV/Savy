@@ -5,9 +5,11 @@ from app.utils import get_supabase_client
 from app.webhooks import clerk_webhook_handler
 from app.jobInformation import create_job_information as create_job_info
 from app.jobInformation import update_job_information_with_resume as update_job_info
+from app.interview import create_interview
 
 import os
 import logging
+
 
 logging.basicConfig(level=logging.DEBUG)
 app = FastAPI()
@@ -38,3 +40,8 @@ async def create_job_information(request: Request):
 async def create_resume(request: Request):
     resume_data = await request.json()
     return await run_in_threadpool(update_job_info, resume_data, supabase)
+
+@app.post("/api/interview/create")
+async def create_interview_endpoint(request: Request):
+    interview_data = await request.json()
+    return create_interview(interview_data, supabase)
