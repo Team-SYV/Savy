@@ -51,7 +51,6 @@ const RecordStepContent: React.FC<StepContentProps> = ({
           }}
           onSelect={(value) => {
             updateFormData("selectedIndustry", value, () => {
-              updateFormData("selectedJobRole", null);
               setShouldProceed(true);
             });
           }}

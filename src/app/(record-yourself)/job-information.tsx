@@ -84,22 +84,32 @@ const JobInformation = () => {
   //Updates form data, marks changes.
   const updateFormData = (
     key: string,
-    value: string,
+    value: string | null,
     callback?: () => void
   ) => {
     setFormData((prevState) => {
-      const newState = {
+      let newState = {
         ...prevState,
         [key]: value,
       };
 
+      if (key === "selectedIndustry") {
+        newState = {
+          ...newState,
+          selectedJobRole: null,
+        };
+      }
+
       if (callback) {
         callback();
       }
+
       return newState;
     });
+
     setHasChanges(true);
 
+    // Clear errors for the current step
     if (errors[activeStep]) {
       setErrors((prevErrors) => ({
         ...prevErrors,

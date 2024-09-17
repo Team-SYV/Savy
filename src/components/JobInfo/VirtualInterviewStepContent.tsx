@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Dropdown from "@/components/Dropdown/Dropdown";
 import InterviewTypeCard from "@/components/Card/InterviewTypeCard";
 import CompanyFormField from "@/components/FormField/CompanyFormField";
@@ -13,10 +13,12 @@ const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
   activeStep,
   formData,
   updateFormData,
+  handleNextStep,
   handleSubmit,
   jobInformationId,
 }) => {
   const router = useRouter();
+  const [shouldProceed, setShouldProceed] = useState(false);
 
   const onProceed = async () => {
     handleSubmit();
@@ -30,6 +32,13 @@ const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
     router.push("/(virtual-interview)/virtual-interview");
   };
 
+  useEffect(() => {
+    if (shouldProceed) {
+      handleNextStep();
+      setShouldProceed(false);
+    }
+  }, [shouldProceed]);
+
   switch (activeStep) {
     case 0:
       return (
@@ -42,7 +51,7 @@ const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
           }}
           onSelect={(value) => {
             updateFormData("selectedIndustry", value, () => {
-              updateFormData("selectedJobRole", null);
+              setShouldProceed(true);
             });
           }}
         />
@@ -58,7 +67,9 @@ const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
               value: formData.selectedJobRole || "",
             }}
             onSelect={(value) => {
-              updateFormData("selectedJobRole", value);
+              updateFormData("selectedJobRole", value, () => {
+                setShouldProceed(true);
+              });
             }}
           />
         )
@@ -71,16 +82,18 @@ const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
             title="Behavioral"
             description="Involves soft skills, interpersonal interactions, problem-solving approaches, and past experiences."
             isSelected={formData.selectedInterviewType === "Behavioral"}
-            onPress={() =>
-              updateFormData("selectedInterviewType", "Behavioral")
-            }
+            onPress={() => {
+              updateFormData("selectedInterviewType", "Behavioral");
+            }}
           />
           <InterviewTypeCard
             imageSource={require("@/assets/icons/technical.png")}
             title="Technical"
             description="Involves coding challenges, technical problem-solving scenarios, and discussions about specific technologies, tools, or methodologies."
             isSelected={formData.selectedInterviewType === "Technical"}
-            onPress={() => updateFormData("selectedInterviewType", "Technical")}
+            onPress={() => {
+              updateFormData("selectedInterviewType", "Technical");
+            }}
           />
         </View>
       );
@@ -94,7 +107,9 @@ const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
             value: formData.selectedExperienceLevel || "",
           }}
           onSelect={(value) => {
-            updateFormData("selectedExperienceLevel", value);
+            updateFormData("selectedExperienceLevel", value, () => {
+              setShouldProceed(true);
+            });
           }}
         />
       );
