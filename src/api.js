@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "https://stingray-beloved-terribly.ngrok-free.app/",
 });
 
 export const createJobInformation = async (jobData) => {
