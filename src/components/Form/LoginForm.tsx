@@ -82,7 +82,7 @@ const LoginForm = () => {
 
   return (
     <View className="flex-1 justify-center p-4">
-      <Spinner visible={loading} />
+      <Spinner visible={loading} color="#00AACE" />
 
       <CustomFormField
         title="Email Address"
