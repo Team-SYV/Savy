@@ -1,11 +1,18 @@
 {
   "expo": {
-    "scheme": "acme",
+    "scheme": "savy",
     "userInterfaceStyle": "automatic",
     "orientation": "default",
     "web": {
       "output": "static",
       "bundler": "metro"
+    },
+    "android": {
+      "splash": {
+        "image": "./src/assets/images/ss.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
+      }
     },
     "plugins": [
       [
