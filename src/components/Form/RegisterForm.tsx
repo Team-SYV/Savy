@@ -88,7 +88,7 @@ const RegisterForm = () => {
     }
   };
 
-   // Checks if the form is valid
+  // Checks if the form is valid
   const isFormValid = () => {
     const firstNameError = validateFirstName(firstName, submitted);
     const lastNameError = validateLastName(lastName, submitted);
@@ -118,7 +118,7 @@ const RegisterForm = () => {
     );
   };
 
-    // Handles sign up 
+  // Handles sign up
   const onSignUpPress = async () => {
     setSubmitted(true);
 
@@ -181,7 +181,7 @@ const RegisterForm = () => {
 
   return (
     <View className="flex-1 justify-center p-2">
-      <Spinner visible={loading} />
+      <Spinner visible={loading} color="#00AACE" />
 
       <CustomFormField
         title="First Name"

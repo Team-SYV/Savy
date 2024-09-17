@@ -6,6 +6,7 @@ import CustomFormField from "@/components/FormField/CustomFormField";
 import CustomButton from "@/components/Button/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Spinner from "react-native-loading-spinner-overlay";
 import {
   View,
   Image,
@@ -15,7 +16,6 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import LoadingSpinner from "@/components/Loading/LoadingSpinner";
 
 const EditProfile = () => {
   const { user } = useUser();
@@ -87,6 +87,8 @@ const EditProfile = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
+      <Spinner visible={loading} color="#00AACE" />
+
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <View className="flex pt-12 bg-white min-h-full">
           <View className="flex items-center justify-center">
@@ -153,8 +155,6 @@ const EditProfile = () => {
               disabled={loading}
             />
           </View>
-
-          {loading && <LoadingSpinner />}
 
           {message && (
             <View className="absolute bottom-24 left-0 right-0 z-10 bg-gray-600 rounded-full py-3 px-1 mx-28">
