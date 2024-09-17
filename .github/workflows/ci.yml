@@ -31,7 +31,7 @@ jobs:
           EXPO_CLI_PASSWORD: ${{ secrets.EAS_ACCOUNT_PASSWORD2 }}
         run: expo login -u $EXPO_CLI_USERNAME -p $EXPO_CLI_PASSWORD
       - name: Configure Project
-        run: eas init --non interactive
+        run: eas init --non-interactive
 
        - name: Build Expo project
          env:
