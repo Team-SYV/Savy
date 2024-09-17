@@ -15,7 +15,7 @@ def create_interview(interview_data: dict, supabase: Client):
 
     interview_info = InterviewCreate(
         user_id=interview_data['user_id'],
-        video=interview_data.get('video')  # Optional field
+        video=interview_data.get('video')  
     )
 
     response = supabase.table('interviews').insert({

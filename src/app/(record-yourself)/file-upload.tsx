@@ -62,14 +62,11 @@ const FileUpload = () => {
     try {
       setUploadProgress(0);
 
-      // Create a unique filename for the file
       const fileName = `${user.id}/${Date.now()}_${selectedFile.name}`;
 
-      // Read the file as a blob
       const fileBlob = await (await fetch(selectedFile.uri)).blob();
 
-      // Upload the file to the 'resumes' bucket in Supabase
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from("resumes")
         .upload(fileName, fileBlob, {
           contentType: "application/pdf",
@@ -79,7 +76,6 @@ const FileUpload = () => {
         throw new Error(error.message);
       }
 
-      // Get the public URL for the uploaded file
       const { data: publicUrlData } = supabase.storage
         .from("resumes")
         .getPublicUrl(fileName);
@@ -91,15 +87,14 @@ const FileUpload = () => {
       const publicUrl = publicUrlData.publicUrl;
 
       const resumeData = {
-        id: jobId, 
-        resume: publicUrl, 
+        id: jobId,
+        resume: publicUrl,
       };
 
       await createResume(resumeData);
 
       Alert.alert("Success", "Resume uploaded successfully.");
 
-      // Proceed with the interview
       router.push("/(record-yourself)/record");
     } catch (error) {
       Alert.alert("Upload Failed", error.message);

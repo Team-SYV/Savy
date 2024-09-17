@@ -75,7 +75,7 @@ const Record: React.FC = () => {
       const fileName = `video_${Date.now()}.mp4`;
 
       const { error } = await supabase.storage
-        .from("videos") // Use the "videos" bucket
+        .from("videos") 
         .upload(fileName, videoBlob, {
           contentType: "video/mp4",
         });
