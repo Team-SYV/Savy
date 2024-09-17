@@ -39,10 +39,9 @@ def update_job_information_with_resume(resume_data: dict, supabase: Client):
         if not resume_data.get(field):
             raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
 
-    # Ensure you're passing the correct key for the resume URL
     job_update = JobInformationUpdate(
         id=resume_data['id'],
-        resume=resume_data['resume']  # Ensure that 'resume' key exists in resume_data
+        resume=resume_data['resume']  
     )
 
     response = supabase.table('job_information').update({

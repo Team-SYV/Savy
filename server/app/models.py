@@ -27,3 +27,7 @@ class JobInformationCreate(BaseModel):
 class JobInformationUpdate(BaseModel):
     id: str
     resume: str
+
+class InterviewCreate(BaseModel):
+    user_id: str
+    video: Optional[str]

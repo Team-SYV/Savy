@@ -4,7 +4,6 @@ from svix.webhooks import Webhook, WebhookVerificationError
 import json
 from .models import ClerkUserCreate, ClerkUserUpdate
 
-# Webhook handler function
 async def clerk_webhook_handler(request: Request, response: Response, supabase: Client, webhook_secret: str):
     headers = dict(request.headers)
     payload = await request.body()
@@ -36,7 +35,6 @@ async def clerk_webhook_handler(request: Request, response: Response, supabase: 
 
     return {"message": "Webhook handled"}
 
-# Handle 'user.created' event
 def handle_user_created(data: dict, supabase: Client):
     email_addresses = data.get("email_addresses", [])
     if not email_addresses or not email_addresses[0].get("email_address"):
@@ -64,7 +62,6 @@ def handle_user_created(data: dict, supabase: Client):
         'image': user.image_url
     }).execute()
 
-# Handle 'user.updated' event
 def handle_user_updated(data: dict, supabase: Client):
     user_id = data["id"]
     user_update = ClerkUserUpdate(
@@ -94,7 +91,6 @@ def handle_user_updated(data: dict, supabase: Client):
 
     supabase.table('users').update(updated_data).eq('id', user_id).execute()
 
-# Handle 'user.deleted' event
 def handle_user_deleted(data: dict, supabase: Client):
     user_id = data["id"]
     supabase.table('users').delete().eq('id', user_id).execute()

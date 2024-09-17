@@ -23,3 +23,14 @@ export const createResume = async (resumeData) => {
     throw new Error(error.response?.data?.detail || "Failed to create resume");
   }
 };
+
+export const createInterview = async (interviewData) => {
+  try {
+    const response = await api.post("/api/interview/create", interviewData);
+    return response.data.id;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.detail || "Failed to create interview"
+    );
+  }
+};

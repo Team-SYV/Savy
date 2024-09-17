@@ -4,6 +4,9 @@ import { Stack } from "expo-router";
 import { Video, ResizeMode } from "expo-av";
 import NextModal from "@/components/Modal/NextModal";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
+import { supabase } from "@/utils/supabase";
+import { useUser } from "@clerk/clerk-expo";
+
 import {
   StyleSheet,
   Text,
@@ -11,7 +14,9 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  Alert,
 } from "react-native";
+import { createInterview } from "@/api";
 
 const Record: React.FC = () => {
   const cameraRef = useRef(null);
@@ -23,13 +28,14 @@ const Record: React.FC = () => {
   const [allQuestionsRecorded, setAllQuestionsRecorded] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // Request Camera and Microphone Permissions
   const [hasCameraPermission, setHasCameraPermission] = useState<
     boolean | null
   >(null);
   const [hasMicrophonePermission, setHasMicrophonePermission] = useState<
     boolean | null
   >(null);
+
+  const { user, isLoaded, isSignedIn } = useUser();
 
   useEffect(() => {
     (async () => {
@@ -42,7 +48,6 @@ const Record: React.FC = () => {
     })();
   }, []);
 
-  // Countdown timer which is decrementing every second while recording is active.
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (isRecording && recordingTime > 0) {
@@ -63,6 +68,39 @@ const Record: React.FC = () => {
     }
     return () => clearInterval(timer);
   }, [isRecording]);
+
+  const uploadVideoToSupabase = async (videoUri: string) => {
+    try {
+      const videoBlob = await (await fetch(videoUri)).blob();
+      const fileName = `video_${Date.now()}.mp4`;
+
+      const { error } = await supabase.storage
+        .from("videos") 
+        .upload(fileName, videoBlob, {
+          contentType: "video/mp4",
+        });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const { data: publicUrlData } = supabase.storage
+        .from("videos")
+        .getPublicUrl(fileName);
+
+      if (!publicUrlData.publicUrl) {
+        throw new Error(
+          "Unable to retrieve public URL for the uploaded video."
+        );
+      }
+
+      Alert.alert("Upload Success", "Video uploaded successfully!");
+      console.log("Video public URL:", publicUrlData.publicUrl);
+    } catch (error) {
+      console.error("Video upload failed:", error.message);
+      Alert.alert("Upload Failed", error.message);
+    }
+  };
 
   // Check if permission has been granted
   if (hasCameraPermission === null || hasMicrophonePermission === null) {
@@ -89,6 +127,10 @@ const Record: React.FC = () => {
         const recordedVideo = await cameraRef.current.recordAsync();
         setRecordedVideos((prev) => [...prev, recordedVideo.uri]);
         setIsModalVisible(true);
+
+        const videoUrl = await uploadVideoToSupabase(recordedVideo.uri);
+        await createInterview(videoUrl);
+
       } catch (error) {
         console.error("Error recording video:", error);
       } finally {
