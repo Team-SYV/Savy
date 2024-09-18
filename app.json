@@ -2,17 +2,9 @@
   "expo": {
     "scheme": "savy",
     "userInterfaceStyle": "automatic",
-    "orientation": "default",
     "web": {
       "output": "static",
       "bundler": "metro"
-    },
-    "android": {
-      "splash": {
-        "image": "./src/assets/images/ss.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#ffffff"
-      }
     },
     "plugins": [
       [
@@ -20,17 +12,43 @@
         {
           "origin": "https://n"
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+        }
       ]
     ],
     "name": "savy",
     "slug": "savy",
     "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/images/ss.png",
+    "splash": {
+      "image": "./src/assets/images/ss.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
     "android": {
-      "package": "com.syv.savy"
+      "package": "com.savy.savy",
+      "versionCode": 1
     },
-    "experiments": {
-      "typeRoutes": "true"
-    },
+    "experiments": {},
     "extra": {
       "router": {
         "origin": "https://n"
@@ -39,6 +57,9 @@
         "projectId": "13889f80-7a2b-4a6d-91ad-d4b208324348"
       }
     },
-    "owner": "savy123"
+    "owner": "savy123",
+    "ios": {
+      "bundleIdentifier": "com.savy.savy"
+    }
   }
 }
