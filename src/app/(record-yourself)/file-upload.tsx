@@ -11,13 +11,15 @@ import { Image } from "react-native";
 import { supabase } from "@/utils/supabase";
 import { createResume } from "@/api";
 import * as FileSystem from "expo-file-system";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const FileUpload = () => {
   const router = useRouter();
-  const { user, isLoaded, isSignedIn } = useUser();
+  const { user } = useUser();
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [loading, setLoading] = useState(false);
   const { jobId } = useLocalSearchParams();
 
   const handleFilePick = async () => {
@@ -57,11 +59,6 @@ const FileUpload = () => {
   };
 
   const handleStartInterview = async () => {
-    if (!isLoaded || !isSignedIn || !user) {
-      Alert.alert("Error", "User not authenticated.");
-      return;
-    }
-
     if (!selectedFile) {
       Alert.alert(
         "No file uploaded",
@@ -71,7 +68,7 @@ const FileUpload = () => {
     }
 
     try {
-      setUploadProgress(0);
+      setLoading(true);
 
       const fileName = `${user.id}/${Date.now()}_${selectedFile.name}`;
 
@@ -109,16 +106,18 @@ const FileUpload = () => {
       };
 
       await createResume(resumeData);
-
-      Alert.alert("Success", "Resume uploaded successfully.");
       router.push("/(record-yourself)/record");
     } catch (error) {
       Alert.alert("Upload Failed", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <View className="flex-1 bg-white">
+      <Spinner visible={loading} color="#00AACE" />
+
       <View className="flex-1 mt-28 px-4">
         <Text className="text-xl text-gray-800 font-medium mb-4">
           Upload Your Resume
@@ -129,6 +128,7 @@ const FileUpload = () => {
           className={`bg-gray-100 w-full rounded-lg items-center justify-center h-[250px] p-4 border-2 border-dashed ${
             fileName ? "border-green-500" : "border-gray-300"
           }`}
+          disabled={loading}
         >
           <SimpleLineIcons
             name="cloud-upload"
@@ -145,7 +145,7 @@ const FileUpload = () => {
         {fileName ? (
           <View className="mt-4 flex-row justify-between items-center px-2">
             <Text className="text-base text-center">{fileName}</Text>
-            <TouchableOpacity onPress={handleRemoveFile}>
+            <TouchableOpacity onPress={handleRemoveFile} disabled={loading}>
               <Ionicons name="trash-outline" size={22} color="red" />
             </TouchableOpacity>
           </View>
@@ -186,6 +186,7 @@ const FileUpload = () => {
           onPress={handleStartInterview}
           containerStyles="bg-[#00AACE] h-[55px] w-full rounded-2xl"
           textStyles="text-white text-[17px]"
+          disabled={loading}
         />
       </View>
     </View>

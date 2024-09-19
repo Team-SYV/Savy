@@ -149,7 +149,7 @@ const JobInformation = () => {
       };
 
       const response = await createJobInformation(jobData);
-      setJobInformationId(response); 
+      setJobInformationId(response);
     } catch (error) {
       console.error("Error creating job description:", error.message);
     } finally {
@@ -225,6 +225,7 @@ const JobInformation = () => {
             containerStyles="bg-[#00AACE] h-14 rounded-xl mb-4 w-1/2 mx-2"
             textStyles="text-white text-[16px] font-semibold text-base"
             isLoading={loading}
+            disabled={loading}
           />
         </View>
 
