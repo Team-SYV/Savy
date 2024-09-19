@@ -134,10 +134,13 @@ const JobInformation = () => {
     router.back();
   };
 
-  // Submits the job information
   const handleSubmit = async () => {
     try {
       setLoading(true);
+
+      if (!user.user) {
+        throw new Error("User is not authenticated");
+      }
 
       const jobData = {
         user_id: user.user.id,
@@ -153,7 +156,11 @@ const JobInformation = () => {
       console.log(response);
       setJobInformationId(response);
     } catch (error) {
-      console.error("Error creating job description:", error.message);
+      if (error instanceof Error) {
+        console.error("Error creating job description:", error.message);
+      } else {
+        console.error("An unknown error occurred.");
+      }
     } finally {
       setLoading(false);
     }

@@ -46,9 +46,11 @@
     },
     "android": {
       "package": "com.savy.savy",
-      "versionCode": 1
+      "versionCode": 1,
+      "permissions": [
+        "INTERNET"
+      ]
     },
-    "experiments": {},
     "extra": {
       "router": {
         "origin": "https://n"
@@ -57,9 +59,6 @@
         "projectId": "13889f80-7a2b-4a6d-91ad-d4b208324348"
       }
     },
-    "owner": "savy123",
-    "ios": {
-      "bundleIdentifier": "com.savy.savy"
-    }
+    "owner": "savy123"
   }
 }

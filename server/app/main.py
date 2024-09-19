@@ -17,11 +17,12 @@ app = FastAPI()
 supabase = get_supabase_client()
 webhook_secret = os.getenv("WEBHOOK_SECRET")
 
-origins = ["http://localhost:8081"]
+origins = ["http://localhost:8081",
+            "https://stingray-beloved-terribly.ngrok-free.app"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
