@@ -134,7 +134,6 @@ const JobInformation = () => {
     router.back();
   };
 
-  // Submits the job information
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -150,8 +149,7 @@ const JobInformation = () => {
       };
 
       const response = await createJobInformation(jobData);
-      console.log(response);
-      setJobInformationId(response);
+      setJobInformationId(response); 
     } catch (error) {
       console.error("Error creating job description:", error.message);
     } finally {

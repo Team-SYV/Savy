@@ -17,9 +17,11 @@ export const createJobInformation = async (jobData) => {
 
 export const createResume = async (resumeData) => {
   try {
-    const response = await api.put("/api/resumes/create/", resumeData);
+    const response = await api.put("/api/resumes/create", resumeData);
+    console.log("API response:", response.data);
     return response.data;
   } catch (error) {
+    console.error("API error:", error.response?.data || error.message); 
     throw new Error(error.response?.data?.detail || "Failed to create resume");
   }
 };

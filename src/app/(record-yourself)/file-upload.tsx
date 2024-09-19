@@ -10,6 +10,7 @@ import { useUser } from "@clerk/clerk-expo";
 import { Image } from "react-native";
 import { supabase } from "@/utils/supabase";
 import { createResume } from "@/api";
+import * as FileSystem from "expo-file-system";
 
 const FileUpload = () => {
   const router = useRouter();
@@ -40,7 +41,6 @@ const FileUpload = () => {
             setUploadProgress(1);
           }
         }, 100);
-        
       } else {
         Alert.alert("Error", "There was an issue picking the file.");
       }
@@ -75,12 +75,18 @@ const FileUpload = () => {
 
       const fileName = `${user.id}/${Date.now()}_${selectedFile.name}`;
 
-      const fileBlob = await (await fetch(selectedFile.uri)).blob();
+      const fileUri = selectedFile.uri;
+      const base64File = await FileSystem.readAsStringAsync(fileUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const fileType = "application/pdf";
 
       const { error } = await supabase.storage
         .from("resumes")
-        .upload(fileName, fileBlob, {
-          contentType: "application/pdf",
+        .upload(fileName, base64File, {
+          contentType: fileType,
+          upsert: true,
         });
 
       if (error) {
@@ -91,7 +97,7 @@ const FileUpload = () => {
         .from("resumes")
         .getPublicUrl(fileName);
 
-      if (!publicUrlData.publicUrl) {
+      if (!publicUrlData?.publicUrl) {
         throw new Error("Unable to retrieve public URL for the uploaded file.");
       }
 
@@ -105,12 +111,12 @@ const FileUpload = () => {
       await createResume(resumeData);
 
       Alert.alert("Success", "Resume uploaded successfully.");
-
       router.push("/(record-yourself)/record");
     } catch (error) {
       Alert.alert("Upload Failed", error.message);
     }
   };
+
   return (
     <View className="flex-1 bg-white">
       <View className="flex-1 mt-28 px-4">

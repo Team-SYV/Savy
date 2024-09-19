@@ -19,12 +19,11 @@ const RecordStepContent: React.FC<StepContentProps> = ({
 }) => {
   const router = useRouter();
   const [shouldProceed, setShouldProceed] = useState(false);
+  const [proceedClicked, setProceedClicked] = useState(false);
 
   const onProceed = async () => {
+    setProceedClicked(true);
     handleSubmit();
-    if (jobInformationId) {
-      router.push(`/(record-yourself)/file-upload?jobId=${jobInformationId}`);
-    }
   };
 
   const onSkip = async () => {
@@ -38,6 +37,12 @@ const RecordStepContent: React.FC<StepContentProps> = ({
       setShouldProceed(false);
     }
   }, [shouldProceed]);
+
+  useEffect(() => {
+    if (proceedClicked && jobInformationId) {
+      router.push(`/(record-yourself)/file-upload?jobId=${jobInformationId}`);
+    }
+  }, [proceedClicked, jobInformationId, router]);
 
   switch (activeStep) {
     case 0:
