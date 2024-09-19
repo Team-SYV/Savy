@@ -31,10 +31,6 @@
     "name": "savy",
     "slug": "savy",
     "version": "1.0.0",
-<<<<<<< HEAD
-    "experiments": {
-      "typeRoutes": "true"
-=======
     "orientation": "portrait",
     "icon": "./src/assets/images/ss.png",
     "splash": {
@@ -51,7 +47,6 @@
     "android": {
       "package": "com.savy.savy",
       "versionCode": 1
->>>>>>> 06f35f7e1218cfd39da4554e0d250647bdbc6221
     },
     "experiments": {},
     "extra": {
