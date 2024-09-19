@@ -32,9 +32,9 @@
     "slug": "savy",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/ss.png",
+    "icon": "./src/assets/images/sss.png",
     "splash": {
-      "image": "./src/assets/images/ss.png",
+      "image": "./src/assets/images/sss.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
