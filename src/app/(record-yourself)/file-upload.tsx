@@ -30,6 +30,17 @@ const FileUpload = () => {
       } else if (result.assets && result.assets.length > 0) {
         setSelectedFile(result.assets[0]);
         setFileName(result.assets[0].name);
+
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += 0.1;
+          setUploadProgress(progress);
+          if (progress >= 1) {
+            clearInterval(interval);
+            setUploadProgress(1);
+          }
+        }, 100);
+        
       } else {
         Alert.alert("Error", "There was an issue picking the file.");
       }
