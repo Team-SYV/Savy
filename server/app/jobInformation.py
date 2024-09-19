@@ -48,6 +48,8 @@ def update_job_information_with_resume(resume_data: dict, supabase: Client):
         'resume': job_update.resume
     }).eq('id', job_update.id).execute()
 
+    print("Supabase response:", response)
+
     if hasattr(response, 'error') and response.error:
         raise HTTPException(status_code=500, detail="Failed to update resume")
 
