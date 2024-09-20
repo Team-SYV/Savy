@@ -210,11 +210,11 @@ const Record: React.FC = () => {
           facing="front"
           ref={cameraRef}
         >
-          <View className="absolute top-12 right-2 items-center mx-2">
+          <View className="absolute top-14 right-4 items-center mx-2">
             <TouchableOpacity onPress={() => setIsConfirmationVisible(true)}>
               <AntDesign
                 name="closecircle"
-                size={32}
+                size={33}
                 color="#A92703"
                 className="bg-white rounded-full"
               />
