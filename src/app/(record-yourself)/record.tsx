@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Camera, CameraView } from "expo-camera";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { Video, ResizeMode } from "expo-av";
 import NextModal from "@/components/Modal/NextModal";
+import ConfirmationModal from "@/components/Modal/ConfirmationModal";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
 import { supabase } from "@/utils/supabase";
 import { useUser } from "@clerk/clerk-expo";
-
+import AntDesign from "@expo/vector-icons/AntDesign";
 import {
   StyleSheet,
   Text,
@@ -27,6 +28,7 @@ const Record: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [allQuestionsRecorded, setAllQuestionsRecorded] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
 
   const [hasCameraPermission, setHasCameraPermission] = useState<
     boolean | null
@@ -36,6 +38,7 @@ const Record: React.FC = () => {
   >(null);
 
   const { user, isLoaded, isSignedIn } = useUser();
+  const router = useRouter(); // Use the router for navigation
 
   useEffect(() => {
     (async () => {
@@ -75,7 +78,7 @@ const Record: React.FC = () => {
       const fileName = `video_${Date.now()}.mp4`;
 
       const { error } = await supabase.storage
-        .from("videos") 
+        .from("videos")
         .upload(fileName, videoBlob, {
           contentType: "video/mp4",
         });
@@ -130,7 +133,6 @@ const Record: React.FC = () => {
 
         const videoUrl = await uploadVideoToSupabase(recordedVideo.uri);
         await createInterview(videoUrl);
-
       } catch (error) {
         console.error("Error recording video:", error);
       } finally {
@@ -208,6 +210,17 @@ const Record: React.FC = () => {
           facing="front"
           ref={cameraRef}
         >
+          <View className="absolute top-12 right-2 items-center mx-2">
+            <TouchableOpacity onPress={() => setIsConfirmationVisible(true)}>
+              <AntDesign
+                name="closecircle"
+                size={32}
+                color="#A92703"
+                className="bg-white rounded-full"
+              />
+            </TouchableOpacity>
+          </View>
+
           <View className="absolute bottom-10 left-0 right-0 items-center mx-2">
             <Text
               className={`text-center mb-4 px-4 py-4 rounded-xl ${
@@ -245,6 +258,22 @@ const Record: React.FC = () => {
         onNext={handleNext}
         onClose={() => setIsModalVisible(false)}
         isLastQuestion={currentQuestionIndex === questions.length - 1}
+      />
+
+      <ConfirmationModal
+        isVisible={isConfirmationVisible}
+        title="Discard Recording?"
+        message={
+          <Text>
+            Exiting now will discard your progress.{"\n"}
+            Are you sure you want to leave?
+          </Text>
+        }
+        onConfirm={() => {
+          setIsConfirmationVisible(false);
+          router.push("/home");
+        }}
+        onClose={() => setIsConfirmationVisible(false)}
       />
     </View>
   );
