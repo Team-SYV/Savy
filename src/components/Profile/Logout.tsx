@@ -38,7 +38,7 @@ const Logout = () => {
 
       <Pressable
         onPress={handleLogout}
-        className="flex-row items-center justify-between p-4 border-b-2 border-gray-500 rounded-lg mx-6 mt-12"
+        className="flex-row items-center justify-between p-4 border-b border-gray-500 rounded-lg mx-4 mt-5"
       >
         <View className="flex-row items-center">
           <Ionicons name="log-out-outline" size={22} className="mr-2" />

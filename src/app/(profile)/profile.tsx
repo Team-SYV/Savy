@@ -4,6 +4,8 @@ import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import Logout from "@/components/Profile/Logout";
+import Subscribe from "@/components/Profile/Subscribe";
+import ShareFeedback from "@/components/Profile/ShareFeedback";
 
 const Profile = () => {
   const { user } = useUser();
@@ -55,6 +57,8 @@ const Profile = () => {
         />
       </View>
 
+      <Subscribe />
+      <ShareFeedback />
       <Logout />
     </View>
   );
