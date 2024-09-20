@@ -89,7 +89,7 @@ const LoginForm = () => {
         placeholder="Email"
         value={emailAddress}
         onChangeText={(text) => handleInputChange(text, "email")}
-        otherStyles="mt-5 mb-1"
+        otherStyles="mt-5 mb-1 bg-white rounded-xl"
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -102,7 +102,7 @@ const LoginForm = () => {
         placeholder="Password"
         value={password}
         onChangeText={(text) => handleInputChange(text, "password")}
-        otherStyles="mt-5 mb-1"
+        otherStyles="mt-5 mb-1 bg-white rounded-xl"
       />
 
       <View className="flex-row items-center justify-between mt-1 mb-1">

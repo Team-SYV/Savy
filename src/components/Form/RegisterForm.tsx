@@ -188,7 +188,7 @@ const RegisterForm = () => {
         placeholder="First Name"
         value={firstName}
         onChangeText={(text) => handleInputChange(text, "firstName")}
-        otherStyles="mt-7 mb-1"
+        otherStyles="mt-7 mb-1 bg-white rounded-xl"
       />
       {errors.firstName && (
         <Text className="text-red-500 text-sm ml-1">{errors.firstName}</Text>
@@ -199,7 +199,7 @@ const RegisterForm = () => {
         placeholder="Last Name"
         value={lastName}
         onChangeText={(text) => handleInputChange(text, "lastName")}
-        otherStyles="mt-5 mb-1"
+        otherStyles="mt-5 mb-1 bg-white rounded-xl"
       />
       {errors.lastName && (
         <Text className="text-red-500 text-sm ml-1">{errors.lastName}</Text>
@@ -210,7 +210,7 @@ const RegisterForm = () => {
         placeholder="Email"
         value={emailAddress}
         onChangeText={(text) => handleInputChange(text, "emailAddress")}
-        otherStyles="mt-5 mb-1"
+        otherStyles="mt-5 mb-1 bg-white rounded-xl"
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -223,7 +223,7 @@ const RegisterForm = () => {
         placeholder="Password"
         value={password}
         onChangeText={(text) => handleInputChange(text, "password")}
-        otherStyles="mt-5 mb-1"
+        otherStyles="mt-5 mb-1 bg-white rounded-xl"
       />
       {errors.password && (
         <Text className="text-red-500 text-sm ml-1">{errors.password}</Text>
@@ -234,7 +234,7 @@ const RegisterForm = () => {
         placeholder="Confirm Password"
         value={confirmPassword}
         onChangeText={(text) => handleInputChange(text, "confirmPassword")}
-        otherStyles="mt-5 mb-1"
+        otherStyles="mt-5 mb-1 bg-white rounded-xl"
       />
       {errors.confirmPassword && (
         <Text className="text-red-500 text-sm ml-1">
