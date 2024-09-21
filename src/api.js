@@ -15,24 +15,24 @@ export const createJobInformation = async (jobData) => {
   }
 };
 
-export const createResume = async (resumeData) => {
-  try {
-    const response = await api.put("/api/resumes/create", resumeData);
-    console.log("API response:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("API error:", error.response?.data || error.message); 
-    throw new Error(error.response?.data?.detail || "Failed to create resume");
-  }
-};
+export const uploadResume = async (file) => {
+  const formData = new FormData();
+  formData.append("file", {
+    uri: file.uri,
+    type: 'application/pdf',
+    name: file.name,
+  });
 
-export const createInterview = async (interviewData) => {
   try {
-    const response = await api.post("/api/interview/create", interviewData);
-    return response.data.id;
+    const response = await api.post("/api/convert-pdf/", formData, {
+      headers: {
+        "Content-Type": "application/pdf",
+      },
+    });
+    return response.data.text;  
   } catch (error) {
     throw new Error(
-      error.response?.data?.detail || "Failed to create interview"
+      error.response?.data?.detail || "Failed to upload resume"
     );
   }
 };
