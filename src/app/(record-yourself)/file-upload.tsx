@@ -66,17 +66,14 @@ const FileUpload = () => {
     setLoading(true);
 
     try {
-      // Fetch job information using jobId
       const jobInfo = await getJobInformation(jobId);
 
-      // Convert the file URI to a base64 string
       const base64File = await FileSystem.readAsStringAsync(selectedFile.uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
 
-      // Prepare the request payload (including the base64-encoded file)
       const payload = {
-        resume: base64File, 
+        resume: base64File,
         fileName: selectedFile.name,
         industry: jobInfo.industry,
         experience_level: jobInfo.experience_level,
@@ -86,12 +83,10 @@ const FileUpload = () => {
         job_role: jobInfo.job_role,
       };
 
-      // Call the API to generate questions
       const questions = await generateQuestions(payload);
 
       console.log("Generated questions:", questions);
 
-      // Redirect to the next page after successful generation
       router.push("/(record-yourself)/record");
     } catch (error) {
       Alert.alert("Upload failed", error.message);
