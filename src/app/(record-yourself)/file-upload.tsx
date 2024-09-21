@@ -5,22 +5,17 @@ import * as DocumentPicker from "expo-document-picker";
 import { Ionicons } from "@expo/vector-icons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import ProgressBar from "react-native-progress/Bar";
-import { useRouter, useLocalSearchParams } from "expo-router";
-import { useUser } from "@clerk/clerk-expo";
+import { useRouter } from "expo-router";
 import { Image } from "react-native";
-import { supabase } from "@/utils/supabase";
-import { createResume } from "@/api";
-import * as FileSystem from "expo-file-system";
 import Spinner from "react-native-loading-spinner-overlay";
+import { uploadResume } from "@/api";
 
 const FileUpload = () => {
   const router = useRouter();
-  const { user } = useUser();
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
   const [loading, setLoading] = useState(false);
-  const { jobId } = useLocalSearchParams();
 
   const handleFilePick = async () => {
     try {
@@ -66,52 +61,15 @@ const FileUpload = () => {
       );
       return;
     }
+    setLoading(true);
 
     try {
-      setLoading(true);
-
-      const fileName = `${user.id}/${Date.now()}_${selectedFile.name}`;
-
-      const fileUri = selectedFile.uri;
-      const base64File = await FileSystem.readAsStringAsync(fileUri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
-      const fileType = "application/pdf";
-
-      const { error } = await supabase.storage
-        .from("resumes")
-        .upload(fileName, base64File, {
-          contentType: fileType,
-          upsert: true,
-        });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const { data: publicUrlData } = supabase.storage
-        .from("resumes")
-        .getPublicUrl(fileName);
-
-      if (!publicUrlData?.publicUrl) {
-        throw new Error("Unable to retrieve public URL for the uploaded file.");
-      }
-
-      const publicUrl = publicUrlData.publicUrl;
-
-      const resumeData = {
-        id: jobId,
-        resume: publicUrl,
-      };
-
-      await createResume(resumeData);
+      await uploadResume(selectedFile);
       router.push("/(record-yourself)/record");
     } catch (error) {
-      Alert.alert("Upload Failed", error.message);
-    } finally {
-      setLoading(false);
+      Alert.alert("upload failed", error.message);
     }
+    setLoading(false);
   };
 
   return (
