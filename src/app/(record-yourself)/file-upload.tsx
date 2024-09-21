@@ -2,16 +2,18 @@ import { Text, View, TouchableOpacity, Alert } from "react-native";
 import React, { useState } from "react";
 import CustomButton from "@/components/Button/CustomButton";
 import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system";
 import { Ionicons } from "@expo/vector-icons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import ProgressBar from "react-native-progress/Bar";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Image } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
-import { uploadResume } from "@/api";
+import { generateQuestions, getJobInformation } from "@/api";
 
 const FileUpload = () => {
   const router = useRouter();
+  const { jobId } = useLocalSearchParams();
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -64,14 +66,38 @@ const FileUpload = () => {
     setLoading(true);
 
     try {
-      await uploadResume(selectedFile);
+      // Fetch job information using jobId
+      const jobInfo = await getJobInformation(jobId);
+
+      // Convert the file URI to a base64 string
+      const base64File = await FileSystem.readAsStringAsync(selectedFile.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      // Prepare the request payload (including the base64-encoded file)
+      const payload = {
+        resume: base64File, 
+        fileName: selectedFile.name,
+        industry: jobInfo.industry,
+        experience_level: jobInfo.experience_level,
+        interview_type: jobInfo.interview_type,
+        job_description: jobInfo.job_description,
+        company_name: jobInfo.company_name,
+        job_role: jobInfo.job_role,
+      };
+
+      // Call the API to generate questions
+      const questions = await generateQuestions(payload);
+
+      console.log("Generated questions:", questions);
+
+      // Redirect to the next page after successful generation
       router.push("/(record-yourself)/record");
     } catch (error) {
-      Alert.alert("upload failed", error.message);
+      Alert.alert("Upload failed", error.message);
     }
     setLoading(false);
   };
-
   return (
     <View className="flex-1 bg-white">
       <Spinner visible={loading} color="#00AACE" />
