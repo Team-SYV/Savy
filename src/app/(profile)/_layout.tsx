@@ -44,6 +44,18 @@ const ProfileLayout = () => {
           headerBackVisible: false,
         }}
       />
+
+      <Stack.Screen
+        name="feedback"
+        options={{
+          headerTitle: () => (
+            <Text className="text-center text-xl font-bold text-white">
+              Feedback
+            </Text>
+          ),
+          headerBackVisible: false,
+        }}
+      />
     </Stack>
   );
 };
