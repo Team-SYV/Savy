@@ -24,7 +24,7 @@ const TextArea: React.FC<TextAreaProps> = ({
         onChangeText={onChangeText}
         multiline
         textAlignVertical="top"
-        className={`border border-[#5D5D5D] rounded-lg text-base ml-12 p-3 h-32
+        className={`border border-[#5D5D5D] rounded-lg text-base p-3 h-32
           ${textInputStyles}`}
       />
     </View>
