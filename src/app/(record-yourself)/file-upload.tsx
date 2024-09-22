@@ -54,7 +54,6 @@ const FileUpload = () => {
     setFileName("");
     setUploadProgress(0);
   };
-
   const handleStartInterview = async () => {
     if (!selectedFile) {
       Alert.alert(
@@ -66,7 +65,10 @@ const FileUpload = () => {
     setLoading(true);
 
     try {
+      console.log("Fetching job information for jobId:", jobId);
       const jobInfo = await getJobInformation(jobId);
+
+      console.log("Job information retrieved:", jobInfo);
 
       const base64File = await FileSystem.readAsStringAsync(selectedFile.uri, {
         encoding: FileSystem.EncodingType.Base64,
@@ -83,13 +85,15 @@ const FileUpload = () => {
         job_role: jobInfo.job_role,
       };
 
+      console.log("Payload to generate questions:", payload);
       const questions = await generateQuestions(payload);
 
       console.log("Generated questions:", questions);
 
       router.push("/(record-yourself)/record");
     } catch (error) {
-      Alert.alert("Upload failed", error.message);
+      console.error("Error during interview start:", error);
+      Alert.alert("Upload failed", error.message || "An error occurred.");
     }
     setLoading(false);
   };
