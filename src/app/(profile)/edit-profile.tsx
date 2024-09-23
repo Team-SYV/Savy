@@ -41,6 +41,11 @@ const EditProfile = () => {
       return;
     }
 
+    if (!lastName.trim()) {
+      showMessage("Last name cannot be empty");
+      return;
+    }
+
     setLoading(true);
     try {
       await user?.update({
