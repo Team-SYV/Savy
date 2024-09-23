@@ -91,18 +91,17 @@ const FileUpload = () => {
       } as unknown as Blob);
 
       formData.append("industry", industry);
-      formData.append("job_role", role);
-      formData.append("interview_type", type);
       formData.append("experience_level", experience);
-      formData.append("company_name", company_name);
+      formData.append("interview_type", type);
       formData.append("job_description", job_description);
+      formData.append("company_name", company_name);
 
-      console.log(formData);
+      formData.append("job_role", role);
+
+      console.log("form Data:",formData);
 
       const questions = await generateQuestions(formData);
       
-      console.log("Generated Questions: ", questions);
-
       for (const question of questions) {
         if (typeof question === "string") {
           await createQuestions(jobId, { question });
