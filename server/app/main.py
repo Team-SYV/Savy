@@ -58,6 +58,7 @@ async def generate_questions(
     company_name: str = None,
     job_role: str = None,
 ):
+    logging.info(f"Received data: {locals()}")
     try:
         file_path = f"/tmp/{file.filename}"
         with open(file_path, "wb") as buffer:
