@@ -18,6 +18,8 @@ import {
 import { getQuestions } from "@/api";
 
 const Record: React.FC = () => {
+  const router = useRouter();
+  const { jobId } = useLocalSearchParams();
   const cameraRef = useRef(null);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [recordingTime, setRecordingTime] = useState(60);
@@ -28,17 +30,14 @@ const Record: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
 
+  const [questions, setQuestions] = useState<string[]>([]);
+
   const [hasCameraPermission, setHasCameraPermission] = useState<
     boolean | null
   >(null);
   const [hasMicrophonePermission, setHasMicrophonePermission] = useState<
     boolean | null
   >(null);
-
-  const router = useRouter();
-  const { jobId } = useLocalSearchParams();
-
-  const [questions, setQuestions] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -56,7 +55,6 @@ const Record: React.FC = () => {
       try {
         const fetchedQuestions = await getQuestions(jobId);
 
-        // Assuming fetchedQuestions is an array of objects with a 'question' field
         const questionTexts = fetchedQuestions.map((q) => q.question);
 
         setQuestions(questionTexts);
@@ -131,15 +129,6 @@ const Record: React.FC = () => {
       setIsModalVisible(true);
     }
   };
-
-  // Sample Questions
-  // const questions = [
-  //   "Tell me about yourself.",
-  //   "What are your greatest strengths?",
-  //   "How do you prioritize your tasks?",
-  //   "Why should we hire you?",
-  //   "Describe a challenging situation you faced at work and how you handled it.",
-  // ];
 
   // Going to next question
   const handleNext = () => {
