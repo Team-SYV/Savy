@@ -15,7 +15,8 @@ def generate_interview_questions(industry, experience_level, interview_type, job
     The job description is as follows: {job_description}.
     The candidate's experience level is {experience_level}, and their resume contains the following information: {resume_text}.
     
-    Based on this information, generate 5 tailored interview questions that focus on the candidate's background, skills, and relevance to the role. 
+     Please generate 5 interview questions in simple, clear language that a beginner could easily understand. 
+    Focus on basic skills, job role expectations, and how the candidate's background relates to the role.
     Please number the questions.
     """
 
@@ -25,7 +26,7 @@ def generate_interview_questions(industry, experience_level, interview_type, job
             {"role": "system", "content": "You are an expert interview question generator."},
             {"role": "user", "content": prompt}
         ],
-        max_tokens=500
+        max_tokens=250
     )
 
     response_text = completion.choices[0].message.content

@@ -38,7 +38,7 @@ const Record: React.FC = () => {
   const router = useRouter();
   const { jobId } = useLocalSearchParams();
 
-  const [questions, setQuestions] = useState<string[]>([]); // State for questions
+  const [questions, setQuestions] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -55,7 +55,11 @@ const Record: React.FC = () => {
     const fetchQuestions = async () => {
       try {
         const fetchedQuestions = await getQuestions(jobId);
-        setQuestions(fetchedQuestions);
+
+        // Assuming fetchedQuestions is an array of objects with a 'question' field
+        const questionTexts = fetchedQuestions.map((q) => q.question);
+
+        setQuestions(questionTexts);
       } catch (error) {
         Alert.alert("Error", error.message);
       }
@@ -207,9 +211,7 @@ const Record: React.FC = () => {
             >
               {isRecording
                 ? formatTime(recordingTime)
-                : `${currentQuestionIndex + 1}. ${
-                    questions[currentQuestionIndex] || ""
-                  }`}
+                : ` ${questions[currentQuestionIndex] || ""}`}
             </Text>
 
             <TouchableOpacity

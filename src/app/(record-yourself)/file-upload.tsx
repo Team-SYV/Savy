@@ -98,11 +98,16 @@ const FileUpload = () => {
       formData.append("job_role", job_role);
 
       const questions = await generateQuestions(formData);
+      console.log("Generated Questions: ", questions);
 
       for (const question of questions) {
-        await createQuestions(jobId, { question });  
+        if (typeof question === "string") {
+          await createQuestions(jobId, { question });
+        } else {
+          console.error("Invalid question format:", question);
+        }
       }
-      
+
       router.push(`/(record-yourself)/record?jobId=${jobId}`);
     } catch (error) {
       Alert.alert("Upload Failed", error.message);
