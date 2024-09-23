@@ -70,35 +70,37 @@ const FileUpload = () => {
     setLoading(true);
 
     try {
+      // Fetch the job information
       const jobInfo = await getJobInformation(jobId);
       const {
         industry,
-        experience_level,
-        interview_type,
-        job_description,
+        experience,
+        type,
         company_name,
-        job_role,
+        role,
+        job_description,
       } = jobInfo;
-
       const fileUri = selectedFile.uri;
 
       const formData = new FormData();
+
       formData.append("file", {
         uri: fileUri,
         name: selectedFile.name,
-        type: selectedFile.type || "application/pdf",
-      } as any);
+        type: "application/pdf",
+      } as unknown as Blob);
 
       formData.append("industry", industry);
-      formData.append("experience_level", experience_level);
-      formData.append("interview_type", interview_type);
-      formData.append("job_description", job_description);
+      formData.append("job_role", role);
+      formData.append("interview_type", type);
+      formData.append("experience_level", experience);
       formData.append("company_name", company_name);
-      formData.append("job_role", job_role);
+      formData.append("job_description", job_description);
 
       console.log(formData);
 
       const questions = await generateQuestions(formData);
+      
       console.log("Generated Questions: ", questions);
 
       for (const question of questions) {
