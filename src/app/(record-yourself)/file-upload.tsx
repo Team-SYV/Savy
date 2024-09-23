@@ -8,9 +8,7 @@ import ProgressBar from "react-native-progress/Bar";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
 import { Image } from "react-native";
-import { supabase } from "@/utils/supabase";
-import * as FileSystem from "expo-file-system";
-import { generateQuestions, getJobInformation } from "@/api";
+import { createQuestions, generateQuestions, getJobInformation } from "@/api";
 
 const FileUpload = () => {
   const router = useRouter();
@@ -73,7 +71,6 @@ const FileUpload = () => {
     try {
       setUploadProgress(0);
 
-      // Fetch job information using jobId
       const jobInfo = await getJobInformation(jobId);
       const {
         industry,
@@ -90,8 +87,8 @@ const FileUpload = () => {
       formData.append("file", {
         uri: fileUri,
         name: selectedFile.name,
-        type: selectedFile.type || "application/pdf", // Ensure a type is set
-      } as any); // Type assertion to bypass TypeScript checking
+        type: selectedFile.type || "application/pdf",
+      } as any);
 
       formData.append("industry", industry);
       formData.append("experience_level", experience_level);
@@ -101,10 +98,12 @@ const FileUpload = () => {
       formData.append("job_role", job_role);
 
       const questions = await generateQuestions(formData);
-      console.log("Generated Questions: ", questions);
 
-      // Proceed to the next screen with the generated questions if needed
-      router.push("/(record-yourself)/record");
+      for (const question of questions) {
+        await createQuestions(jobId, { question });  
+      }
+      
+      router.push(`/(record-yourself)/record?jobId=${jobId}`);
     } catch (error) {
       Alert.alert("Upload Failed", error.message);
     }

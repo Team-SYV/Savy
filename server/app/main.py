@@ -7,9 +7,11 @@ from app.jobInformation import get_job_information as fetch_job_info
 from app.interview import create_interview
 from app.pdf_to_text import convert_pdf_to_text
 from app.question_generator import generate_interview_questions
+from app.questions import create_questions, get_questions
 
 import os
 import logging
+
 
 logging.basicConfig(level=logging.DEBUG)
 app = FastAPI()
@@ -78,3 +80,23 @@ async def generate_questions(
     except Exception as e:
         logging.error(f"Error generating questions: {e}")
         raise HTTPException(status_code=500, detail="Failed to generate questions")
+
+@app.post("/api/questions/create/{job_id}")
+async def create_questions_endpoint(job_id: str, request: Request):
+    try:
+        data = await request.json()
+        # Add job_id to the request data
+        data['job_information_id'] = job_id
+        
+        # Call the function to create the questions
+        response = create_questions(data, supabase)
+        
+        return response
+    except Exception as e:
+        logging.error(f"Error creating question: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create question")
+
+@app.get("/api/questions/{job_id}")
+async def get_questions_endpoint(job_id: str):
+    questions = get_questions(job_id, supabase)
+    return {"questions": questions}

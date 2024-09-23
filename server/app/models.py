@@ -23,3 +23,7 @@ class JobInformationCreate(BaseModel):
     company_name:Optional [str] = None
     job_description: Optional [str] = None
 
+class QuestionsCreate(BaseModel):
+    job_information_id: str
+    question: str
+

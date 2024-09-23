@@ -40,3 +40,28 @@ export const generateQuestions = async (formData) => {
     );
   }
 };
+
+export const createQuestions = async (jobId, questionData) => {
+  try {
+    const response = await api.post(
+      `/api/questions/create/${jobId}`,
+      questionData
+    );
+    return response.data.message;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.detail || "Failed to create questions"
+    );
+  }
+};
+
+export const getQuestions = async (jobId) => {
+  try {
+    const response = await api.get(`/api/questions/${jobId}`);
+    return response.data.questions;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.detail || "Failed to retrieve questions"
+    );
+  }
+};
