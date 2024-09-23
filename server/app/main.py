@@ -3,12 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.utils import get_supabase_client
 from app.webhooks import clerk_webhook_handler
 from app.jobInformation import create_job_information as create_job_info
+from app.jobInformation import get_job_information as fetch_job_info
 from app.interview import create_interview
+from app.pdf_to_text import convert_pdf_to_text
+from app.question_generator import generate_interview_questions
+from app.questions import create_questions, get_questions
 
 import os
 import logging
-
-from app.pdf_to_text import convert_pdf_to_text
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -36,25 +38,65 @@ async def webhook_handler(request: Request, response: Response):
 async def create_job_information(request: Request):
     job_data = await request.json()
     return create_job_info(job_data, supabase)
-    
+
+@app.get("/api/job_information/{job_id}/")
+async def get_job_information(job_id: str):
+    return fetch_job_info(job_id, supabase) 
+
 @app.post("/api/interview/create")
 async def create_interview_endpoint(request: Request):
     interview_data = await request.json()
     return create_interview(interview_data, supabase)
 
-@app.post("/api/convert-pdf/")
-async def convert_pdf_endpoint(file: UploadFile = File(...)):
+@app.post("/api/generate-questions/")
+async def generate_questions(
+    file: UploadFile = File(...),
+    industry: str = None,
+    experience_level: str = None,
+    interview_type: str = None,
+    job_description: str = None,
+    company_name: str = None,
+    job_role: str = None,
+):
     try:
-        file_location = f"/tmp/{file.filename}"
-        with open(file_location, "wb") as f:
-            f.write(await file.read())
+        file_path = f"/tmp/{file.filename}"
+        with open(file_path, "wb") as buffer:
+            buffer.write(await file.read())
 
-        extracted_text = convert_pdf_to_text(file_location)
+        resume_text = convert_pdf_to_text(file_path)
 
-        os.remove(file_location)
+        questions = generate_interview_questions(
+            industry=industry,
+            experience_level=experience_level,
+            interview_type=interview_type,
+            job_description=job_description,
+            company_name=company_name,
+            job_role=job_role,
+            resume_text=resume_text,
+        )
 
-        return {"text": extracted_text}
+        return {"questions": questions}
     
     except Exception as e:
-        logging.error(f"Error processing PDF: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to process PDF file")
+        logging.error(f"Error generating questions: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate questions")
+
+@app.post("/api/questions/create/{job_id}")
+async def create_questions_endpoint(job_id: str, request: Request):
+    try:
+        data = await request.json()
+        # Add job_id to the request data
+        data['job_information_id'] = job_id
+        
+        # Call the function to create the questions
+        response = create_questions(data, supabase)
+        
+        return response
+    except Exception as e:
+        logging.error(f"Error creating question: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create question")
+
+@app.get("/api/questions/{job_id}")
+async def get_questions_endpoint(job_id: str):
+    questions = get_questions(job_id, supabase)
+    return {"questions": questions}

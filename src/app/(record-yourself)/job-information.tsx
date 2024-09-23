@@ -127,7 +127,6 @@ const JobInformation = () => {
     }
   };
 
-  // Closes the confirmation modal, navigates back.
   const handleDiscardChanges = () => {
     setModalVisible(false);
     setHasChanges(false);

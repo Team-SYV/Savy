@@ -33,3 +33,13 @@ def create_job_information(job_data: dict, supabase: Client):
 
     return {"message": "Job information created successfully", "id": response.data[0]['id']}
 
+def get_job_information(job_id: str, supabase: Client):
+    response = supabase.table('job_information').select('*').eq('id', job_id).execute()
+
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Job information not found")
+
+    if hasattr(response, 'error') and response.error:
+        raise HTTPException(status_code=500, detail="Failed to retrieve job information")
+
+    return response.data[0]

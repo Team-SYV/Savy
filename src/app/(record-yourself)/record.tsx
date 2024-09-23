@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Camera, CameraView } from "expo-camera";
-import { Stack, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Video, ResizeMode } from "expo-av";
 import NextModal from "@/components/Modal/NextModal";
 import ConfirmationModal from "@/components/Modal/ConfirmationModal";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
-import { supabase } from "@/utils/supabase";
-import { useUser } from "@clerk/clerk-expo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import {
   StyleSheet,
@@ -17,7 +15,7 @@ import {
   FlatList,
   Alert,
 } from "react-native";
-import { createInterview } from "@/api";
+import { getQuestions } from "@/api";
 
 const Record: React.FC = () => {
   const cameraRef = useRef(null);
@@ -37,8 +35,10 @@ const Record: React.FC = () => {
     boolean | null
   >(null);
 
-  const { user, isLoaded, isSignedIn } = useUser();
-  const router = useRouter(); // Use the router for navigation
+  const router = useRouter();
+  const { jobId } = useLocalSearchParams();
+
+  const [questions, setQuestions] = useState<string[]>([]); // State for questions
 
   useEffect(() => {
     (async () => {
@@ -50,6 +50,18 @@ const Record: React.FC = () => {
       setHasMicrophonePermission(microphonePermission.status === "granted");
     })();
   }, []);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const fetchedQuestions = await getQuestions(jobId);
+        setQuestions(fetchedQuestions);
+      } catch (error) {
+        Alert.alert("Error", error.message);
+      }
+    };
+    fetchQuestions();
+  }, [jobId]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -71,39 +83,6 @@ const Record: React.FC = () => {
     }
     return () => clearInterval(timer);
   }, [isRecording]);
-
-  const uploadVideoToSupabase = async (videoUri: string) => {
-    try {
-      const videoBlob = await (await fetch(videoUri)).blob();
-      const fileName = `video_${Date.now()}.mp4`;
-
-      const { error } = await supabase.storage
-        .from("videos")
-        .upload(fileName, videoBlob, {
-          contentType: "video/mp4",
-        });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const { data: publicUrlData } = supabase.storage
-        .from("videos")
-        .getPublicUrl(fileName);
-
-      if (!publicUrlData.publicUrl) {
-        throw new Error(
-          "Unable to retrieve public URL for the uploaded video."
-        );
-      }
-
-      Alert.alert("Upload Success", "Video uploaded successfully!");
-      console.log("Video public URL:", publicUrlData.publicUrl);
-    } catch (error) {
-      console.error("Video upload failed:", error.message);
-      Alert.alert("Upload Failed", error.message);
-    }
-  };
 
   // Check if permission has been granted
   if (hasCameraPermission === null || hasMicrophonePermission === null) {
@@ -130,9 +109,6 @@ const Record: React.FC = () => {
         const recordedVideo = await cameraRef.current.recordAsync();
         setRecordedVideos((prev) => [...prev, recordedVideo.uri]);
         setIsModalVisible(true);
-
-        const videoUrl = await uploadVideoToSupabase(recordedVideo.uri);
-        await createInterview(videoUrl);
       } catch (error) {
         console.error("Error recording video:", error);
       } finally {
@@ -153,13 +129,13 @@ const Record: React.FC = () => {
   };
 
   // Sample Questions
-  const questions = [
-    "Tell me about yourself.",
-    "What are your greatest strengths?",
-    "How do you prioritize your tasks?",
-    "Why should we hire you?",
-    "Describe a challenging situation you faced at work and how you handled it.",
-  ];
+  // const questions = [
+  //   "Tell me about yourself.",
+  //   "What are your greatest strengths?",
+  //   "How do you prioritize your tasks?",
+  //   "Why should we hire you?",
+  //   "Describe a challenging situation you faced at work and how you handled it.",
+  // ];
 
   // Going to next question
   const handleNext = () => {

@@ -15,24 +15,53 @@ export const createJobInformation = async (jobData) => {
   }
 };
 
-export const uploadResume = async (file) => {
-  const formData = new FormData();
-  formData.append("file", {
-    uri: file.uri,
-    type: 'application/pdf',
-    name: file.name,
-  });
-
+export const getJobInformation = async (jobId) => {
   try {
-    const response = await api.post("/api/convert-pdf/", formData, {
-      headers: {
-        "Content-Type": "application/pdf",
-      },
-    });
-    return response.data.text;  
+    const response = await api.get(`/api/job_information/${jobId}/`);
+    return response.data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.detail || "Failed to upload resume"
+      error.response?.data?.detail || "Failed to retrieve job information"
+    );
+  }
+};
+
+export const generateQuestions = async (formData) => {
+  try {
+    const response = await api.post("/api/generate-questions/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data.questions;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.detail || "Failed to generate interview questions"
+    );
+  }
+};
+
+export const createQuestions = async (jobId, questionData) => {
+  try {
+    const response = await api.post(
+      `/api/questions/create/${jobId}`,
+      questionData
+    );
+    return response.data.message;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.detail || "Failed to create questions"
+    );
+  }
+};
+
+export const getQuestions = async (jobId) => {
+  try {
+    const response = await api.get(`/api/questions/${jobId}`);
+    return response.data.questions;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.detail || "Failed to retrieve questions"
     );
   }
 };
