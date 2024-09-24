@@ -18,6 +18,8 @@ import {
 import { getQuestions } from "@/api";
 
 const Record: React.FC = () => {
+  const router = useRouter();
+  const { jobId } = useLocalSearchParams();
   const cameraRef = useRef(null);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [recordingTime, setRecordingTime] = useState(60);
@@ -28,17 +30,14 @@ const Record: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
 
+  const [questions, setQuestions] = useState<string[]>([]);
+
   const [hasCameraPermission, setHasCameraPermission] = useState<
     boolean | null
   >(null);
   const [hasMicrophonePermission, setHasMicrophonePermission] = useState<
     boolean | null
   >(null);
-
-  const router = useRouter();
-  const { jobId } = useLocalSearchParams();
-
-  const [questions, setQuestions] = useState<string[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -56,7 +55,6 @@ const Record: React.FC = () => {
       try {
         const fetchedQuestions = await getQuestions(jobId);
 
-        // Assuming fetchedQuestions is an array of objects with a 'question' field
         const questionTexts = fetchedQuestions.map((q) => q.question);
 
         setQuestions(questionTexts);
@@ -132,15 +130,6 @@ const Record: React.FC = () => {
     }
   };
 
-  // Sample Questions
-  // const questions = [
-  //   "Tell me about yourself.",
-  //   "What are your greatest strengths?",
-  //   "How do you prioritize your tasks?",
-  //   "Why should we hire you?",
-  //   "Describe a challenging situation you faced at work and how you handled it.",
-  // ];
-
   // Going to next question
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
@@ -162,7 +151,7 @@ const Record: React.FC = () => {
 
   // Sample function to show the recorded videos
   const renderVideoItem = ({ item }: { item: string }) => (
-    <View className="pb-12">
+    <View className="pb-6">
       <Video
         source={{ uri: item }}
         style={styles.video}
@@ -175,7 +164,17 @@ const Record: React.FC = () => {
 
   return (
     <View className="flex-1 justify-center">
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen
+        options={{
+          headerShown: allQuestionsRecorded,
+          headerLeft: () =>
+            allQuestionsRecorded && (
+              <TouchableOpacity onPress={() => router.push("/home")}>
+                <AntDesign name="arrowleft" size={24} color="white" />
+              </TouchableOpacity>
+            ),
+        }}
+      />
       {allQuestionsRecorded ? (
         <FlatList
           data={recordedVideos}
@@ -265,6 +264,6 @@ const styles = StyleSheet.create({
   },
   video: {
     width: "100%",
-    height: 700,
+    height: 680,
   },
 });

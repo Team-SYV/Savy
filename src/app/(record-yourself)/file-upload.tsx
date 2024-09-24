@@ -6,18 +6,19 @@ import { Ionicons } from "@expo/vector-icons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import ProgressBar from "react-native-progress/Bar";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { useUser } from "@clerk/clerk-expo";
 import { Image } from "react-native";
 import { createQuestions, generateQuestions, getJobInformation } from "@/api";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const FileUpload = () => {
   const router = useRouter();
-  const { user, isLoaded, isSignedIn } = useUser();
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [loading, setLoading] = useState(false);
   const { jobId } = useLocalSearchParams();
 
+  // Pick the file
   const handleFilePick = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
@@ -25,7 +26,9 @@ const FileUpload = () => {
       });
 
       if (result.canceled) {
-        Alert.alert("File Selection", "You did not select any file.");
+        if (!selectedFile) {
+          Alert.alert("File Selection", "You did not select any file.");
+        }
       } else if (result.assets && result.assets.length > 0) {
         setSelectedFile(result.assets[0]);
         setFileName(result.assets[0].name);
@@ -44,22 +47,18 @@ const FileUpload = () => {
       }
     } catch (error) {
       console.error(error);
-      Alert.alert("Error", "There was an issue picking the file.");
     }
   };
 
+  // Remove file
   const handleRemoveFile = () => {
     setSelectedFile(null);
     setFileName("");
     setUploadProgress(0);
   };
 
+  // Handles starting the interview by uploading the resume and generating questions
   const handleStartInterview = async () => {
-    if (!isLoaded || !isSignedIn || !user) {
-      Alert.alert("Error", "User not authenticated.");
-      return;
-    }
-
     if (!selectedFile) {
       Alert.alert(
         "No file uploaded",
@@ -68,39 +67,44 @@ const FileUpload = () => {
       return;
     }
 
-    try {
-      setUploadProgress(0);
+    setLoading(true);
 
+    try {
+      // Fetch the job information
       const jobInfo = await getJobInformation(jobId);
       const {
         industry,
-        experience_level,
-        interview_type,
-        job_description,
+        experience,
+        type,
         company_name,
-        job_role,
+        role,
+        job_description,
       } = jobInfo;
-
       const fileUri = selectedFile.uri;
 
       const formData = new FormData();
+
       formData.append("file", {
         uri: fileUri,
         name: selectedFile.name,
-        type: selectedFile.type || "application/pdf",
-      } as any);
+        type: "application/pdf",
+      } as unknown as Blob);
 
+      // Append job info to formData for question generation
       formData.append("industry", industry);
-      formData.append("experience_level", experience_level);
-      formData.append("interview_type", interview_type);
+      formData.append("experience_level", experience);
+      formData.append("interview_type", type);
       formData.append("job_description", job_description);
       formData.append("company_name", company_name);
-      formData.append("job_role", job_role);
+      formData.append("job_role", role);
 
+      console.log("form Data:",formData);
+
+       // Generate questions
       const questions = await generateQuestions(formData);
-      console.log("Generated Questions: ", questions);
-
+      
       for (const question of questions) {
+        // Create question to db
         if (typeof question === "string") {
           await createQuestions(jobId, { question });
         } else {
@@ -111,10 +115,15 @@ const FileUpload = () => {
       router.push(`/(record-yourself)/record?jobId=${jobId}`);
     } catch (error) {
       Alert.alert("Upload Failed", error.message);
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <View className="flex-1 bg-white">
+      <Spinner visible={loading} color="#00AACE" />
+
       <View className="flex-1 mt-28 px-4">
         <Text className="text-xl text-gray-800 font-medium mb-4">
           Upload Your Resume
@@ -182,6 +191,7 @@ const FileUpload = () => {
           onPress={handleStartInterview}
           containerStyles="bg-[#00AACE] h-[55px] w-full rounded-2xl"
           textStyles="text-white text-[17px]"
+          disabled={loading}
         />
       </View>
     </View>

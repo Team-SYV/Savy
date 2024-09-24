@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request, Response, status, UploadFile, File
+from fastapi import FastAPI, Form, HTTPException, Request, Response, status, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from app.utils import get_supabase_client
 from app.webhooks import clerk_webhook_handler
@@ -51,13 +51,14 @@ async def create_interview_endpoint(request: Request):
 @app.post("/api/generate-questions/")
 async def generate_questions(
     file: UploadFile = File(...),
-    industry: str = None,
-    experience_level: str = None,
-    interview_type: str = None,
-    job_description: str = None,
-    company_name: str = None,
-    job_role: str = None,
+    industry: str = Form(None),
+    experience_level: str = Form(None),
+    interview_type: str = Form(None),
+    job_description: str = Form(None),
+    company_name: str = Form(None),
+    job_role: str = Form(None),
 ):
+    logging.info(f"Received data: {locals()}")
     try:
         file_path = f"/tmp/{file.filename}"
         with open(file_path, "wb") as buffer:
