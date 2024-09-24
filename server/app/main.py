@@ -50,7 +50,7 @@ async def create_interview_endpoint(request: Request):
 
 @app.post("/api/generate-questions/")
 async def generate_questions(
-    file: UploadFile = File(...),
+    file: UploadFile = File(None),  # Make file optional
     industry: str = Form(None),
     experience_level: str = Form(None),
     interview_type: str = Form(None),
@@ -59,13 +59,22 @@ async def generate_questions(
     job_role: str = Form(None),
 ):
     logging.info(f"Received data: {locals()}")
+    
+    resume_text = None
+    
+    if file:
+        try:
+            file_path = f"/tmp/{file.filename}"
+            with open(file_path, "wb") as buffer:
+                buffer.write(await file.read())
+
+            resume_text = convert_pdf_to_text(file_path)
+
+        except Exception as e:
+            logging.error(f"Error reading file: {e}")
+            raise HTTPException(status_code=500, detail="Failed to process the uploaded file")
+
     try:
-        file_path = f"/tmp/{file.filename}"
-        with open(file_path, "wb") as buffer:
-            buffer.write(await file.read())
-
-        resume_text = convert_pdf_to_text(file_path)
-
         questions = generate_interview_questions(
             industry=industry,
             experience_level=experience_level,
@@ -73,15 +82,15 @@ async def generate_questions(
             job_description=job_description,
             company_name=company_name,
             job_role=job_role,
-            resume_text=resume_text,
+            resume_text=resume_text, 
         )
 
         return {"questions": questions}
-    
+
     except Exception as e:
         logging.error(f"Error generating questions: {e}")
         raise HTTPException(status_code=500, detail="Failed to generate questions")
-
+    
 @app.post("/api/questions/create/{job_id}")
 async def create_questions_endpoint(job_id: str, request: Request):
     try:

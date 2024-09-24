@@ -8,7 +8,12 @@ import ConfirmationModal from "@/components/Modal/ConfirmationModal";
 import { JobInfoData } from "@/types/JobInfo";
 import * as Haptics from "expo-haptics";
 import { steps } from "@/constants/constants";
-import { createJobInformation } from "@/api";
+import {
+  createJobInformation,
+  createQuestions,
+  generateQuestions,
+  getJobInformation,
+} from "@/api";
 import { useUser } from "@clerk/clerk-expo";
 import RecordStepContent from "@/components/JobInfo/RecordStepContent";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -156,6 +161,68 @@ const JobInformation = () => {
     }
   };
 
+  const handleSkip = async () => {
+    try {
+      setLoading(true);
+
+      // Create job information
+      const jobData = {
+        user_id: user.user.id,
+        industry: formData.selectedIndustry,
+        role: formData.selectedJobRole,
+        type: formData.selectedInterviewType,
+        experience: formData.selectedExperienceLevel,
+        company_name: formData.companyName,
+        job_description: formData.jobDescription,
+      };
+
+      // Create job information and directly use the returned jobInformationId
+      const response = await createJobInformation(jobData);
+      const jobId = response; // Job information ID
+      setJobInformationId(jobId); // Optionally set state for future use
+
+      // Fetch the newly created job information using the returned jobInformationId
+      const jobInfo = await getJobInformation(jobId);
+      const {
+        industry,
+        experience,
+        type,
+        company_name,
+        role,
+        job_description,
+      } = jobInfo;
+
+      // Rename 'formData' to 'formPayload' to avoid conflict with state variable
+      const formPayload = new FormData();
+      formPayload.append("industry", industry);
+      formPayload.append("experience_level", experience);
+      formPayload.append("interview_type", type);
+      formPayload.append("job_description", job_description);
+      formPayload.append("company_name", company_name);
+      formPayload.append("job_role", role);
+
+      console.log("Form Data (without file):", formPayload);
+
+      // Generate questions
+      const questions = await generateQuestions(formPayload);
+
+      // Loop through each question and create them in the database
+      for (const question of questions) {
+        if (typeof question === "string") {
+          await createQuestions(jobId, { question });
+        } else {
+          console.error("Invalid question format:", question);
+        }
+      }
+
+      // Navigate to the record screen after skipping the file upload
+      router.push(`/(record-yourself)/record?jobId=${jobId}`);
+    } catch (err) {
+      console.error("Error skipping file upload:", err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <SafeAreaView className="flex-1 bg-white">
       <Spinner visible={loading} color="#00AACE" />
@@ -196,6 +263,7 @@ const JobInformation = () => {
                       updateFormData={updateFormData}
                       handleNextStep={handleNextStep}
                       handleSubmit={handleSubmit}
+                      handleSkip={handleSkip}
                       jobInformationId={jobInformationId}
                     />
                     {errors[activeStep] && (

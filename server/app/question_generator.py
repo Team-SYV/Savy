@@ -9,7 +9,7 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=OPENAI_API_KEY)
 
-def generate_interview_questions(industry, experience_level, interview_type, job_description, company_name, job_role, resume_text):
+def generate_interview_questions(industry, experience_level, interview_type, job_description, company_name, job_role, resume_text=None):
     prompt = f"""
     You are a hiring manager conducting an interview for a {job_role} position at {company_name}.
     The industry is {industry}. 
