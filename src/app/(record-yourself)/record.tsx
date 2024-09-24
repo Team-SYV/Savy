@@ -164,7 +164,17 @@ const Record: React.FC = () => {
 
   return (
     <View className="flex-1 justify-center">
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen
+        options={{
+          headerShown: allQuestionsRecorded,
+          headerLeft: () =>
+            allQuestionsRecorded && (
+              <TouchableOpacity onPress={() => router.push("/home")}>
+                <AntDesign name="arrowleft" size={24} color="white" />
+              </TouchableOpacity>
+            ),
+        }}
+      />
       {allQuestionsRecorded ? (
         <FlatList
           data={recordedVideos}
