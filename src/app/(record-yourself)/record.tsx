@@ -151,7 +151,7 @@ const Record: React.FC = () => {
 
   // Sample function to show the recorded videos
   const renderVideoItem = ({ item }: { item: string }) => (
-    <View className="pb-12">
+    <View className="pb-6">
       <Video
         source={{ uri: item }}
         style={styles.video}
@@ -264,6 +264,6 @@ const styles = StyleSheet.create({
   },
   video: {
     width: "100%",
-    height: 700,
+    height: 680,
   },
 });
