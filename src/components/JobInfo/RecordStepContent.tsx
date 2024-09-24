@@ -16,6 +16,7 @@ const RecordStepContent: React.FC<StepContentProps> = ({
   updateFormData,
   handleNextStep,
   handleSubmit,
+  handleSkip,
   jobInformationId,
 }) => {
   const router = useRouter();
@@ -37,9 +38,8 @@ const RecordStepContent: React.FC<StepContentProps> = ({
   const onSkip = async () => {
     try {
       setLoading(true);
-      await handleSubmit();
+      await handleSkip();
       setLoading(false);
-      router.push("/(record-yourself)/record");
     } catch (err) {
       setLoading(false);
     }
