@@ -48,7 +48,7 @@ const JobInformation = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [jobInformationId, setJobInformationId] = useState<string | null>(null);
 
-  // Updates the active step in a multi-step process when a step is pressed
+  // Updates the active step when a step is pressed
   const handleStepPress = useCallback((index: number) => {
     setActiveStep(index);
   }, []);
@@ -56,9 +56,7 @@ const JobInformation = () => {
   // Move to next step
   const handleNextStep = useCallback(async () => {
     if (activeStep === steps.length - 1) {
-      handleSubmit();
-      router.push("/(record-yourself)/record");
-      return;
+      await handleSkip();
     }
 
     if (!validateStep(activeStep, formData)) {
@@ -79,14 +77,14 @@ const JobInformation = () => {
     }
   }, [activeStep, formData]);
 
-  // Moves to previous step.
+  // Moves to previous step
   const handlePrevStep = useCallback(() => {
     if (activeStep > 0) {
       setActiveStep(activeStep - 1);
     }
   }, [activeStep]);
 
-  //Updates form data, marks changes.
+  // Updates form data, marks changes
   const updateFormData = (
     key: string,
     value: string | null,
@@ -114,7 +112,6 @@ const JobInformation = () => {
 
     setHasChanges(true);
 
-    // Clear errors for the current step
     if (errors[activeStep]) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -123,7 +120,6 @@ const JobInformation = () => {
     }
   };
 
-  // Button to show a confirmation modal if there are unsaved changes
   const handleBackButtonPress = () => {
     if (hasChanges) {
       setModalVisible(true);
@@ -138,6 +134,7 @@ const JobInformation = () => {
     router.back();
   };
 
+  // When proceed is clicked
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -161,11 +158,11 @@ const JobInformation = () => {
     }
   };
 
+  // When file upload is skipped
   const handleSkip = async () => {
     try {
       setLoading(true);
 
-      // Create job information
       const jobData = {
         user_id: user.user.id,
         industry: formData.selectedIndustry,
@@ -176,12 +173,12 @@ const JobInformation = () => {
         job_description: formData.jobDescription,
       };
 
-      // Create job information and directly use the returned jobInformationId
+      // Create job information
       const response = await createJobInformation(jobData);
-      const jobId = response; // Job information ID
-      setJobInformationId(jobId); // Optionally set state for future use
+      const jobId = response;
+      setJobInformationId(jobId);
 
-      // Fetch the newly created job information using the returned jobInformationId
+      // Fetch the newly created job information
       const jobInfo = await getJobInformation(jobId);
       const {
         industry,
@@ -192,7 +189,6 @@ const JobInformation = () => {
         job_description,
       } = jobInfo;
 
-      // Rename 'formData' to 'formPayload' to avoid conflict with state variable
       const formPayload = new FormData();
       formPayload.append("industry", industry);
       formPayload.append("experience_level", experience);
@@ -206,7 +202,6 @@ const JobInformation = () => {
       // Generate questions
       const questions = await generateQuestions(formPayload);
 
-      // Loop through each question and create them in the database
       for (const question of questions) {
         if (typeof question === "string") {
           await createQuestions(jobId, { question });
@@ -214,8 +209,6 @@ const JobInformation = () => {
           console.error("Invalid question format:", question);
         }
       }
-
-      // Navigate to the record screen after skipping the file upload
       router.push(`/(record-yourself)/record?jobId=${jobId}`);
     } catch (err) {
       console.error("Error skipping file upload:", err.message);
@@ -223,6 +216,7 @@ const JobInformation = () => {
       setLoading(false);
     }
   };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <Spinner visible={loading} color="#00AACE" />
