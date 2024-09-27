@@ -36,7 +36,7 @@ const Login = () => {
         <ScrollView>
           <Stack.Screen options={{ headerShown: false }} />
 
-          <View className="w-24 h-24 self-center mt-32">
+          <View className="w-24 h-24 self-center mt-36">
             <Image
               source={require("@/assets/images/savy.png")}
               className="w-full h-full"
