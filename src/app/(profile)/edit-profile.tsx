@@ -34,10 +34,20 @@ const EditProfile = () => {
     }, 3000);
   };
 
+  // Function to filter name input
+  const filterName = (text: string) => {
+    return text.replace(/[^A-Za-z\s'-]/g, '').slice(0, 50);
+  };
+
   // Handles the process of saving user profile updates.
   const handleSaveUser = async () => {
     if (!firstName.trim()) {
       showMessage("First name cannot be empty");
+      return;
+    }
+
+    if (!lastName.trim()) {
+      showMessage("Last name cannot be empty");
       return;
     }
 
@@ -124,7 +134,7 @@ const EditProfile = () => {
             title="firstName"
             placeholder="First Name"
             value={firstName}
-            onChangeText={setFirstName}
+            onChangeText={(text) => setFirstName(filterName(text))}
             otherStyles="mx-4"
           />
           <Text className="mt-6 mx-5 mb-1 text-sm font-semibold text-gray-800">
@@ -134,7 +144,7 @@ const EditProfile = () => {
             title="lastName"
             placeholder="Last Name"
             value={lastName}
-            onChangeText={setLastName}
+            onChangeText={(text) => setLastName(filterName(text))}
             otherStyles="mx-4 mb-12"
           />
 

@@ -8,6 +8,7 @@ import CustomButton from "../Button/CustomButton";
 import { View, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { StepContentProps } from "@/types/StepContent";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const RecordStepContent: React.FC<StepContentProps> = ({
   activeStep,
@@ -15,21 +16,33 @@ const RecordStepContent: React.FC<StepContentProps> = ({
   updateFormData,
   handleNextStep,
   handleSubmit,
+  handleSkip,
   jobInformationId,
 }) => {
   const router = useRouter();
   const [shouldProceed, setShouldProceed] = useState(false);
+  const [proceedClicked, setProceedClicked] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onProceed = async () => {
-    handleSubmit();
-    if (jobInformationId) {
-      router.push(`/(record-yourself)/file-upload?jobId=${jobInformationId}`);
+    try {
+      setLoading(true);
+      setProceedClicked(true);
+      await handleSubmit();
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
     }
   };
 
   const onSkip = async () => {
-    handleSubmit();
-    router.push("/(record-yourself)/record");
+    try {
+      setLoading(true);
+      await handleSkip();
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -38,6 +51,12 @@ const RecordStepContent: React.FC<StepContentProps> = ({
       setShouldProceed(false);
     }
   }, [shouldProceed]);
+
+  useEffect(() => {
+    if (proceedClicked && jobInformationId) {
+      router.push(`/(record-yourself)/file-upload?jobId=${jobInformationId}`);
+    }
+  }, [proceedClicked, jobInformationId, router]);
 
   switch (activeStep) {
     case 0:
@@ -129,11 +148,13 @@ const RecordStepContent: React.FC<StepContentProps> = ({
           value={formData.jobDescription}
           onChangeText={(text) => updateFormData("jobDescription", text)}
           placeholder="Fill in your job description"
+          textInputStyles="ml-12"
         />
       );
     case 6:
       return (
         <View>
+          <Spinner visible={loading} color="#00AACE" />
           <Text className="ml-12 mr-3 text-base">
             Do you wish to customize your interview based on your resume by
             uploading a file? If not, please skip.
@@ -144,12 +165,14 @@ const RecordStepContent: React.FC<StepContentProps> = ({
               onPress={onSkip}
               containerStyles="bg-gray-200 h-12 rounded-xl mb-4 mx-2 w-1/2"
               textStyles="text-[#00AACE] text-[16px] font-semibold text-base"
+              disabled={loading}
             />
             <CustomButton
               title="Proceed"
               onPress={onProceed}
               containerStyles="bg-[#00AACE] h-12 rounded-xl mb-4 w-1/2 mx-2"
               textStyles="text-white text-[16px] font-semibold text-base"
+              disabled={loading}
             />
           </View>
         </View>

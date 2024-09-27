@@ -16,7 +16,7 @@ __pycache__
 .DS_Store
 
 # Environment files
-# .env
+.env
 
 # Expo Prebuild
 /android/

@@ -8,7 +8,12 @@ import ConfirmationModal from "@/components/Modal/ConfirmationModal";
 import { JobInfoData } from "@/types/JobInfo";
 import * as Haptics from "expo-haptics";
 import { steps } from "@/constants/constants";
-import { createJobInformation } from "@/api";
+import {
+  createJobInformation,
+  createQuestions,
+  generateQuestions,
+  getJobInformation,
+} from "@/api";
 import { useUser } from "@clerk/clerk-expo";
 import RecordStepContent from "@/components/JobInfo/RecordStepContent";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -43,7 +48,7 @@ const JobInformation = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [jobInformationId, setJobInformationId] = useState<string | null>(null);
 
-  // Updates the active step in a multi-step process when a step is pressed
+  // Updates the active step when a step is pressed
   const handleStepPress = useCallback((index: number) => {
     setActiveStep(index);
   }, []);
@@ -51,9 +56,7 @@ const JobInformation = () => {
   // Move to next step
   const handleNextStep = useCallback(async () => {
     if (activeStep === steps.length - 1) {
-      handleSubmit();
-      router.push("/(record-yourself)/record");
-      return;
+      await handleSkip();
     }
 
     if (!validateStep(activeStep, formData)) {
@@ -74,14 +77,14 @@ const JobInformation = () => {
     }
   }, [activeStep, formData]);
 
-  // Moves to previous step.
+  // Moves to previous step
   const handlePrevStep = useCallback(() => {
     if (activeStep > 0) {
       setActiveStep(activeStep - 1);
     }
   }, [activeStep]);
 
-  //Updates form data, marks changes.
+  // Updates form data, marks changes
   const updateFormData = (
     key: string,
     value: string | null,
@@ -109,7 +112,6 @@ const JobInformation = () => {
 
     setHasChanges(true);
 
-    // Clear errors for the current step
     if (errors[activeStep]) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -118,7 +120,6 @@ const JobInformation = () => {
     }
   };
 
-  // Button to show a confirmation modal if there are unsaved changes
   const handleBackButtonPress = () => {
     if (hasChanges) {
       setModalVisible(true);
@@ -127,14 +128,13 @@ const JobInformation = () => {
     }
   };
 
-  // Closes the confirmation modal, navigates back.
   const handleDiscardChanges = () => {
     setModalVisible(false);
     setHasChanges(false);
     router.back();
   };
 
-  // Submits the job information
+  // When proceed is clicked
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -150,10 +150,68 @@ const JobInformation = () => {
       };
 
       const response = await createJobInformation(jobData);
-      console.log(response);
       setJobInformationId(response);
     } catch (error) {
       console.error("Error creating job description:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // When file upload is skipped
+  const handleSkip = async () => {
+    try {
+      setLoading(true);
+
+      const jobData = {
+        user_id: user.user.id,
+        industry: formData.selectedIndustry,
+        role: formData.selectedJobRole,
+        type: formData.selectedInterviewType,
+        experience: formData.selectedExperienceLevel,
+        company_name: formData.companyName,
+        job_description: formData.jobDescription,
+      };
+
+      // Create job information
+      const response = await createJobInformation(jobData);
+      const jobId = response;
+      setJobInformationId(jobId);
+
+      // Fetch the newly created job information
+      const jobInfo = await getJobInformation(jobId);
+      const {
+        industry,
+        experience,
+        type,
+        company_name,
+        role,
+        job_description,
+      } = jobInfo;
+
+      const formPayload = new FormData();
+      formPayload.append("industry", industry);
+      formPayload.append("experience_level", experience);
+      formPayload.append("interview_type", type);
+      formPayload.append("job_description", job_description);
+      formPayload.append("company_name", company_name);
+      formPayload.append("job_role", role);
+
+      console.log("Form Data (without file):", formPayload);
+
+      // Generate questions
+      const questions = await generateQuestions(formPayload);
+
+      for (const question of questions) {
+        if (typeof question === "string") {
+          await createQuestions(jobId, { question });
+        } else {
+          console.error("Invalid question format:", question);
+        }
+      }
+      router.push(`/(record-yourself)/record?jobId=${jobId}`);
+    } catch (err) {
+      console.error("Error skipping file upload:", err.message);
     } finally {
       setLoading(false);
     }
@@ -199,6 +257,7 @@ const JobInformation = () => {
                       updateFormData={updateFormData}
                       handleNextStep={handleNextStep}
                       handleSubmit={handleSubmit}
+                      handleSkip={handleSkip}
                       jobInformationId={jobInformationId}
                     />
                     {errors[activeStep] && (
@@ -227,6 +286,7 @@ const JobInformation = () => {
             containerStyles="bg-[#00AACE] h-14 rounded-xl mb-4 w-1/2 mx-2"
             textStyles="text-white text-[16px] font-semibold text-base"
             isLoading={loading}
+            disabled={loading}
           />
         </View>
 

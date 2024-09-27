@@ -4,23 +4,24 @@ import React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import Logout from "@/components/Profile/Logout";
+import Subscribe from "@/components/Profile/Subscribe";
+import ShareFeedback from "@/components/Profile/ShareFeedback";
 
 const Profile = () => {
   const { user } = useUser();
 
   return (
-    <View className="pt-12 bg-white min-h-full">
-      <View className="relative flex-row items-center justify-center">
+    <View className="pt-16 bg-white min-h-full">
+      <View className="flex items-center justify-center> mb-4">
         <Link href="/(profile)/edit-profile">
           <View style={{ position: "relative" }}>
             <Image
               source={{ uri: user?.imageUrl }}
-              className="w-20 h-20 rounded-full border-2 border-[#008FAE]"
+              className="w-32 h-32 rounded-full border-2 border-[#008FAE]"
             />
-
             <MaterialCommunityIcons
               name="pencil"
-              size={16}
+              size={18}
               color="#008FAE"
               style={{
                 position: "absolute",
@@ -38,23 +39,20 @@ const Profile = () => {
             />
           </View>
         </Link>
-
-        <View className="flex-col ml-2">
-          <Text className="text-lg font-medium ml-1">
-            {user?.firstName} {user?.lastName}
-          </Text>
-
-          <Text className="font-normal ml-1">
-            {user?.emailAddresses[0].emailAddress}
-          </Text>
-        </View>
-
-        <Image
-          source={require("@/assets/icons/gold-medal.png")}
-          className="w-14 h-14 ml-12"
-        />
       </View>
 
+      <View className="flex-col ml-2">
+        <Text className="text-2xl font-medium text-center mb-1">
+          {user?.firstName} {user?.lastName}
+        </Text>
+
+        <Text className="font-normal ml-1 text-center">
+          {user?.emailAddresses[0].emailAddress}
+        </Text>
+      </View>
+
+      <Subscribe />
+      <ShareFeedback />
       <Logout />
     </View>
   );

@@ -20,14 +20,10 @@ class JobInformationCreate(BaseModel):
     role: str
     type: str
     experience: str
-    company_name: str
-    job_description: str
-    resume: Optional[str] = None
+    company_name:Optional [str] = None
+    job_description: Optional [str] = None
 
-class JobInformationUpdate(BaseModel):
-    id: str
-    resume: str
+class QuestionsCreate(BaseModel):
+    job_information_id: str
+    question: str
 
-class InterviewCreate(BaseModel):
-    user_id: str
-    video: Optional[str]

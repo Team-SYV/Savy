@@ -1,9 +1,9 @@
 from fastapi import HTTPException
 from supabase import Client
-from .models import JobInformationCreate, JobInformationUpdate
+from .models import JobInformationCreate
 
 def create_job_information(job_data: dict, supabase: Client):
-    required_fields = ['user_id', 'industry', 'role', 'type', 'experience', 'company_name', 'job_description']
+    required_fields = ['user_id', 'industry', 'role', 'type', 'experience']
     for field in required_fields:
         if not job_data.get(field):
             raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
@@ -33,22 +33,13 @@ def create_job_information(job_data: dict, supabase: Client):
 
     return {"message": "Job information created successfully", "id": response.data[0]['id']}
 
-def update_job_information_with_resume(resume_data: dict, supabase: Client):
-    required_fields = ['id', 'resume']
-    for field in required_fields:
-        if not resume_data.get(field):
-            raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+def get_job_information(job_id: str, supabase: Client):
+    response = supabase.table('job_information').select('*').eq('id', job_id).execute()
 
-    job_update = JobInformationUpdate(
-        id=resume_data['id'],
-        resume=resume_data['resume']  
-    )
-
-    response = supabase.table('job_information').update({
-        'resume': job_update.resume
-    }).eq('id', job_update.id).execute()
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Job information not found")
 
     if hasattr(response, 'error') and response.error:
-        raise HTTPException(status_code=500, detail="Failed to update resume")
+        raise HTTPException(status_code=500, detail="Failed to retrieve job information")
 
-    return {"message": "Resume updated successfully"}
+    return response.data[0]

@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Camera, CameraView } from "expo-camera";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { Video, ResizeMode } from "expo-av";
 import NextModal from "@/components/Modal/NextModal";
+import ConfirmationModal from "@/components/Modal/ConfirmationModal";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
-import { supabase } from "@/utils/supabase";
-import { useUser } from "@clerk/clerk-expo";
-
+import AntDesign from "@expo/vector-icons/AntDesign";
 import {
   StyleSheet,
   Text,
@@ -16,9 +15,11 @@ import {
   FlatList,
   Alert,
 } from "react-native";
-import { createInterview } from "@/api";
+import { getQuestions } from "@/api";
 
 const Record: React.FC = () => {
+  const router = useRouter();
+  const { jobId } = useLocalSearchParams();
   const cameraRef = useRef(null);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [recordingTime, setRecordingTime] = useState(60);
@@ -27,6 +28,9 @@ const Record: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [allQuestionsRecorded, setAllQuestionsRecorded] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
+
+  const [questions, setQuestions] = useState<string[]>([]);
 
   const [hasCameraPermission, setHasCameraPermission] = useState<
     boolean | null
@@ -34,8 +38,6 @@ const Record: React.FC = () => {
   const [hasMicrophonePermission, setHasMicrophonePermission] = useState<
     boolean | null
   >(null);
-
-  const { user, isLoaded, isSignedIn } = useUser();
 
   useEffect(() => {
     (async () => {
@@ -47,6 +49,21 @@ const Record: React.FC = () => {
       setHasMicrophonePermission(microphonePermission.status === "granted");
     })();
   }, []);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const fetchedQuestions = await getQuestions(jobId);
+
+        const questionTexts = fetchedQuestions.map((q) => q.question);
+
+        setQuestions(questionTexts);
+      } catch (error) {
+        Alert.alert("Error", error.message);
+      }
+    };
+    fetchQuestions();
+  }, [jobId]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -68,39 +85,6 @@ const Record: React.FC = () => {
     }
     return () => clearInterval(timer);
   }, [isRecording]);
-
-  const uploadVideoToSupabase = async (videoUri: string) => {
-    try {
-      const videoBlob = await (await fetch(videoUri)).blob();
-      const fileName = `video_${Date.now()}.mp4`;
-
-      const { error } = await supabase.storage
-        .from("videos") 
-        .upload(fileName, videoBlob, {
-          contentType: "video/mp4",
-        });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      const { data: publicUrlData } = supabase.storage
-        .from("videos")
-        .getPublicUrl(fileName);
-
-      if (!publicUrlData.publicUrl) {
-        throw new Error(
-          "Unable to retrieve public URL for the uploaded video."
-        );
-      }
-
-      Alert.alert("Upload Success", "Video uploaded successfully!");
-      console.log("Video public URL:", publicUrlData.publicUrl);
-    } catch (error) {
-      console.error("Video upload failed:", error.message);
-      Alert.alert("Upload Failed", error.message);
-    }
-  };
 
   // Check if permission has been granted
   if (hasCameraPermission === null || hasMicrophonePermission === null) {
@@ -127,10 +111,6 @@ const Record: React.FC = () => {
         const recordedVideo = await cameraRef.current.recordAsync();
         setRecordedVideos((prev) => [...prev, recordedVideo.uri]);
         setIsModalVisible(true);
-
-        const videoUrl = await uploadVideoToSupabase(recordedVideo.uri);
-        await createInterview(videoUrl);
-
       } catch (error) {
         console.error("Error recording video:", error);
       } finally {
@@ -149,15 +129,6 @@ const Record: React.FC = () => {
       setIsModalVisible(true);
     }
   };
-
-  // Sample Questions
-  const questions = [
-    "Tell me about yourself.",
-    "What are your greatest strengths?",
-    "How do you prioritize your tasks?",
-    "Why should we hire you?",
-    "Describe a challenging situation you faced at work and how you handled it.",
-  ];
 
   // Going to next question
   const handleNext = () => {
@@ -180,7 +151,7 @@ const Record: React.FC = () => {
 
   // Sample function to show the recorded videos
   const renderVideoItem = ({ item }: { item: string }) => (
-    <View className="pb-12">
+    <View className="pb-6">
       <Video
         source={{ uri: item }}
         style={styles.video}
@@ -193,7 +164,17 @@ const Record: React.FC = () => {
 
   return (
     <View className="flex-1 justify-center">
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen
+        options={{
+          headerShown: allQuestionsRecorded,
+          headerLeft: () =>
+            allQuestionsRecorded && (
+              <TouchableOpacity onPress={() => router.push("/home")}>
+                <AntDesign name="arrowleft" size={24} color="white" />
+              </TouchableOpacity>
+            ),
+        }}
+      />
       {allQuestionsRecorded ? (
         <FlatList
           data={recordedVideos}
@@ -208,6 +189,17 @@ const Record: React.FC = () => {
           facing="front"
           ref={cameraRef}
         >
+          <View className="absolute top-14 right-4 items-center mx-2">
+            <TouchableOpacity onPress={() => setIsConfirmationVisible(true)}>
+              <AntDesign
+                name="closecircle"
+                size={33}
+                color="#A92703"
+                className="bg-white rounded-full"
+              />
+            </TouchableOpacity>
+          </View>
+
           <View className="absolute bottom-10 left-0 right-0 items-center mx-2">
             <Text
               className={`text-center mb-4 px-4 py-4 rounded-xl ${
@@ -218,9 +210,7 @@ const Record: React.FC = () => {
             >
               {isRecording
                 ? formatTime(recordingTime)
-                : `${currentQuestionIndex + 1}. ${
-                    questions[currentQuestionIndex] || ""
-                  }`}
+                : ` ${questions[currentQuestionIndex] || ""}`}
             </Text>
 
             <TouchableOpacity
@@ -246,6 +236,22 @@ const Record: React.FC = () => {
         onClose={() => setIsModalVisible(false)}
         isLastQuestion={currentQuestionIndex === questions.length - 1}
       />
+
+      <ConfirmationModal
+        isVisible={isConfirmationVisible}
+        title="Discard Recording?"
+        message={
+          <Text>
+            Exiting now will discard your progress.{"\n"}
+            Are you sure you want to leave?
+          </Text>
+        }
+        onConfirm={() => {
+          setIsConfirmationVisible(false);
+          router.push("/home");
+        }}
+        onClose={() => setIsConfirmationVisible(false)}
+      />
     </View>
   );
 };
@@ -258,6 +264,6 @@ const styles = StyleSheet.create({
   },
   video: {
     width: "100%",
-    height: 700,
+    height: 680,
   },
 });

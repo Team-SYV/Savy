@@ -6,6 +6,7 @@ import CustomFormField from "../FormField/CustomFormField";
 import CustomButton from "../Button/CustomButton";
 import { validateEmail, validatePassword } from "@/utils/validateLogin";
 import { Link } from "expo-router";
+import Toast from "react-native-toast-message";
 
 const LoginForm = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -68,13 +69,16 @@ const LoginForm = () => {
       });
       await setActive({ session: completeSignIn.createdSessionId });
     } catch (err) {
-      setErrors((prev) => ({
-        ...prev,
-        general: err.errors?.[0]?.message || "An unknown error occurred",
-      }));
-      setTimeout(() => {
-        setErrors((prev) => ({ ...prev, general: "" }));
-      }, 3000);
+      const errorMessage =
+      err.errors?.[0]?.message || "An unknown error occurred";
+
+    Toast.show({
+      text1: "Error",
+      text2: errorMessage,
+      type: "error",
+      visibilityTime: 3000
+    });
+    
     } finally {
       setLoading(false);
     }
@@ -89,7 +93,7 @@ const LoginForm = () => {
         placeholder="Email"
         value={emailAddress}
         onChangeText={(text) => handleInputChange(text, "email")}
-        otherStyles="mt-5 mb-1"
+        otherStyles="mt-5 mb-1 bg-white rounded-xl"
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -102,7 +106,7 @@ const LoginForm = () => {
         placeholder="Password"
         value={password}
         onChangeText={(text) => handleInputChange(text, "password")}
-        otherStyles="mt-5 mb-1"
+        otherStyles="mt-5 mb-1 bg-white rounded-xl"
       />
 
       <View className="flex-row items-center justify-between mt-1 mb-1">
@@ -116,12 +120,6 @@ const LoginForm = () => {
           Forgot Password?
         </Link>
       </View>
-
-      {errors.general && (
-        <Text className="text-red-500 text-sm text-center mt-2">
-          {errors.general}
-        </Text>
-      )}
 
       <CustomButton
         title="Sign In"

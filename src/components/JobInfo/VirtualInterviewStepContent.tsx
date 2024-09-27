@@ -129,6 +129,7 @@ const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
           value={formData.jobDescription}
           onChangeText={(text) => updateFormData("jobDescription", text)}
           placeholder="Fill in your job description"
+          textInputStyles="ml-12"
         />
       );
     case 6:

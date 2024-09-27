@@ -6,6 +6,7 @@ import CustomButton from "../Button/CustomButton";
 import BottomHalfModal from "../Modal/BottomHalfModal";
 import OTPTextInput from "react-native-otp-textinput";
 import CustomFormField from "../FormField/CustomFormField";
+import Toast from "react-native-toast-message";
 import {
   validateFirstName,
   validateLastName,
@@ -39,9 +40,12 @@ const RegisterForm = () => {
 
   // Handles input change and sets validation errors based on field type
   const handleInputChange = (text: string, field: keyof typeof errors) => {
+    // Allow only letters, dash, spaces, hyphens, or apostrophes, and only maximum of 50 characters
+    const filteredName = text.replace(/[^A-Za-z\s'-]/g, "").slice(0, 50);
+
     switch (field) {
       case "firstName":
-        setFirstName(text);
+        setFirstName(filteredName);
         setErrors((prev) => ({
           ...prev,
           firstName: text
@@ -50,7 +54,7 @@ const RegisterForm = () => {
         }));
         break;
       case "lastName":
-        setLastName(text);
+        setLastName(filteredName);
         setErrors((prev) => ({
           ...prev,
           lastName: text
@@ -138,13 +142,15 @@ const RegisterForm = () => {
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setPendingVerification(true);
     } catch (err) {
-      setErrors((prev) => ({
-        ...prev,
-        general: err.errors?.[0]?.message || "An unknown error occurred",
-      }));
-      setTimeout(() => {
-        setErrors((prev) => ({ ...prev, general: "" }));
-      }, 3000);
+      const errorMessage =
+        err.errors?.[0]?.message || "An unknown error occurred";
+
+      Toast.show({
+        text1: "Error",
+        text2: errorMessage,
+        type: "error",
+        visibilityTime: 3000,
+      });
     } finally {
       setLoading(false);
     }
@@ -188,7 +194,7 @@ const RegisterForm = () => {
         placeholder="First Name"
         value={firstName}
         onChangeText={(text) => handleInputChange(text, "firstName")}
-        otherStyles="mt-7 mb-1"
+        otherStyles="mt-7 mb-1 bg-white rounded-xl"
       />
       {errors.firstName && (
         <Text className="text-red-500 text-sm ml-1">{errors.firstName}</Text>
@@ -199,7 +205,7 @@ const RegisterForm = () => {
         placeholder="Last Name"
         value={lastName}
         onChangeText={(text) => handleInputChange(text, "lastName")}
-        otherStyles="mt-5 mb-1"
+        otherStyles="mt-5 mb-1 bg-white rounded-xl"
       />
       {errors.lastName && (
         <Text className="text-red-500 text-sm ml-1">{errors.lastName}</Text>
@@ -210,7 +216,7 @@ const RegisterForm = () => {
         placeholder="Email"
         value={emailAddress}
         onChangeText={(text) => handleInputChange(text, "emailAddress")}
-        otherStyles="mt-5 mb-1"
+        otherStyles="mt-5 mb-1 bg-white rounded-xl"
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -223,7 +229,7 @@ const RegisterForm = () => {
         placeholder="Password"
         value={password}
         onChangeText={(text) => handleInputChange(text, "password")}
-        otherStyles="mt-5 mb-1"
+        otherStyles="mt-5 mb-1 bg-white rounded-xl"
       />
       {errors.password && (
         <Text className="text-red-500 text-sm ml-1">{errors.password}</Text>
@@ -234,17 +240,11 @@ const RegisterForm = () => {
         placeholder="Confirm Password"
         value={confirmPassword}
         onChangeText={(text) => handleInputChange(text, "confirmPassword")}
-        otherStyles="mt-5 mb-1"
+        otherStyles="mt-5 mb-1 bg-white rounded-xl"
       />
       {errors.confirmPassword && (
         <Text className="text-red-500 text-sm ml-1">
           {errors.confirmPassword}
-        </Text>
-      )}
-
-      {errors.general && (
-        <Text className="text-red-500 text-sm ml-1 text-center mt-2">
-          {errors.general}
         </Text>
       )}
 

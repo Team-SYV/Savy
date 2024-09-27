@@ -199,8 +199,9 @@ const JobInformation = () => {
                       updateFormData={updateFormData}
                       handleNextStep={handleNextStep}
                       handleSubmit={handleSubmit}
-                      jobInformationId={jobInformationId}
-                    />
+                      jobInformationId={jobInformationId} handleSkip={function (): void {
+                        throw new Error("Function not implemented.");
+                      } }                    />
                     {errors[activeStep] && (
                       <Text className="text-red-500 ml-12">
                         {errors[activeStep]}

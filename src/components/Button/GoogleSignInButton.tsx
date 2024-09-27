@@ -25,7 +25,7 @@ const GoogleSignInButton = ({ isLoading, setIsLoading }) => {
 
   return (
     <GoogleButton
-      title="Sign in with Google"
+      title="Continue in with Google"
       onPress={onPress}
       containerStyles="mx-4 py-4"
       isLoading={isLoading}
