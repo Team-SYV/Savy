@@ -6,6 +6,7 @@ import CustomButton from "../Button/CustomButton";
 import BottomHalfModal from "../Modal/BottomHalfModal";
 import OTPTextInput from "react-native-otp-textinput";
 import CustomFormField from "../FormField/CustomFormField";
+import Toast from "react-native-toast-message";
 import {
   validateFirstName,
   validateLastName,
@@ -39,9 +40,8 @@ const RegisterForm = () => {
 
   // Handles input change and sets validation errors based on field type
   const handleInputChange = (text: string, field: keyof typeof errors) => {
-
     // Allow only letters, dash, spaces, hyphens, or apostrophes, and only maximum of 50 characters
-    const filteredName = text.replace(/[^A-Za-z\s'-]/g, '').slice(0, 50);
+    const filteredName = text.replace(/[^A-Za-z\s'-]/g, "").slice(0, 50);
 
     switch (field) {
       case "firstName":
@@ -142,13 +142,15 @@ const RegisterForm = () => {
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
       setPendingVerification(true);
     } catch (err) {
-      setErrors((prev) => ({
-        ...prev,
-        general: err.errors?.[0]?.message || "An unknown error occurred",
-      }));
-      setTimeout(() => {
-        setErrors((prev) => ({ ...prev, general: "" }));
-      }, 3000);
+      const errorMessage =
+        err.errors?.[0]?.message || "An unknown error occurred";
+
+      Toast.show({
+        text1: "Error",
+        text2: errorMessage,
+        type: "error",
+        visibilityTime: 3000,
+      });
     } finally {
       setLoading(false);
     }
@@ -243,12 +245,6 @@ const RegisterForm = () => {
       {errors.confirmPassword && (
         <Text className="text-red-500 text-sm ml-1">
           {errors.confirmPassword}
-        </Text>
-      )}
-
-      {errors.general && (
-        <Text className="text-red-500 text-sm ml-1 text-center mt-2">
-          {errors.general}
         </Text>
       )}
 
