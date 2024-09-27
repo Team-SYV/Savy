@@ -39,9 +39,13 @@ const RegisterForm = () => {
 
   // Handles input change and sets validation errors based on field type
   const handleInputChange = (text: string, field: keyof typeof errors) => {
+
+    // Allow only letters, dash, spaces, hyphens, or apostrophes, and only maximum of 50 characters
+    const filteredName = text.replace(/[^A-Za-z\s'-]/g, '').slice(0, 50);
+
     switch (field) {
       case "firstName":
-        setFirstName(text);
+        setFirstName(filteredName);
         setErrors((prev) => ({
           ...prev,
           firstName: text
@@ -50,7 +54,7 @@ const RegisterForm = () => {
         }));
         break;
       case "lastName":
-        setLastName(text);
+        setLastName(filteredName);
         setErrors((prev) => ({
           ...prev,
           lastName: text
