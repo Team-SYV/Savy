@@ -1,20 +1,54 @@
-import { sampleMessages } from "@/constants/sampleMessage";
 import { Message, Role } from "@/types/Chat";
 import { useUser } from "@clerk/clerk-expo";
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Image } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
 import * as Speech from "expo-speech";
 import { Audio } from "expo-av";
+import {
+  createQuestions,
+  generateQuestions,
+  getJobInformation,
+  getQuestions,
+  transcribeAudio,
+} from "@/api";
+import { useLocalSearchParams } from "expo-router";
 
 const VirtualInterview = () => {
   const { user } = useUser();
+  const { jobId } = useLocalSearchParams();
   const flatListRef = useRef<FlatList>(null);
-  const messages = sampleMessages;
   const [isRecording, setIsRecording] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording | undefined>(
     undefined
   );
-  
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await getQuestions(jobId);
+        const n = response.length;
+        const questionString = response[n - 1].question;
+        const question = questionString.replace(/^\d+\.\s*/, "");
+
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { role: Role.Bot, content: question },
+        ]);
+      } catch (error) {
+        Alert.alert("Error", error.message);
+      }
+    };
+    fetchQuestions();
+  }, [jobId]);
+
   // Scroll to the bottom whenever messages update
   useEffect(() => {
     flatListRef.current?.scrollToEnd({ animated: true });
@@ -66,6 +100,63 @@ const VirtualInterview = () => {
 
     const uri = recording.getURI();
     console.log("Recording stopped and stored at", uri);
+
+    try {
+      const file = {
+        uri: uri,
+        name: "recording.m4a",
+        type: "audio/m4a",
+      };
+
+      // Log the file object to ensure it’s structured correctly
+      console.log("Transcribing file:", file);
+
+      // Call the API to transcribe audio
+      const transcription = await transcribeAudio(file);
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { role: Role.User, content: transcription },
+      ]);
+
+      const jobInfo = await getJobInformation(jobId);
+      const {
+        industry,
+        experience,
+        type,
+        company_name,
+        role,
+        job_description,
+      } = jobInfo;
+
+      const formData = new FormData();
+      formData.append("type", "VIRTUAL");
+      formData.append("industry", industry);
+      formData.append("experience_level", experience);
+      formData.append("interview_type", type);
+      formData.append("job_description", job_description);
+      formData.append("company_name", company_name);
+      formData.append("job_role", role);
+      formData.append("response", transcription);
+
+      const newQuestions = await generateQuestions(formData);
+
+      if (newQuestions && newQuestions.length > 0) {
+        let newQuestion = newQuestions[0];
+        newQuestion = newQuestion.replace(/^\d+\.\s*/, "");
+        // Save the new question to the database
+        await createQuestions(jobId, { question: newQuestion });
+
+        // Add the new question to the chat
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { role: Role.Bot, content: newQuestion },
+        ]);
+      }
+    } catch (error) {
+      console.error("Failed to transcribe audio", error.message || error);
+    }
+
     setRecording(undefined);
   };
 

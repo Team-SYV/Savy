@@ -16,6 +16,7 @@ const RecordStepContent: React.FC<StepContentProps> = ({
   updateFormData,
   handleNextStep,
   handleSubmit,
+  handleSubmitRoute,
   handleSkip,
   jobInformationId,
 }) => {
@@ -54,7 +55,7 @@ const RecordStepContent: React.FC<StepContentProps> = ({
 
   useEffect(() => {
     if (proceedClicked && jobInformationId) {
-      router.push(`/(record-yourself)/file-upload?jobId=${jobInformationId}`);
+      router.push(`${handleSubmitRoute + jobInformationId}`);
     }
   }, [proceedClicked, jobInformationId, router]);
 

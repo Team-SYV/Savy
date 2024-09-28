@@ -65,3 +65,23 @@ export const getQuestions = async (jobId) => {
     );
   }
 };
+
+export const transcribeAudio = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await api.post("/api/transcribe-audio/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data.transcription;
+  } catch (error) {
+    console.error("Error response from server:", error.response);
+    throw new Error(
+      error.response?.data?.detail || "Failed to transcribe audio"
+    );
+  }
+};

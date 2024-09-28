@@ -190,6 +190,7 @@ const JobInformation = () => {
       } = jobInfo;
 
       const formPayload = new FormData();
+      formPayload.append("type", "RECORD");
       formPayload.append("industry", industry);
       formPayload.append("experience_level", experience);
       formPayload.append("interview_type", type);
@@ -257,6 +258,7 @@ const JobInformation = () => {
                       updateFormData={updateFormData}
                       handleNextStep={handleNextStep}
                       handleSubmit={handleSubmit}
+                      handleSubmitRoute={`/(record-yourself)/file-upload?jobId=`}
                       handleSkip={handleSkip}
                       jobInformationId={jobInformationId}
                     />
