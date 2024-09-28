@@ -99,6 +99,7 @@ python-dotenv==1.0.1
 python-json-logger==2.0.7
 python-multipart==0.0.10
 pytz==2023.3
+pypdf
 PyYAML==6.0.1
 pyzmq==25.1.1
 realtime==2.0.2
