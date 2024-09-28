@@ -8,10 +8,10 @@ from app.interview import create_interview
 from app.pdf_to_text import convert_pdf_to_text
 from app.question_generator import generate_interview_questions
 from app.questions import create_questions, get_questions
+from server.app.speech_to_text import transcribe_audio
 
 import os
 import logging
-
 
 logging.basicConfig(level=logging.DEBUG)
 app = FastAPI()
@@ -50,7 +50,8 @@ async def create_interview_endpoint(request: Request):
 
 @app.post("/api/generate-questions/")
 async def generate_questions(
-    file: UploadFile = File(None),  # Make file optional
+    file: UploadFile = File(None),  
+    type: str = Form(None),
     industry: str = Form(None),
     experience_level: str = Form(None),
     interview_type: str = Form(None),
@@ -77,6 +78,7 @@ async def generate_questions(
     try:
         questions = generate_interview_questions(
             industry=industry,
+            type=type,
             experience_level=experience_level,
             interview_type=interview_type,
             job_description=job_description,
@@ -110,3 +112,18 @@ async def create_questions_endpoint(job_id: str, request: Request):
 async def get_questions_endpoint(job_id: str):
     questions = get_questions(job_id, supabase)
     return {"questions": questions}
+
+@app.post("/api/transcribe-audio/")
+async def transcribe_audio_endpoint(file: UploadFile = File(...)):
+    try:
+        file_path = f"/tmp/{file.filename}"
+        with open(file_path, "wb") as buffer:
+            buffer.write(await file.read())
+
+        transcription_text = transcribe_audio(file_path)
+
+        return {"transcription": transcription_text}
+
+    except Exception as e:
+        logging.error(f"Error transcribing audio: {e}")
+        raise HTTPException(status_code=500, detail="Failed to transcribe the file")

@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, Image } from "react-native";
 import * as Speech from "expo-speech";
 import { Audio } from "expo-av";
+import { transcribeAudio } from "@/api";
 
 const VirtualInterview = () => {
   const { user } = useUser();
@@ -14,7 +15,7 @@ const VirtualInterview = () => {
   const [recording, setRecording] = useState<Audio.Recording | undefined>(
     undefined
   );
-  
+
   // Scroll to the bottom whenever messages update
   useEffect(() => {
     flatListRef.current?.scrollToEnd({ animated: true });
@@ -66,6 +67,22 @@ const VirtualInterview = () => {
 
     const uri = recording.getURI();
     console.log("Recording stopped and stored at", uri);
+
+    try {
+      const file = {
+        uri: uri,
+        name: "recording.m4a", 
+        type: "audio/m4a", 
+      };
+
+      const transcription = await transcribeAudio(file);
+      
+      console.log("Transcription:", transcription);
+
+    } catch (error) {
+      console.error("Failed to transcribe audio", error);
+    }
+
     setRecording(undefined);
   };
 
