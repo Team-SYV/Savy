@@ -77,8 +77,9 @@ export const transcribeAudio = async (file) => {
       },
     });
 
-    return response.data.transcription; 
+    return response.data.transcription;
   } catch (error) {
+    console.error("Error response from server:", error.response);
     throw new Error(
       error.response?.data?.detail || "Failed to transcribe audio"
     );

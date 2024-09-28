@@ -71,16 +71,19 @@ const VirtualInterview = () => {
     try {
       const file = {
         uri: uri,
-        name: "recording.m4a", 
-        type: "audio/m4a", 
+        name: "recording.m4a",
+        type: "audio/m4a",
       };
 
-      const transcription = await transcribeAudio(file);
-      
-      console.log("Transcription:", transcription);
+      // Log the file object to ensure it’s structured correctly
+      console.log("Transcribing file:", file);
 
+      // Call the API to transcribe audio
+      const transcription = await transcribeAudio(file);
+
+      console.log("Transcription:", transcription);
     } catch (error) {
-      console.error("Failed to transcribe audio", error);
+      console.error("Failed to transcribe audio", error.message || error);
     }
 
     setRecording(undefined);

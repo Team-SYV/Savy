@@ -14,4 +14,4 @@ def transcribe_audio(audio_file_path):
             file=audio_file
         )
         
-    return transcription['text']
+    return transcription.text

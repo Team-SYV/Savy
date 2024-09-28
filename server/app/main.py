@@ -8,7 +8,7 @@ from app.interview import create_interview
 from app.pdf_to_text import convert_pdf_to_text
 from app.question_generator import generate_interview_questions
 from app.questions import create_questions, get_questions
-from server.app.speech_to_text import transcribe_audio
+from app.speech_to_text import transcribe_audio
 
 import os
 import logging
