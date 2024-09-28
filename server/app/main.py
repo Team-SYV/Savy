@@ -52,12 +52,14 @@ async def create_interview_endpoint(request: Request):
 async def generate_questions(
     file: UploadFile = File(None),  
     type: str = Form(None),
+    previous: str = Form(None),
     industry: str = Form(None),
     experience_level: str = Form(None),
     interview_type: str = Form(None),
     job_description: str = Form(None),
     company_name: str = Form(None),
     job_role: str = Form(None),
+
 ):
     logging.info(f"Received data: {locals()}")
     
@@ -79,6 +81,7 @@ async def generate_questions(
         questions = generate_interview_questions(
             industry=industry,
             type=type,
+            previous=previous,
             experience_level=experience_level,
             interview_type=interview_type,
             job_description=job_description,
