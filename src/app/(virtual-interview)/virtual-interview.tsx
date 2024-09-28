@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import * as Speech from "expo-speech";
 import { Audio } from "expo-av";
+import { useLocalSearchParams } from "expo-router";
 import {
   createQuestions,
   generateQuestions,
@@ -18,17 +19,16 @@ import {
   getQuestions,
   transcribeAudio,
 } from "@/api";
-import { useLocalSearchParams } from "expo-router";
 
 const VirtualInterview = () => {
   const { user } = useUser();
   const { jobId } = useLocalSearchParams();
   const flatListRef = useRef<FlatList>(null);
   const [isRecording, setIsRecording] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [recording, setRecording] = useState<Audio.Recording | undefined>(
     undefined
   );
-  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -54,6 +54,14 @@ const VirtualInterview = () => {
     flatListRef.current?.scrollToEnd({ animated: true });
   }, [messages]);
 
+  // Automatically read the bot's message aloud when it gets added to the chat
+  useEffect(() => {
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage && lastMessage.role === Role.Bot) {
+      speak(lastMessage.content);
+    }
+  }, [messages]);
+
   const requestPermissions = async () => {
     const { status } = await Audio.requestPermissionsAsync();
     if (status !== "granted") {
@@ -66,12 +74,8 @@ const VirtualInterview = () => {
     requestPermissions();
   }, []);
 
+  // Start recording
   const startRecording = async () => {
-    if (isRecording) {
-      console.log("Already recording");
-      return;
-    }
-
     try {
       if (recording) {
         await stopRecording();
@@ -82,24 +86,17 @@ const VirtualInterview = () => {
       );
       setRecording(newRecording);
       setIsRecording(true);
-      console.log("Recording started");
     } catch (err) {
       console.error("Failed to start recording", err);
     }
   };
 
   const stopRecording = async () => {
-    if (!recording) {
-      console.log("No recording to stop");
-      return;
-    }
-
-    console.log("Stopping recording...");
     setIsRecording(false);
+
     await recording.stopAndUnloadAsync();
 
     const uri = recording.getURI();
-    console.log("Recording stopped and stored at", uri);
 
     try {
       const file = {
@@ -107,9 +104,6 @@ const VirtualInterview = () => {
         name: "recording.m4a",
         type: "audio/m4a",
       };
-
-      // Log the file object to ensure it’s structured correctly
-      console.log("Transcribing file:", file);
 
       // Call the API to transcribe audio
       const transcription = await transcribeAudio(file);
@@ -144,6 +138,7 @@ const VirtualInterview = () => {
       if (newQuestions && newQuestions.length > 0) {
         let newQuestion = newQuestions[0];
         newQuestion = newQuestion.replace(/^\d+\.\s*/, "");
+
         // Save the new question to the database
         await createQuestions(jobId, { question: newQuestion });
 
@@ -183,12 +178,10 @@ const VirtualInterview = () => {
           </View>
           <View className="bg-[#CDF1F8] p-4 rounded-lg max-w-[315px] border border-[#ADE3ED]">
             <Text className="text-base">{item.content}</Text>
-            <TouchableOpacity onPress={() => speak(item.content)}>
-              <Text className="text-blue-500">Speak</Text>
-            </TouchableOpacity>
           </View>
         </View>
       )}
+
       {item.role === Role.User && (
         <View className="flex items-end">
           <View className="flex-row items-center mb-1">
@@ -225,23 +218,17 @@ const VirtualInterview = () => {
           <TouchableOpacity className="p-3" onPress={stopRecording}>
             <Image
               source={require("@/assets/icons/stop-mic.png")}
-              className="w-14 h-12 rounded-full mr-24"
+              className="w-14 h-12 rounded-full"
             />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity className="p-3" onPress={startRecording}>
             <Image
               source={require("@/assets/icons/mic.png")}
-              className="w-14 h-12 rounded-full mr-24"
+              className="w-14 h-12 rounded-full"
             />
           </TouchableOpacity>
         )}
-        <TouchableOpacity className="p-3">
-          <Image
-            source={require("@/assets/icons/video.png")}
-            className="w-12 h-12 rounded-full"
-          />
-        </TouchableOpacity>
       </View>
     </View>
   );
