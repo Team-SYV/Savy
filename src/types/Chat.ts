@@ -8,9 +8,3 @@ export type Message = {
   role: Role;
   content: string;
 };
-
-
-export interface Chat {
-  id: number;
-  title: string;
-}
