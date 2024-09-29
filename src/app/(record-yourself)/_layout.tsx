@@ -27,7 +27,7 @@ const RecordLayout = () => {
         name="job-information"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-white">
+            <Text className="text-center font-medium text-xl text-white">
               Record Yourself
             </Text>
           ),
@@ -38,7 +38,7 @@ const RecordLayout = () => {
         name="file-upload"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-white">
+            <Text className="text-center font-medium text-xl text-white">
               Record Yourself
             </Text>
           ),
@@ -46,11 +46,12 @@ const RecordLayout = () => {
         }}
       />
 
+
       <Stack.Screen
         name="record"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-white">
+            <Text className="text-center font-medium text-xl text-white">
               Record Yourself
             </Text>
           ),
