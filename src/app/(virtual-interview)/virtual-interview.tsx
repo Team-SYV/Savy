@@ -4,6 +4,9 @@ import * as Speech from "expo-speech";
 import { Audio } from "expo-av";
 import uuid from 'react-native-uuid'; 
 import React, { useEffect, useRef, useState } from "react";
+import ConfirmationModal from "@/components/Modal/ConfirmationModal";
+import { Ionicons } from "@expo/vector-icons";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import {
   View,
   Text,
@@ -12,7 +15,6 @@ import {
   Image,
   Alert,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
 import {
   createQuestions,
   generateQuestions,
@@ -28,6 +30,7 @@ const VirtualInterview = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined);
+  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -100,6 +103,7 @@ const VirtualInterview = () => {
 
   const stopRecording = async () => {
     setIsRecording(false);
+    if (!recording) return; 
 
     await recording.stopAndUnloadAsync();
 
@@ -202,8 +206,22 @@ const VirtualInterview = () => {
     </View>
   );
 
+  const handleBackButtonPress = () => {
+    setIsConfirmationVisible(true);
+  };
+
   return (
     <View className="flex-1 justify-between bg-gray-50">
+      
+      <Stack.Screen
+          options={{
+            headerLeft: () => (
+              <TouchableOpacity onPress={handleBackButtonPress}>
+                <Ionicons name="arrow-back" size={24} color="white" />
+              </TouchableOpacity>
+            ),
+          }}
+        />
       <Image
         source={require("@/assets/images/avatar.png")}
         className="w-[96%] h-56 rounded-xl mx-auto mt-4 mb-2"
@@ -231,6 +249,23 @@ const VirtualInterview = () => {
           </TouchableOpacity>
         )}
       </View>
+
+      <ConfirmationModal
+        isVisible={isConfirmationVisible}
+        title="Discard Interview?"
+        message={
+          <Text>
+            Exiting now will discard your progress.{"\n"}
+            Are you sure you want to leave?
+          </Text>
+        }
+        onConfirm={() => {
+          Speech.stop(); 
+          setIsConfirmationVisible(false);
+          router.push("/home");
+        }}
+        onClose={() => setIsConfirmationVisible(false)}
+      />
     </View>
   );
 };
