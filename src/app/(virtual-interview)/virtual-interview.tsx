@@ -1,5 +1,8 @@
 import { Message, Role } from "@/types/Chat";
 import { useUser } from "@clerk/clerk-expo";
+import * as Speech from "expo-speech";
+import { Audio } from "expo-av";
+import uuid from 'react-native-uuid'; 
 import React, { useEffect, useRef, useState } from "react";
 import {
   View,
@@ -9,8 +12,6 @@ import {
   Image,
   Alert,
 } from "react-native";
-import * as Speech from "expo-speech";
-import { Audio } from "expo-av";
 import { useLocalSearchParams } from "expo-router";
 import {
   createQuestions,
@@ -40,7 +41,7 @@ const VirtualInterview = () => {
 
         setMessages((prevMessages) => [
           ...prevMessages,
-          { role: Role.Bot, content: question },
+          { id: uuid.v4() as string, role: Role.Bot, content: question },
         ]);
       } catch (error) {
         Alert.alert("Error", error.message);
@@ -54,7 +55,7 @@ const VirtualInterview = () => {
     flatListRef.current?.scrollToEnd({ animated: true });
   }, [messages]);
 
-  // Automatically read the bot's message aloud when it gets added to the chat
+  // Automatically read the bot's message when it gets added to the chat
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
     if (lastMessage && lastMessage.role === Role.Bot) {
@@ -62,6 +63,7 @@ const VirtualInterview = () => {
     }
   }, [messages]);
 
+  // Request permission
   const requestPermissions = async () => {
     const { status } = await Audio.requestPermissionsAsync();
     if (status !== "granted") {
@@ -69,7 +71,6 @@ const VirtualInterview = () => {
     }
   };
 
-  // Request permission
   useEffect(() => {
     requestPermissions();
   }, []);
@@ -110,7 +111,7 @@ const VirtualInterview = () => {
 
       setMessages((prevMessages) => [
         ...prevMessages,
-        { role: Role.User, content: transcription },
+        { id: uuid.v4() as string, role: Role.User, content: transcription },
       ]);
 
       const jobInfo = await getJobInformation(jobId);
@@ -145,7 +146,7 @@ const VirtualInterview = () => {
         // Add the new question to the chat
         setMessages((prevMessages) => [
           ...prevMessages,
-          { role: Role.Bot, content: newQuestion },
+          { id: uuid.v4() as string, role: Role.Bot, content: newQuestion },
         ]);
       }
     } catch (error) {
@@ -211,21 +212,21 @@ const VirtualInterview = () => {
         ref={flatListRef}
         data={messages}
         renderItem={renderMessage}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.id}
       />
       <View className="flex-row p-2 bg-white shadow-md justify-center border-gray-300 border">
         {isRecording ? (
           <TouchableOpacity className="p-3" onPress={stopRecording}>
             <Image
               source={require("@/assets/icons/stop-mic.png")}
-              className="w-14 h-12 rounded-full"
+              className="w-16 h-14 rounded-full"
             />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity className="p-3" onPress={startRecording}>
             <Image
               source={require("@/assets/icons/mic.png")}
-              className="w-14 h-12 rounded-full"
+              className="w-16 h-14 rounded-full"
             />
           </TouchableOpacity>
         )}

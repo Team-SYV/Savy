@@ -3,11 +3,12 @@ export enum Role {
   Bot = 1,
 }
 
-export interface Message {
+export type Message = {
+  id: string;
   role: Role;
   content: string;
-  prompt?: string;
-}
+};
+
 
 export interface Chat {
   id: number;
