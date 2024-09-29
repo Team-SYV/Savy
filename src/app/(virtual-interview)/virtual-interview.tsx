@@ -237,14 +237,14 @@ const VirtualInterview = () => {
           <TouchableOpacity className="p-3" onPress={stopRecording}>
             <Image
               source={require("@/assets/icons/stop-mic.png")}
-              className="w-16 h-14 rounded-full"
+              className="w-14 h-14 rounded-full"
             />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity className="p-3" onPress={startRecording}>
             <Image
               source={require("@/assets/icons/mic.png")}
-              className="w-16 h-14 rounded-full"
+              className="w-14 h-14 rounded-full"
             />
           </TouchableOpacity>
         )}
