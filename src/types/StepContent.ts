@@ -6,6 +6,7 @@ export interface StepContentProps {
   updateFormData: (key: string, value: string, callback?: () => void) => void;
   handleNextStep: () => void;
   handleSubmit: () => void;
+  handleSubmitRoute: string;
   handleSkip: () => void;
   jobInformationId: string | null;
 }

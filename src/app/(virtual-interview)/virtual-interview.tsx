@@ -1,25 +1,82 @@
-import { sampleMessages } from "@/constants/sampleMessage";
 import { Message, Role } from "@/types/Chat";
 import { useUser } from "@clerk/clerk-expo";
-import React, { useEffect, useRef, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Image } from "react-native";
 import * as Speech from "expo-speech";
 import { Audio } from "expo-av";
+import uuid from "react-native-uuid";
+import React, { useEffect, useRef, useState } from "react";
+import ConfirmationModal from "@/components/Modal/ConfirmationModal";
+import { Ionicons } from "@expo/vector-icons";
+import { router, Stack, useLocalSearchParams } from "expo-router";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
+import { getQuestions, transcribeAudio } from "@/api";
 
 const VirtualInterview = () => {
   const { user } = useUser();
+  const { jobId } = useLocalSearchParams();
   const flatListRef = useRef<FlatList>(null);
-  const messages = sampleMessages;
   const [isRecording, setIsRecording] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [recording, setRecording] = useState<Audio.Recording | undefined>(
     undefined
   );
-  
+  const [questions, setQuestions] = useState<string[]>([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await getQuestions(jobId);
+        const allQuestions = response.map((q) =>
+          q.question.replace(/^\d+\.\s*/, "")
+        );
+        setQuestions(allQuestions);
+
+        // Display the first question only initially
+        if (allQuestions.length > 0) {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              id: uuid.v4() as string,
+              role: Role.Bot,
+              content: allQuestions[0],
+            },
+          ]);
+        }
+      } catch (error) {
+        Alert.alert("Error", error.message);
+      }
+    };
+    fetchQuestions();
+  }, [jobId]);
+
   // Scroll to the bottom whenever messages update
   useEffect(() => {
     flatListRef.current?.scrollToEnd({ animated: true });
   }, [messages]);
 
+  // Automatically read the bot's message when it gets added to the chat
+  useEffect(() => {
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage && lastMessage.role === Role.Bot) {
+      speak(lastMessage.content);
+    }
+  }, [messages]);
+
+  const speak = (message: string) => {
+    Speech.speak(message, {
+      rate: 1.0,
+    });
+  };
+
+  // Request permission
   const requestPermissions = async () => {
     const { status } = await Audio.requestPermissionsAsync();
     if (status !== "granted") {
@@ -27,16 +84,13 @@ const VirtualInterview = () => {
     }
   };
 
-  // Request permission
   useEffect(() => {
     requestPermissions();
   }, []);
 
+  // Start recording
   const startRecording = async () => {
-    if (isRecording) {
-      console.log("Already recording");
-      return;
-    }
+    Speech.stop();
 
     try {
       if (recording) {
@@ -48,31 +102,63 @@ const VirtualInterview = () => {
       );
       setRecording(newRecording);
       setIsRecording(true);
-      console.log("Recording started");
     } catch (err) {
       console.error("Failed to start recording", err);
     }
   };
 
   const stopRecording = async () => {
-    if (!recording) {
-      console.log("No recording to stop");
-      return;
-    }
-
-    console.log("Stopping recording...");
     setIsRecording(false);
+    if (!recording) return;
+
     await recording.stopAndUnloadAsync();
 
     const uri = recording.getURI();
-    console.log("Recording stopped and stored at", uri);
-    setRecording(undefined);
-  };
 
-  const speak = (message: string) => {
-    Speech.speak(message, {
-      rate: 1.0,
-    });
+    try {
+      const file = {
+        uri: uri,
+        name: "recording.m4a",
+        type: "audio/m4a",
+      };
+
+      // Call the API to transcribe audio
+      const transcription = await transcribeAudio(file);
+
+      // Add the user's transcription to messages
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { id: uuid.v4() as string, role: Role.User, content: transcription },
+      ]);
+
+      // Display the next question after the user answers
+      const nextQuestionIndex = currentQuestionIndex + 1;
+      if (nextQuestionIndex < questions.length) {
+        setCurrentQuestionIndex(nextQuestionIndex);
+
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: uuid.v4() as string,
+            role: Role.Bot,
+            content: questions[nextQuestionIndex],
+          },
+        ]);
+      } else {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: uuid.v4() as string,
+            role: Role.Bot,
+            content: "Interview completed. Thank you!",
+          },
+        ]);
+      }
+    } catch (error) {
+      console.error("Failed to transcribe audio", error.message || error);
+    }
+
+    setRecording(undefined);
   };
 
   const renderMessage = ({ item }: { item: Message }) => (
@@ -92,12 +178,10 @@ const VirtualInterview = () => {
           </View>
           <View className="bg-[#CDF1F8] p-4 rounded-lg max-w-[315px] border border-[#ADE3ED]">
             <Text className="text-base">{item.content}</Text>
-            <TouchableOpacity onPress={() => speak(item.content)}>
-              <Text className="text-blue-500">Speak</Text>
-            </TouchableOpacity>
           </View>
         </View>
       )}
+
       {item.role === Role.User && (
         <View className="flex items-end">
           <View className="flex-row items-center mb-1">
@@ -117,8 +201,21 @@ const VirtualInterview = () => {
     </View>
   );
 
+  const handleBackButtonPress = () => {
+    setIsConfirmationVisible(true);
+  };
+
   return (
     <View className="flex-1 justify-between bg-gray-50">
+      <Stack.Screen
+        options={{
+          headerLeft: () => (
+            <TouchableOpacity onPress={handleBackButtonPress}>
+              <Ionicons name="arrow-back" size={24} color="white" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <Image
         source={require("@/assets/images/avatar.png")}
         className="w-[96%] h-56 rounded-xl mx-auto mt-4 mb-2"
@@ -127,31 +224,42 @@ const VirtualInterview = () => {
         ref={flatListRef}
         data={messages}
         renderItem={renderMessage}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.id}
       />
       <View className="flex-row p-2 bg-white shadow-md justify-center border-gray-300 border">
         {isRecording ? (
           <TouchableOpacity className="p-3" onPress={stopRecording}>
             <Image
               source={require("@/assets/icons/stop-mic.png")}
-              className="w-14 h-12 rounded-full mr-24"
+              className="w-14 h-14 rounded-full"
             />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity className="p-3" onPress={startRecording}>
             <Image
               source={require("@/assets/icons/mic.png")}
-              className="w-14 h-12 rounded-full mr-24"
+              className="w-14 h-14 rounded-full"
             />
           </TouchableOpacity>
         )}
-        <TouchableOpacity className="p-3">
-          <Image
-            source={require("@/assets/icons/video.png")}
-            className="w-12 h-12 rounded-full"
-          />
-        </TouchableOpacity>
       </View>
+
+      <ConfirmationModal
+        isVisible={isConfirmationVisible}
+        title="Discard Interview?"
+        message={
+          <Text>
+            Exiting now will discard your progress.{"\n"}
+            Are you sure you want to leave?
+          </Text>
+        }
+        onConfirm={() => {
+          Speech.stop();
+          setIsConfirmationVisible(false);
+          router.push("/home");
+        }}
+        onClose={() => setIsConfirmationVisible(false)}
+      />
     </View>
   );
 };

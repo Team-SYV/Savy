@@ -97,12 +97,13 @@ const FileUpload = () => {
       formData.append("job_description", job_description);
       formData.append("company_name", company_name);
       formData.append("job_role", role);
+      formData.append("type", "RECORD");
 
-      console.log("form Data:",formData);
+      console.log("form Data:", formData);
 
-       // Generate questions
+      // Generate questions
       const questions = await generateQuestions(formData);
-      
+
       for (const question of questions) {
         // Create question to db
         if (typeof question === "string") {

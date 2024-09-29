@@ -8,16 +8,15 @@ import ConfirmationModal from "@/components/Modal/ConfirmationModal";
 import { JobInfoData } from "@/types/JobInfo";
 import * as Haptics from "expo-haptics";
 import { steps } from "@/constants/constants";
+import { useUser } from "@clerk/clerk-expo";
+import RecordStepContent from "@/components/JobInfo/RecordStepContent";
+import Spinner from "react-native-loading-spinner-overlay";
 import {
   createJobInformation,
   createQuestions,
   generateQuestions,
   getJobInformation,
 } from "@/api";
-import { useUser } from "@clerk/clerk-expo";
-import RecordStepContent from "@/components/JobInfo/RecordStepContent";
-import Spinner from "react-native-loading-spinner-overlay";
-
 import {
   View,
   SafeAreaView,
@@ -35,8 +34,8 @@ const JobInformation = () => {
     selectedJobRole: null,
     selectedInterviewType: "Behavioral",
     selectedExperienceLevel: null,
-    companyName: "",
-    jobDescription: "",
+    companyName: null,
+    jobDescription: null,
   });
 
   const router = useRouter();
@@ -120,6 +119,7 @@ const JobInformation = () => {
     }
   };
 
+  // Show the confirmation modal when back is pressed and there is changes
   const handleBackButtonPress = () => {
     if (hasChanges) {
       setModalVisible(true);
@@ -134,7 +134,7 @@ const JobInformation = () => {
     router.back();
   };
 
-  // When proceed is clicked
+  // Creates job information
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -145,8 +145,8 @@ const JobInformation = () => {
         role: formData.selectedJobRole,
         type: formData.selectedInterviewType,
         experience: formData.selectedExperienceLevel,
-        company_name: formData.companyName,
-        job_description: formData.jobDescription,
+        company_name: formData.companyName || "None",
+        job_description: formData.jobDescription || "None",
       };
 
       const response = await createJobInformation(jobData);
@@ -169,8 +169,8 @@ const JobInformation = () => {
         role: formData.selectedJobRole,
         type: formData.selectedInterviewType,
         experience: formData.selectedExperienceLevel,
-        company_name: formData.companyName,
-        job_description: formData.jobDescription,
+        company_name: formData.companyName || "None",
+        job_description: formData.jobDescription || "None",
       };
 
       // Create job information
@@ -190,6 +190,7 @@ const JobInformation = () => {
       } = jobInfo;
 
       const formPayload = new FormData();
+      formPayload.append("type", "RECORD");
       formPayload.append("industry", industry);
       formPayload.append("experience_level", experience);
       formPayload.append("interview_type", type);
@@ -257,6 +258,7 @@ const JobInformation = () => {
                       updateFormData={updateFormData}
                       handleNextStep={handleNextStep}
                       handleSubmit={handleSubmit}
+                      handleSubmitRoute={`/(record-yourself)/file-upload?jobId=`}
                       handleSkip={handleSkip}
                       jobInformationId={jobInformationId}
                     />

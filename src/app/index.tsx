@@ -1,12 +1,20 @@
-import React from "react";
-import { ActivityIndicator, View } from "react-native";
+import{ useEffect } from "react";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
 
 const StartPage = () => {
-  return (
-    <View className="flex-1 items-center justify-center">
-      <ActivityIndicator size="large" color="#0000ff" />
-    </View>
-  );
+  useEffect(() => {
+    const prepare = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      await SplashScreen.hideAsync();
+    };
+
+    prepare();
+  }, []);
+
+  return null;
 };
 
 export default StartPage;

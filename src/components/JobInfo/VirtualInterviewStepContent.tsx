@@ -8,6 +8,7 @@ import CustomButton from "../Button/CustomButton";
 import { View, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { StepContentProps } from "@/types/StepContent";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
   activeStep,
@@ -15,21 +16,34 @@ const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
   updateFormData,
   handleNextStep,
   handleSubmit,
+  handleSubmitRoute,
+  handleSkip,
   jobInformationId,
 }) => {
   const router = useRouter();
   const [shouldProceed, setShouldProceed] = useState(false);
+  const [proceedClicked, setProceedClicked] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onProceed = async () => {
-    handleSubmit();
-    if (jobInformationId) {
-      router.push(`/(virtual-interview)/file-upload?jobId=${jobInformationId}`);
+    try {
+      setLoading(true);
+      setProceedClicked(true);
+      await handleSubmit();
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
     }
   };
 
   const onSkip = async () => {
-    handleSubmit();
-    router.push("/(virtual-interview)/virtual-interview");
+    try {
+      setLoading(true);
+      await handleSkip();
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -38,6 +52,12 @@ const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
       setShouldProceed(false);
     }
   }, [shouldProceed]);
+
+  useEffect(() => {
+    if (proceedClicked && jobInformationId) {
+      router.push(`${handleSubmitRoute + jobInformationId}`);
+    }
+  }, [proceedClicked, jobInformationId, router]);
 
   switch (activeStep) {
     case 0:
@@ -132,29 +152,32 @@ const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
           textInputStyles="ml-12"
         />
       );
-    case 6:
-      return (
-        <View>
-          <Text className="ml-12 mr-3 text-base">
-            Do you wish to customize your interview based on your resume by
-            uploading a file? If not, please skip.
-          </Text>
-          <View className="flex-row items-center justify-center px-6 mt-4 ml-7">
-            <CustomButton
-              title="Skip"
-              onPress={onSkip}
-              containerStyles="bg-gray-200 h-12 rounded-xl mb-4 mx-2 w-1/2"
-              textStyles="text-[#00AACE] text-[16px] font-semibold text-base"
-            />
-            <CustomButton
-              title="Proceed"
-              onPress={onProceed}
-              containerStyles="bg-[#00AACE] h-12 rounded-xl mb-4 w-1/2 mx-2"
-              textStyles="text-white text-[16px] font-semibold text-base"
-            />
+      case 6:
+        return (
+          <View>
+            <Spinner visible={loading} color="#00AACE" />
+            <Text className="ml-12 mr-3 text-base">
+              Do you wish to customize your interview based on your resume by
+              uploading a file? If not, please skip.
+            </Text>
+            <View className="flex-row items-center justify-center px-6 mt-4 ml-7">
+              <CustomButton
+                title="Skip"
+                onPress={onSkip}
+                containerStyles="bg-gray-200 h-12 rounded-xl mb-4 mx-2 w-1/2"
+                textStyles="text-[#00AACE] text-[16px] font-semibold text-base"
+                disabled={loading}
+              />
+              <CustomButton
+                title="Proceed"
+                onPress={onProceed}
+                containerStyles="bg-[#00AACE] h-12 rounded-xl mb-4 w-1/2 mx-2"
+                textStyles="text-white text-[16px] font-semibold text-base"
+                disabled={loading}
+              />
+            </View>
           </View>
-        </View>
-      );
+        );
     default:
       return null;
   }
