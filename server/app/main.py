@@ -19,9 +19,6 @@ app = FastAPI()
 supabase = get_supabase_client()
 webhook_secret = os.getenv("WEBHOOK_SECRET")
 
-origins = ["http://localhost:8081",
-           ]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

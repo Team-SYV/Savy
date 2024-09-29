@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://stingray-beloved-terribly.ngrok-free.app/",
+  baseURL: "https://savy-4ceq.onrender.com/",
 });
 
 export const createJobInformation = async (jobData) => {
