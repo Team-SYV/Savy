@@ -27,9 +27,7 @@ const VirtualInterview = () => {
   const flatListRef = useRef<FlatList>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [recording, setRecording] = useState<Audio.Recording | undefined>(
-    undefined
-  );
+  const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -63,6 +61,12 @@ const VirtualInterview = () => {
     }
   }, [messages]);
 
+  const speak = (message: string) => {
+    Speech.speak(message, {
+      rate: 1.0,
+    });
+  };
+
   // Request permission
   const requestPermissions = async () => {
     const { status } = await Audio.requestPermissionsAsync();
@@ -77,6 +81,8 @@ const VirtualInterview = () => {
 
   // Start recording
   const startRecording = async () => {
+    Speech.stop(); 
+
     try {
       if (recording) {
         await stopRecording();
@@ -154,12 +160,6 @@ const VirtualInterview = () => {
     }
 
     setRecording(undefined);
-  };
-
-  const speak = (message: string) => {
-    Speech.speak(message, {
-      rate: 1.0,
-    });
   };
 
   const renderMessage = ({ item }: { item: Message }) => (
