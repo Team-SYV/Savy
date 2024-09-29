@@ -2,7 +2,7 @@ import { Message, Role } from "@/types/Chat";
 import { useUser } from "@clerk/clerk-expo";
 import * as Speech from "expo-speech";
 import { Audio } from "expo-av";
-import uuid from 'react-native-uuid'; 
+import uuid from "react-native-uuid";
 import React, { useEffect, useRef, useState } from "react";
 import ConfirmationModal from "@/components/Modal/ConfirmationModal";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,13 +15,7 @@ import {
   Image,
   Alert,
 } from "react-native";
-import {
-  createQuestions,
-  generateQuestions,
-  getJobInformation,
-  getQuestions,
-  transcribeAudio,
-} from "@/api";
+import { getQuestions, transcribeAudio } from "@/api";
 
 const VirtualInterview = () => {
   const { user } = useUser();
@@ -29,21 +23,33 @@ const VirtualInterview = () => {
   const flatListRef = useRef<FlatList>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined);
+  const [recording, setRecording] = useState<Audio.Recording | undefined>(
+    undefined
+  );
+  const [questions, setQuestions] = useState<string[]>([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
         const response = await getQuestions(jobId);
-        const n = response.length;
-        const questionString = response[n - 1].question;
-        const question = questionString.replace(/^\d+\.\s*/, "");
+        const allQuestions = response.map((q) =>
+          q.question.replace(/^\d+\.\s*/, "")
+        );
+        setQuestions(allQuestions);
 
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { id: uuid.v4() as string, role: Role.Bot, content: question },
-        ]);
+        // Display the first question only initially
+        if (allQuestions.length > 0) {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              id: uuid.v4() as string,
+              role: Role.Bot,
+              content: allQuestions[0],
+            },
+          ]);
+        }
       } catch (error) {
         Alert.alert("Error", error.message);
       }
@@ -84,7 +90,7 @@ const VirtualInterview = () => {
 
   // Start recording
   const startRecording = async () => {
-    Speech.stop(); 
+    Speech.stop();
 
     try {
       if (recording) {
@@ -103,7 +109,7 @@ const VirtualInterview = () => {
 
   const stopRecording = async () => {
     setIsRecording(false);
-    if (!recording) return; 
+    if (!recording) return;
 
     await recording.stopAndUnloadAsync();
 
@@ -119,44 +125,33 @@ const VirtualInterview = () => {
       // Call the API to transcribe audio
       const transcription = await transcribeAudio(file);
 
+      // Add the user's transcription to messages
       setMessages((prevMessages) => [
         ...prevMessages,
         { id: uuid.v4() as string, role: Role.User, content: transcription },
       ]);
 
-      const jobInfo = await getJobInformation(jobId);
-      const {
-        industry,
-        experience,
-        type,
-        company_name,
-        role,
-        job_description,
-      } = jobInfo;
+      // Display the next question after the user answers
+      const nextQuestionIndex = currentQuestionIndex + 1;
+      if (nextQuestionIndex < questions.length) {
+        setCurrentQuestionIndex(nextQuestionIndex);
 
-      const formData = new FormData();
-      formData.append("type", "VIRTUAL");
-      formData.append("industry", industry);
-      formData.append("experience_level", experience);
-      formData.append("interview_type", type);
-      formData.append("job_description", job_description);
-      formData.append("company_name", company_name);
-      formData.append("job_role", role);
-      formData.append("response", transcription);
-
-      const newQuestions = await generateQuestions(formData);
-
-      if (newQuestions && newQuestions.length > 0) {
-        let newQuestion = newQuestions[0];
-        newQuestion = newQuestion.replace(/^\d+\.\s*/, "");
-
-        // Save the new question to the database
-        await createQuestions(jobId, { question: newQuestion });
-
-        // Add the new question to the chat
         setMessages((prevMessages) => [
           ...prevMessages,
-          { id: uuid.v4() as string, role: Role.Bot, content: newQuestion },
+          {
+            id: uuid.v4() as string,
+            role: Role.Bot,
+            content: questions[nextQuestionIndex],
+          },
+        ]);
+      } else {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            id: uuid.v4() as string,
+            role: Role.Bot,
+            content: "Interview completed. Thank you!",
+          },
         ]);
       }
     } catch (error) {
@@ -212,16 +207,15 @@ const VirtualInterview = () => {
 
   return (
     <View className="flex-1 justify-between bg-gray-50">
-      
       <Stack.Screen
-          options={{
-            headerLeft: () => (
-              <TouchableOpacity onPress={handleBackButtonPress}>
-                <Ionicons name="arrow-back" size={24} color="white" />
-              </TouchableOpacity>
-            ),
-          }}
-        />
+        options={{
+          headerLeft: () => (
+            <TouchableOpacity onPress={handleBackButtonPress}>
+              <Ionicons name="arrow-back" size={24} color="white" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <Image
         source={require("@/assets/images/avatar.png")}
         className="w-[96%] h-56 rounded-xl mx-auto mt-4 mb-2"
@@ -260,7 +254,7 @@ const VirtualInterview = () => {
           </Text>
         }
         onConfirm={() => {
-          Speech.stop(); 
+          Speech.stop();
           setIsConfirmationVisible(false);
           router.push("/home");
         }}
