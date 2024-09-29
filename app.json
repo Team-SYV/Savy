@@ -28,11 +28,11 @@
         }
       ]
     ],
-    "name": "savy",
+    "name": "Savy",
     "slug": "savy",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/sss.png",
+    "icon": "./src/assets/images/svy.png",
     "splash": {
       "image": "./src/assets/images/sss.png",
       "resizeMode": "contain",

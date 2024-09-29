@@ -3,7 +3,8 @@ import { Slot, useRouter, useSegments } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
 import { useEffect } from "react";
-import Toast from 'react-native-toast-message';
+import Toast from "react-native-toast-message";
+import StartPage from ".";
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
@@ -55,6 +56,7 @@ const RootLayoutNav = () => {
       publishableKey={CLERK_PUBLISHABLE_KEY}
     >
       <ClerkLoaded>
+        <StartPage />
         <InitialLayout />
         <Toast />
       </ClerkLoaded>

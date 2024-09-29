@@ -1,6 +1,12 @@
 import { Message, Role } from "@/types/Chat";
 import { useUser } from "@clerk/clerk-expo";
+import * as Speech from "expo-speech";
+import { Audio } from "expo-av";
+import uuid from 'react-native-uuid'; 
 import React, { useEffect, useRef, useState } from "react";
+import ConfirmationModal from "@/components/Modal/ConfirmationModal";
+import { Ionicons } from "@expo/vector-icons";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import {
   View,
   Text,
@@ -9,8 +15,6 @@ import {
   Image,
   Alert,
 } from "react-native";
-import * as Speech from "expo-speech";
-import { Audio } from "expo-av";
 import {
   createQuestions,
   generateQuestions,
@@ -18,17 +22,15 @@ import {
   getQuestions,
   transcribeAudio,
 } from "@/api";
-import { useLocalSearchParams } from "expo-router";
 
 const VirtualInterview = () => {
   const { user } = useUser();
   const { jobId } = useLocalSearchParams();
   const flatListRef = useRef<FlatList>(null);
   const [isRecording, setIsRecording] = useState(false);
-  const [recording, setRecording] = useState<Audio.Recording | undefined>(
-    undefined
-  );
   const [messages, setMessages] = useState<Message[]>([]);
+  const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined);
+  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -40,7 +42,7 @@ const VirtualInterview = () => {
 
         setMessages((prevMessages) => [
           ...prevMessages,
-          { role: Role.Bot, content: question },
+          { id: uuid.v4() as string, role: Role.Bot, content: question },
         ]);
       } catch (error) {
         Alert.alert("Error", error.message);
@@ -54,6 +56,21 @@ const VirtualInterview = () => {
     flatListRef.current?.scrollToEnd({ animated: true });
   }, [messages]);
 
+  // Automatically read the bot's message when it gets added to the chat
+  useEffect(() => {
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage && lastMessage.role === Role.Bot) {
+      speak(lastMessage.content);
+    }
+  }, [messages]);
+
+  const speak = (message: string) => {
+    Speech.speak(message, {
+      rate: 1.0,
+    });
+  };
+
+  // Request permission
   const requestPermissions = async () => {
     const { status } = await Audio.requestPermissionsAsync();
     if (status !== "granted") {
@@ -61,16 +78,13 @@ const VirtualInterview = () => {
     }
   };
 
-  // Request permission
   useEffect(() => {
     requestPermissions();
   }, []);
 
+  // Start recording
   const startRecording = async () => {
-    if (isRecording) {
-      console.log("Already recording");
-      return;
-    }
+    Speech.stop(); 
 
     try {
       if (recording) {
@@ -82,24 +96,18 @@ const VirtualInterview = () => {
       );
       setRecording(newRecording);
       setIsRecording(true);
-      console.log("Recording started");
     } catch (err) {
       console.error("Failed to start recording", err);
     }
   };
 
   const stopRecording = async () => {
-    if (!recording) {
-      console.log("No recording to stop");
-      return;
-    }
-
-    console.log("Stopping recording...");
     setIsRecording(false);
+    if (!recording) return; 
+
     await recording.stopAndUnloadAsync();
 
     const uri = recording.getURI();
-    console.log("Recording stopped and stored at", uri);
 
     try {
       const file = {
@@ -108,15 +116,12 @@ const VirtualInterview = () => {
         type: "audio/m4a",
       };
 
-      // Log the file object to ensure it’s structured correctly
-      console.log("Transcribing file:", file);
-
       // Call the API to transcribe audio
       const transcription = await transcribeAudio(file);
 
       setMessages((prevMessages) => [
         ...prevMessages,
-        { role: Role.User, content: transcription },
+        { id: uuid.v4() as string, role: Role.User, content: transcription },
       ]);
 
       const jobInfo = await getJobInformation(jobId);
@@ -144,13 +149,14 @@ const VirtualInterview = () => {
       if (newQuestions && newQuestions.length > 0) {
         let newQuestion = newQuestions[0];
         newQuestion = newQuestion.replace(/^\d+\.\s*/, "");
+
         // Save the new question to the database
         await createQuestions(jobId, { question: newQuestion });
 
         // Add the new question to the chat
         setMessages((prevMessages) => [
           ...prevMessages,
-          { role: Role.Bot, content: newQuestion },
+          { id: uuid.v4() as string, role: Role.Bot, content: newQuestion },
         ]);
       }
     } catch (error) {
@@ -158,12 +164,6 @@ const VirtualInterview = () => {
     }
 
     setRecording(undefined);
-  };
-
-  const speak = (message: string) => {
-    Speech.speak(message, {
-      rate: 1.0,
-    });
   };
 
   const renderMessage = ({ item }: { item: Message }) => (
@@ -183,12 +183,10 @@ const VirtualInterview = () => {
           </View>
           <View className="bg-[#CDF1F8] p-4 rounded-lg max-w-[315px] border border-[#ADE3ED]">
             <Text className="text-base">{item.content}</Text>
-            <TouchableOpacity onPress={() => speak(item.content)}>
-              <Text className="text-blue-500">Speak</Text>
-            </TouchableOpacity>
           </View>
         </View>
       )}
+
       {item.role === Role.User && (
         <View className="flex items-end">
           <View className="flex-row items-center mb-1">
@@ -208,8 +206,22 @@ const VirtualInterview = () => {
     </View>
   );
 
+  const handleBackButtonPress = () => {
+    setIsConfirmationVisible(true);
+  };
+
   return (
     <View className="flex-1 justify-between bg-gray-50">
+      
+      <Stack.Screen
+          options={{
+            headerLeft: () => (
+              <TouchableOpacity onPress={handleBackButtonPress}>
+                <Ionicons name="arrow-back" size={24} color="white" />
+              </TouchableOpacity>
+            ),
+          }}
+        />
       <Image
         source={require("@/assets/images/avatar.png")}
         className="w-[96%] h-56 rounded-xl mx-auto mt-4 mb-2"
@@ -218,31 +230,42 @@ const VirtualInterview = () => {
         ref={flatListRef}
         data={messages}
         renderItem={renderMessage}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.id}
       />
       <View className="flex-row p-2 bg-white shadow-md justify-center border-gray-300 border">
         {isRecording ? (
           <TouchableOpacity className="p-3" onPress={stopRecording}>
             <Image
               source={require("@/assets/icons/stop-mic.png")}
-              className="w-14 h-12 rounded-full mr-24"
+              className="w-16 h-14 rounded-full"
             />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity className="p-3" onPress={startRecording}>
             <Image
               source={require("@/assets/icons/mic.png")}
-              className="w-14 h-12 rounded-full mr-24"
+              className="w-16 h-14 rounded-full"
             />
           </TouchableOpacity>
         )}
-        <TouchableOpacity className="p-3">
-          <Image
-            source={require("@/assets/icons/video.png")}
-            className="w-12 h-12 rounded-full"
-          />
-        </TouchableOpacity>
       </View>
+
+      <ConfirmationModal
+        isVisible={isConfirmationVisible}
+        title="Discard Interview?"
+        message={
+          <Text>
+            Exiting now will discard your progress.{"\n"}
+            Are you sure you want to leave?
+          </Text>
+        }
+        onConfirm={() => {
+          Speech.stop(); 
+          setIsConfirmationVisible(false);
+          router.push("/home");
+        }}
+        onClose={() => setIsConfirmationVisible(false)}
+      />
     </View>
   );
 };
