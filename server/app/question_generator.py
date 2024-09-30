@@ -62,3 +62,20 @@ def generate_interview_questions(type, industry, experience_level, interview_typ
     questions = [q.strip() for q in questions if q.strip() and q.strip()[0].isdigit()]
 
     return questions
+
+def generate_answer_feedback(previous_question, previous_answer):
+    prompt = f"""given this {previous_answer} to this {previous_question}, make a short feedback to the answer"""
+   
+
+    completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are an expert interview feedback generator."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=500
+    )
+
+    response_text = completion.choices[0].message.content
+
+    return response_text

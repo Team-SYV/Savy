@@ -6,7 +6,7 @@ from app.jobInformation import create_job_information as create_job_info
 from app.jobInformation import get_job_information as fetch_job_info
 from app.interview import create_interview
 from app.pdf_to_text import convert_pdf_to_text
-from app.question_generator import generate_interview_questions
+from app.question_generator import generate_answer_feedback, generate_interview_questions
 from app.questions import create_questions, get_questions
 from app.speech_to_text import transcribe_audio
 
@@ -125,3 +125,15 @@ async def transcribe_audio_endpoint(file: UploadFile = File(...)):
     except Exception as e:
         logging.error(f"Error transcribing audio: {e}")
         raise HTTPException(status_code=500, detail="Failed to transcribe the file")
+
+@app.post("/api/generate-answer-feedback/")
+async def generate_answer_feedback_endpoint(
+    previous_question: str = Form(...), 
+    previous_answer: str = Form(...)
+):
+    try:
+        feedback = generate_answer_feedback(previous_question, previous_answer)
+        return {"feedback": feedback}
+    except Exception as e:
+        logging.error(f"Error generating answer feedback: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate answer feedback")
