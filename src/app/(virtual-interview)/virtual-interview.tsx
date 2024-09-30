@@ -170,7 +170,7 @@ const VirtualInterview = () => {
         ]);
         setTimeout(() => {
           router.push("(virtual-interview)/feedback");
-        }, 5000);
+        }, 12000);
       }
     } catch (error) {
       console.error("Failed to transcribe audio", error.message || error);
