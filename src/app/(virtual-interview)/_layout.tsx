@@ -57,6 +57,18 @@ const VILayout = () => {
           headerBackVisible: false,
         }}
       />
+
+      <Stack.Screen
+        name="feedback"
+        options={{
+          headerTitle: () => (
+            <Text className="text-center text-lg font-medium text-white">
+              Feedback
+            </Text>
+          ),
+          headerBackVisible: false,
+        }}
+      />
     </Stack>
   );
 };

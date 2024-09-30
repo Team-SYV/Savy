@@ -150,9 +150,12 @@ const VirtualInterview = () => {
           {
             id: uuid.v4() as string,
             role: Role.Bot,
-            content: "Interview completed. Thank you!",
+            content: "Your interview is complete. Thank you for your time and participation!",
           },
         ]);
+        setTimeout(() => {
+          router.push("(virtual-interview)/feedback");
+        }, 5000);
       }
     } catch (error) {
       console.error("Failed to transcribe audio", error.message || error);
