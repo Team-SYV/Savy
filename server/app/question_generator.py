@@ -37,14 +37,14 @@ def generate_interview_questions(type, industry, experience_level, interview_typ
             Job description: {'' if job_description is None else job_description}.
             Resume details: {'' if resume_text is None else resume_text}.
 
-            Please generate **2 clear and concise interview question**.
+            Please generate **10 clear and concise interview question**.
             Ensure the first question is an introductory one, such as 'Tell me about yourself and a brief background,' 
             Please number the questions and ensure they are simple, short, straightforward, and easy to understand.
             """
               
     # Generate the completion using OpenAI's chat completion model
     completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": "You are an expert interview question generator."},
             {"role": "user", "content": prompt}
@@ -73,7 +73,7 @@ def generate_answer_feedback(previous_question, previous_answer):
     """
 
     completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": "You are an experienced hiring manager giving concise praise."},
             {"role": "user", "content": prompt}
