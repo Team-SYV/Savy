@@ -37,7 +37,7 @@ def generate_interview_questions(type, industry, experience_level, interview_typ
             Job description: {'' if job_description is None else job_description}.
             Resume details: {'' if resume_text is None else resume_text}.
 
-            Please generate **10 clear and concise interview question**.
+            Please generate **2 clear and concise interview question**.
             Ensure the first question is an introductory one, such as 'Tell me about yourself and a brief background,' 
             Please number the questions and ensure they are simple, short, straightforward, and easy to understand.
             """
@@ -64,18 +64,23 @@ def generate_interview_questions(type, industry, experience_level, interview_typ
     return questions
 
 def generate_answer_feedback(previous_question, previous_answer):
-    prompt = f"""given this {previous_answer} to this {previous_question}, make a short feedback to the answer"""
-   
+    prompt = f"""
+    Previous question: {previous_question}
+    Previous answer: {previous_answer}
+    
+    Please provide one short sentence starting with "You" that either gives positive praise or indicates if the answer is unclear.
+    Speak as if you are talking to me directly.
+    """
 
     completion = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are an expert interview feedback generator."},
+            {"role": "system", "content": "You are an experienced hiring manager giving concise praise."},
             {"role": "user", "content": prompt}
         ],
-        max_tokens=500
+        max_tokens=50
     )
 
-    response_text = completion.choices[0].message.content
+    response_text = completion.choices[0].message.content.strip()
 
     return response_text
