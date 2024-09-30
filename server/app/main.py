@@ -27,7 +27,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/api/webhooks/", status_code=status.HTTP_204_NO_CONTENT)
+@app.post("/api/webhooks", status_code=status.HTTP_204_NO_CONTENT)
 async def webhook_handler(request: Request, response: Response):
     return await clerk_webhook_handler(request, response, supabase, webhook_secret)
 
