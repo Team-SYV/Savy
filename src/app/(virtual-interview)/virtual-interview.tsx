@@ -15,7 +15,7 @@ import {
   Image,
   Alert,
 } from "react-native";
-import { getQuestions, transcribeAudio } from "@/api";
+import { generateAnswerFeedback, getQuestions, transcribeAudio } from "@/api";
 
 const VirtualInterview = () => {
   const { user } = useUser();
@@ -131,7 +131,21 @@ const VirtualInterview = () => {
         { id: uuid.v4() as string, role: Role.User, content: transcription },
       ]);
 
-      // Display the next question after the user answers
+      const form = new FormData();
+      form.append("previous_question", questions[currentQuestionIndex]);
+      form.append("previous_answer", transcription);
+
+      // Get feedback on the user's answer
+      const feedback = await generateAnswerFeedback(form);
+
+      console.log(feedback);
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { id: uuid.v4() as string, role: Role.Bot, content: feedback },
+      ]);
+
+      // Display the next question after the feedback
       const nextQuestionIndex = currentQuestionIndex + 1;
       if (nextQuestionIndex < questions.length) {
         setCurrentQuestionIndex(nextQuestionIndex);
@@ -150,12 +164,13 @@ const VirtualInterview = () => {
           {
             id: uuid.v4() as string,
             role: Role.Bot,
-            content: "Your interview is complete. Thank you for your time and participation!",
+            content:
+              "Your interview is complete. Thank you for your time and participation!",
           },
         ]);
         setTimeout(() => {
           router.push("(virtual-interview)/feedback");
-        }, 5000);
+        }, 12000);
       }
     } catch (error) {
       console.error("Failed to transcribe audio", error.message || error);
@@ -163,7 +178,6 @@ const VirtualInterview = () => {
 
     setRecording(undefined);
   };
-
   const renderMessage = ({ item }: { item: Message }) => (
     <View
       className={`flex-row my-2 mx-4 ${
