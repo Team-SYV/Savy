@@ -27,6 +27,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
+import { cleanQuestion } from "@/utils/cleanQuestion";
 
 const JobInformation = () => {
   const [formData, setFormData] = useState<JobInfoData>({
@@ -205,7 +206,8 @@ const JobInformation = () => {
 
       for (const question of questions) {
         if (typeof question === "string") {
-          await createQuestions(jobId, { question });
+          const cleanedQuestion = cleanQuestion(question);
+          await createQuestions(jobId, { question: cleanedQuestion });
         } else {
           console.error("Invalid question format:", question);
         }

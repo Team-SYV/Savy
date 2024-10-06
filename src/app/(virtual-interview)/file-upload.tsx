@@ -9,6 +9,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { Image } from "react-native";
 import { createQuestions, generateQuestions, getJobInformation } from "@/api";
 import Spinner from "react-native-loading-spinner-overlay";
+import { cleanQuestion } from "@/utils/cleanQuestion";
 
 const FileUpload = () => {
   const router = useRouter();
@@ -107,7 +108,8 @@ const FileUpload = () => {
       for (const question of questions) {
         // Create question to db
         if (typeof question === "string") {
-          await createQuestions(jobId, { question });
+          const cleanedQuestion = cleanQuestion(question);
+          await createQuestions(jobId, { question: cleanedQuestion });
         } else {
           console.error("Invalid question format:", question);
         }

@@ -49,7 +49,7 @@ def generate_interview_questions(type, industry, experience_level, interview_typ
             {"role": "system", "content": "You are an expert interview question generator."},
             {"role": "user", "content": prompt}
         ],
-        max_tokens=500
+        max_tokens=1000
     )
 
     # Extract the response text from the completion
