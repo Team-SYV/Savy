@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://savy-4ceq.onrender.com/",
+  baseURL: process.env.EXPO_PUBLIC_BASE_URL,
 });
 
 export const createJobInformation = async (jobData) => {
@@ -107,6 +107,29 @@ export const generateAnswerFeedback = async (formData) => {
 
     throw new Error(
       error.response?.data?.detail || "Failed to generate answer feedback"
+    );
+  }
+};
+
+export const talk = async (text, voice) => {
+  try {
+    const formData = new FormData();
+    formData.append("text", text);
+    if (voice) {
+      formData.append("voice", voice);
+    }
+
+    const response = await api.post("/api/talk/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data; 
+  } catch (error) {
+    console.error("Error response from server:", error.response);
+    throw new Error(
+      error.response?.data?.detail || "Failed to generate speech"
     );
   }
 };

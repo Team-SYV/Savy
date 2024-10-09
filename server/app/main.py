@@ -9,9 +9,11 @@ from app.pdf_to_text import convert_pdf_to_text
 from app.question_generator import generate_answer_feedback, generate_interview_questions
 from app.questions import create_questions, get_questions
 from app.speech_to_text import transcribe_audio
+from app.text_to_speech import text_to_speech
 
 import os
 import logging
+
 
 logging.basicConfig(level=logging.DEBUG)
 app = FastAPI()
@@ -137,3 +139,12 @@ async def generate_answer_feedback_endpoint(
     except Exception as e:
         logging.error(f"Error generating answer feedback: {e}")
         raise HTTPException(status_code=500, detail="Failed to generate answer feedback")
+    
+@app.post("/api/talk/")
+async def talk(text: str = Form(...)):
+    try:
+        result = await text_to_speech(text)
+        return result
+    except Exception as e:
+        logging.error(f"Error in text-to-speech conversion: {e}")
+        raise HTTPException(status_code=500, detail="Failed to process the request")

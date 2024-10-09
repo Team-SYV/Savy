@@ -16,6 +16,7 @@ import {
   Alert,
 } from "react-native";
 import { generateAnswerFeedback, getQuestions, transcribeAudio } from "@/api";
+import VirtualAvatar from "./virtual-avatar";
 
 const VirtualInterview = () => {
   const { user } = useUser();
@@ -233,10 +234,11 @@ const VirtualInterview = () => {
           ),
         }}
       />
-      <Image
+      {/* <Image
         source={require("@/assets/images/avatar.png")}
         className="w-[96%] h-56 rounded-xl mx-auto mt-4 mb-2"
-      />
+      /> */}
+      <VirtualAvatar avatarUrl="/model.glb" initialText={""} />
       <FlatList
         ref={flatListRef}
         data={messages}
