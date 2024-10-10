@@ -102,7 +102,7 @@ const EditProfile = () => {
       <Spinner visible={loading} color="#00AACE" />
 
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View className="flex pt-12 bg-white min-h-full">
+        <View className="flex pt-10 bg-white min-h-full">
           <View className="flex items-center justify-center">
             <Image
               source={{ uri: imageUri || "https://via.placeholder.com/150" }}
