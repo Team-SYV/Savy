@@ -30,8 +30,8 @@ const CustomFormField: React.FC<CustomInputProps> = ({
   return (
     <View className={`space-y-2 ${otherStyles}`}>
       <View
-        className={`relative w-full h-[55px] px-1 rounded-2xl border ${
-          isFocused ? 'border-[#00AACE]' : 'border-[#5D5D5D]'
+        className={`relative w-full h-[50px] px-1 rounded-2xl border bg-[#FBFBFB] ${
+          isFocused ? "border-[#B5B5B5]" : "border-[#E2E2E2]"
         } flex flex-row items-center`}
       >
         <TextInput
@@ -42,7 +42,7 @@ const CustomFormField: React.FC<CustomInputProps> = ({
           value={value}
           onChangeText={onChangeText}
           secureTextEntry={isPasswordField && !showPassword}
-          className="flex-1 px-2 bg-white text-base text-[#5D5D5D] placeholder:text-[#5D5D5D]"
+          className="flex-1 px-2 bg-[##FBFBFB] text-sm text-[#4C4C4C] placeholder:text-[#4C4C4C]"
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           {...props}
@@ -55,8 +55,8 @@ const CustomFormField: React.FC<CustomInputProps> = ({
           >
             <Ionicons
               name={showPassword ? "eye-off" : "eye"}
-              size={24}
-              color="#5D5D5D"
+              size={22}
+              color="#4C4C4C"
             />
           </TouchableOpacity>
         )}
