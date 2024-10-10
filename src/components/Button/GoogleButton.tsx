@@ -35,7 +35,7 @@ const GoogleButton: React.FC<GoogleButtonProps> = ({
       <View className="flex-row items-center justify-center">
         <Image
           source={require("@/assets/images/google-logo.png")}
-          className="w-8 h-8 mr-5"
+          className="w-7 h-7 mr-5"
           resizeMode="contain"
         />
         <Text className={`${textStyles} text-center text-base`}>{title}</Text>
