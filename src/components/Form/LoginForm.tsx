@@ -70,15 +70,14 @@ const LoginForm = () => {
       await setActive({ session: completeSignIn.createdSessionId });
     } catch (err) {
       const errorMessage =
-      err.errors?.[0]?.message || "An unknown error occurred";
+        err.errors?.[0]?.message || "An unknown error occurred";
 
-    Toast.show({
-      text1: "Error",
-      text2: errorMessage,
-      type: "error",
-      visibilityTime: 3000
-    });
-    
+      Toast.show({
+        text1: "Error",
+        text2: errorMessage,
+        type: "error",
+        visibilityTime: 3000,
+      });
     } finally {
       setLoading(false);
     }
@@ -93,7 +92,7 @@ const LoginForm = () => {
         placeholder="Email"
         value={emailAddress}
         onChangeText={(text) => handleInputChange(text, "email")}
-        otherStyles="mt-5 mb-1 bg-white rounded-xl"
+        otherStyles="mt-4 mb-1 bg-white rounded-xl"
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -106,7 +105,7 @@ const LoginForm = () => {
         placeholder="Password"
         value={password}
         onChangeText={(text) => handleInputChange(text, "password")}
-        otherStyles="mt-5 mb-1 bg-white rounded-xl"
+        otherStyles="mt-4 mb-1 bg-white rounded-xl"
       />
 
       <View className="flex-row items-center justify-between mt-1 mb-1">
@@ -124,8 +123,8 @@ const LoginForm = () => {
       <CustomButton
         title="Sign In"
         onPress={onSignInPress}
-        containerStyles="bg-[#00AACE] h-[55px] w-full rounded-2xl mt-6"
-        textStyles="text-white text-[20px]"
+        containerStyles="bg-[#00AACE] h-[50px] w-full rounded-2xl mt-6"
+        textStyles="text-white text-[16px] font-semibold"
         isLoading={loading}
       />
     </View>
