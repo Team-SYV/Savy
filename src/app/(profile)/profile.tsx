@@ -11,17 +11,17 @@ const Profile = () => {
   const { user } = useUser();
 
   return (
-    <View className="pt-16 bg-white min-h-full">
+    <View className="pt-10 bg-white min-h-full">
       <View className="flex items-center justify-center> mb-4">
         <Link href="/(profile)/edit-profile">
           <View style={{ position: "relative" }}>
             <Image
               source={{ uri: user?.imageUrl }}
-              className="w-32 h-32 rounded-full border-2 border-[#008FAE]"
+              className="w-[105px] h-[105px] rounded-full border-2 border-[#008FAE]"
             />
             <MaterialCommunityIcons
               name="pencil"
-              size={18}
+              size={16}
               color="#008FAE"
               style={{
                 position: "absolute",
