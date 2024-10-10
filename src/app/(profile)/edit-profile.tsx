@@ -7,6 +7,7 @@ import CustomButton from "@/components/Button/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Spinner from "react-native-loading-spinner-overlay";
+import Toast from "react-native-toast-message";
 import {
   View,
   Image,
@@ -25,29 +26,30 @@ const EditProfile = () => {
   const [lastName, setLastName] = useState(user?.lastName || "");
   const [imageUri, setImageUri] = useState(user?.imageUrl || "");
   const [newImageUri, setNewImageUri] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
 
-  const showMessage = (msg: string) => {
-    setMessage(msg);
-    setTimeout(() => {
-      setMessage(null);
-    }, 3000);
+  const showToast = (type: "success" | "error", msg: string) => {
+    Toast.show({
+      type,
+      text1: msg,
+      position: "bottom",
+      bottomOffset: 80,
+    });
   };
 
   // Function to filter name input
   const filterName = (text: string) => {
-    return text.replace(/[^A-Za-z\s'-]/g, '').slice(0, 50);
+    return text.replace(/[^A-Za-z\s'-]/g, "").slice(0, 50);
   };
 
   // Handles the process of saving user profile updates.
   const handleSaveUser = async () => {
     if (!firstName.trim()) {
-      showMessage("First name cannot be empty");
+      showToast("error", "First name cannot be empty");
       return;
     }
 
     if (!lastName.trim()) {
-      showMessage("Last name cannot be empty");
+      showToast("error", "Last name cannot be empty");
       return;
     }
 
@@ -65,12 +67,12 @@ const EditProfile = () => {
         });
       }
 
-      showMessage("Your changes are saved");
+      showToast("success", "Your changes are saved");
       setTimeout(() => {
         navigation.goBack();
       }, 1000);
     } catch (error) {
-      showMessage("Failed to update profile.");
+      showToast("error", "Failed to update profile.");
       console.error(error);
     } finally {
       setLoading(false);
@@ -117,11 +119,11 @@ const EditProfile = () => {
               <View className="border border-[#008FAE] py-2 px-2 rounded-lg flex-row items-center">
                 <MaterialCommunityIcons
                   name="pencil"
-                  size={16}
+                  size={14}
                   color="#008FAE"
                 />
-                <Text className="ml-1 font-medium text-gray-700">
-                  Change avatar
+                <Text className="ml-1 font-medium text-gray-600 text-sm">
+                  Change Avatar
                 </Text>
               </View>
             </TouchableOpacity>
@@ -152,27 +154,23 @@ const EditProfile = () => {
             <CustomButton
               title="Cancel"
               onPress={() => navigation.goBack()}
-              containerStyles={`border border-[#00AACE] h-14 rounded-xl mb-4 mx-1 w-1/2`}
-              textStyles="text-[#00AACE] text-[16px] font-semibold"
+              containerStyles={`border border-[#00AACE] h-[44px] rounded-xl mb-4 mx-1 w-1/2`}
+              textStyles="text-[#00AACE] text-[15px] font-semibold"
               disabled={loading}
             />
 
             <CustomButton
               title="SAVE"
               onPress={handleSaveUser}
-              containerStyles={`bg-[#00AACE] h-14 rounded-xl mb-4 w-1/2 mx-1`}
-              textStyles="text-white text-[16px] font-semibold"
+              containerStyles={`bg-[#00AACE] h-[44px] rounded-xl mb-4 w-1/2 mx-1`}
+              textStyles="text-white text-[15px] font-semibold"
               disabled={loading}
             />
           </View>
-
-          {message && (
-            <View className="absolute bottom-24 left-0 right-0 z-10 bg-gray-600 rounded-full py-3 px-1 mx-28">
-              <Text className="text-center text-white">{message}</Text>
-            </View>
-          )}
         </View>
       </ScrollView>
+
+      <Toast />
     </KeyboardAvoidingView>
   );
 };
