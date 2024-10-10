@@ -53,7 +53,7 @@ describe("Validation Functions", () => {
 
   test("validatePassword should return error message if password is too short", () => {
     expect(validatePassword("Pass1", true)).toBe(
-      "Password must include at least 6 characters."
+      "Password must include at least 8 characters."
     );
   });
 
