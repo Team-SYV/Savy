@@ -9,16 +9,14 @@ const ProfileLayout = () => {
   return (
     <Stack
       screenOptions={{
-        headerStyle: {
-          backgroundColor: "#008FAE",
-        },
         headerTitleAlign: "center",
+        headerShadowVisible: false,
         headerLeft: () => (
           <TouchableOpacity
             style={{ padding: 1 }}
             onPress={() => router.back()}
           >
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Ionicons name="arrow-back" size={20} color="black" />
           </TouchableOpacity>
         ),
       }}
@@ -27,7 +25,7 @@ const ProfileLayout = () => {
         name="profile"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-white">
+            <Text className="text-center text-xl font-bold text-black">
               Profile
             </Text>
           ),
@@ -37,7 +35,7 @@ const ProfileLayout = () => {
         name="edit-profile"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-white">
+            <Text className="text-center text-xl font-bold text-black">
               Edit Profile
             </Text>
           ),
@@ -49,7 +47,7 @@ const ProfileLayout = () => {
         name="feedback"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-white">
+            <Text className="text-center text-xl font-bold text-black">
               Feedback
             </Text>
           ),
