@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 const BackToLogin = () => {
   return (
-    <View className="flex-1 justify-center items-center mt-12">
+    <View className="flex-1 justify-center items-center mt-12 mb-10">
       <Link href="/(auth)/login">
         <View className="flex-row items-center">
           <Ionicons name="arrow-back" size={18} color="black" />
