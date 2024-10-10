@@ -39,7 +39,7 @@ const Login = () => {
 
         <GoogleSignInButton isLoading={isLoading} setIsLoading={setIsLoading} />
 
-        <View className="flex-row items-center justify-center mt-6">
+        <View className="flex-row items-center justify-center mt-6 mb-10">
           <Text> Don't have an account? </Text>
           <Link
             href="/(auth)/register"
