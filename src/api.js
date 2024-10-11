@@ -99,7 +99,7 @@ export const generateAnswerFeedback = async (formData) => {
       }
     );
 
-    return response.data.feedback;
+    return response.data.feedback; // Assuming feedback is structured correctly
   } catch (error) {
     console.error("Error response from server:", error.response);
 
@@ -131,4 +131,3 @@ export const generateAnswerFeedback = async (formData) => {
       );
     }
   };
-};
