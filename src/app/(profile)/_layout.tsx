@@ -44,11 +44,11 @@ const ProfileLayout = () => {
       />
 
       <Stack.Screen
-        name="feedback"
+        name="share-feedback"
         options={{
           headerTitle: () => (
             <Text className="text-center text-xl font-bold text-black">
-              Feedback
+              Share Feedback
             </Text>
           ),
           headerBackVisible: false,
