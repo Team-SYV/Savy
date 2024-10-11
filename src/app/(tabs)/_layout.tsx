@@ -10,7 +10,7 @@ const HeaderLeft = () => (
   <View className="flex-row items-center">
     <Image
       source={require("@/assets/images/svy.png")}
-      className="w-10 h-10 ml-2"
+      className="w-8 h-8 ml-2"
     />
     <Text className="text-white text-xl font-bold"> Savy </Text>
   </View>
@@ -29,7 +29,7 @@ const TabLayout = () => {
         tabBarActiveTintColor: "#008FAE",
         tabBarInactiveTintColor: "#7F7F7F",
         tabBarStyle: {
-          height: 62,
+          height: 56,
           position: "absolute",
           bottom: 10,
           left: 10,
@@ -40,7 +40,7 @@ const TabLayout = () => {
           elevation: 5,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11,
           bottom: 10,
           borderRadius: 20,
         },
