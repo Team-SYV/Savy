@@ -99,7 +99,11 @@ export const generateAnswerFeedback = async (formData) => {
       }
     );
 
+<<<<<<< HEAD
     return response.data.feedback;
+=======
+    return response.data.feedback; 
+>>>>>>> ad66cd2 (avatar)
   } catch (error) {
     console.error("Error response from server:", error.response);
 
