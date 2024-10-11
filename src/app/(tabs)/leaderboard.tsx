@@ -18,7 +18,7 @@ const Leaderboard = () => {
 
   return (
     <View className="flex-1 bg-white">
-      <Text className="text-lg font-semibold text-center mt-2 text-gray-700">Leaderboard</Text>
+      <Text className="text-lg font-semibold text-center mt-4 text-gray-700">Leaderboard</Text>
 
       <Image
         source={{
