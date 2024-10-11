@@ -25,7 +25,7 @@ const InterviewTypeCard: React.FC<InterviewTypeCardProps> = ({
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
       <View
-        className={`rounded-xl shadow-lg overflow-hidden m-4 w-48 h-44 ${
+        className={`rounded-xl shadow-lg overflow-hidden m-3 w-44 h-44 ${
           isSelected ? "bg-[#BBEEF8]" : "bg-[#EBEAEA]"
         }`}
       >
