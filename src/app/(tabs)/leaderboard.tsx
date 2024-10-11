@@ -22,7 +22,7 @@ const Leaderboard = () => {
         source={{
           uri: user.imageUrl || "https://via.placeholder.com/150",
         }}
-        className="w-[72px] h-[72px] rounded-full mt-2 mx-auto"
+        className="w-[80px] h-[80px] rounded-full mt-2 mx-auto"
         style={{ zIndex: 1 }}
       />
 
@@ -72,7 +72,7 @@ const Leaderboard = () => {
             source={{
               uri: "https://imgcdn.stablediffusionweb.com/2024/2/24/4abb7f5d-c625-4f72-88dc-3da18e45aad9.jpg",
             }}
-            className="w-32 h-32 rounded-full mt-4 mx-auto"
+            className="w-36 h-36 rounded-full mt-4 mx-auto"
             style={{ zIndex: 1 }}
           />
           <Text className="text-sm">Dave Alivio</Text>
