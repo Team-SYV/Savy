@@ -1,11 +1,9 @@
 import React from "react";
-import { Stack, useRouter } from "expo-router";
-import { TouchableOpacity, Text } from "react-native";
+import { router, Stack } from "expo-router";
+import { Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const ProfileLayout = () => {
-  const router = useRouter();
-
   return (
     <Stack
       screenOptions={{
@@ -22,32 +20,28 @@ const ProfileLayout = () => {
       }}
     >
       <Stack.Screen
-        name="profile"
+        name="index"
         options={{
-          headerTitle: () => (
-            <Text className="text-center text-[18px] font-bold text-[#2a2a2a]">
-              Profile
-            </Text>
-          ),
+          headerShown: false,
         }}
       />
+
       <Stack.Screen
         name="edit-profile"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-[18px] font-bold text-[#2a2a2a]">
+            <Text className="text-center text-[18px] font-semibold text-[#2a2a2a]">
               Edit Profile
             </Text>
           ),
           headerBackVisible: false,
         }}
       />
-
       <Stack.Screen
         name="share-feedback"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-[18px] font-bold text-[#2a2a2a]">
+            <Text className="text-center text-[18px] font-semibold text-[#2a2a2a]">
               Share Feedback
             </Text>
           ),
