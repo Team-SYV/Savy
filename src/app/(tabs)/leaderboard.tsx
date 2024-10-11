@@ -18,8 +18,6 @@ const Leaderboard = () => {
 
   return (
     <View className="flex-1 bg-white">
-      <Text className="text-lg font-semibold text-center mt-4 text-gray-700">Leaderboard</Text>
-
       <Image
         source={{
           uri: user.imageUrl || "https://via.placeholder.com/150",
@@ -74,7 +72,7 @@ const Leaderboard = () => {
             source={{
               uri: "https://imgcdn.stablediffusionweb.com/2024/2/24/4abb7f5d-c625-4f72-88dc-3da18e45aad9.jpg",
             }}
-            className="w-32 h-32 rounded-full mt-6 mx-auto"
+            className="w-32 h-32 rounded-full mt-4 mx-auto"
             style={{ zIndex: 1 }}
           />
           <Text className="text-sm">Dave Alivio</Text>
@@ -102,10 +100,10 @@ const Leaderboard = () => {
       </View>
 
       {/* Scrollable list */}
-      <View className="flex-1 mt-2 py-2">
+      <View className="flex-1 py-2 mt-1">
         <ScrollView
           style={{ flex: 1 }}
-          className="max-h-[220px] border border-gray-500 mx-4 py-2 rounded-xl"
+          className="max-h-[270px] border border-gray-500 mx-4 py-2 rounded-xl"
         >
           {sampleData.map((item, index) => (
             <View
