@@ -232,7 +232,7 @@ const JobInformation = () => {
           options={{
             headerLeft: () => (
               <TouchableOpacity onPress={handleBackButtonPress}>
-                <Ionicons name="arrow-back" size={24} color="white" />
+                <Ionicons name="arrow-back" size={20} color="[#2a2a2a]" />
               </TouchableOpacity>
             ),
           }}
