@@ -18,7 +18,7 @@ const CompanyFormField: React.FC<CompanyInputProps> = ({
 }) => {
   return (
     <View className={`space-y-2 ${otherStyles}`}>
-      <View className="h-[45px] mr-4 relative px-1 rounded-xl border border-[#5D5D5D] flex flex-row items-center">
+      <View className="h-[45px] mr-4 relative px-1 rounded-xl border border-[#6e6e6e] flex flex-row items-center">
         <TextInput
           placeholder={placeholder}
           value={value}

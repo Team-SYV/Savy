@@ -38,6 +38,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         marginRight: 12,
         marginLeft: 40,
         marginTop: 0,
+
         ...dropdownStyles,
       }}
       boxStyles={{
@@ -47,13 +48,13 @@ const Dropdown: React.FC<DropdownProps> = ({
         ...boxStyles,
       }}
       inputStyles={{
-        fontSize: 13,
+        fontSize: 14,
         ...inputStyles,
       }}
       dropdownTextStyles={{
         marginBottom: 0.5,
         marginTop: 0.5,
-        fontSize: 13,
+        fontSize: 14,
       }}
     />
   );
