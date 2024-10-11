@@ -1,39 +1,34 @@
 import { Tabs } from "expo-router";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useAuth } from "@clerk/clerk-expo";
-import { ProfileButton } from "@/components/Profile/ProfileButton";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { Image, View, Text } from "react-native";
-
-const HeaderLeft = () => (
-  <View className="flex-row items-center">
-    <Image
-      source={require("@/assets/images/svy.png")}
-      className="w-8 h-8 ml-2"
-    />
-    <Text className="text-white text-xl font-bold"> Savy </Text>
-  </View>
-);
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
+import { Text } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 
 const TabLayout = () => {
   const { isSignedIn } = useAuth();
 
+  // Helper function to hide tab bar on specific routes
+  const shouldTabBarBeVisible = (route: any) => {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? "profile";
+    return !(routeName === "edit-profile" || routeName === "share-feedback");
+  };
+
   return (
     <Tabs
       screenOptions={{
-        headerStyle: {
-          backgroundColor: "#008FAE",
-        },
-        headerTintColor: "#fff",
+        headerShown: false,
+        headerShadowVisible: false,
         tabBarActiveTintColor: "#008FAE",
         tabBarInactiveTintColor: "#7F7F7F",
         tabBarStyle: {
           height: 56,
           position: "absolute",
           bottom: 10,
-          left: 10,
-          right: 10,
+          left: 8,
+          right: 8,
           borderRadius: 15,
           borderTopWidth: 0,
           shadowColor: "#000",
@@ -41,12 +36,14 @@ const TabLayout = () => {
         },
         tabBarLabelStyle: {
           fontSize: 11,
-          bottom: 10,
-          borderRadius: 20,
+          marginBottom: 6, 
         },
-        headerRight: () => <ProfileButton />,
-        headerTitle: () => null,
-        headerLeft: () => <HeaderLeft />,
+        tabBarIconStyle: {
+          marginTop: 6, 
+        },
+        tabBarItemStyle: {
+          marginHorizontal: 8, 
+        },
       }}
     >
       <Tabs.Screen
@@ -74,6 +71,13 @@ const TabLayout = () => {
       <Tabs.Screen
         name="leaderboard"
         options={{
+          headerShown: true,
+          headerTitleAlign: "center",
+          headerTitle: () => (
+            <Text className="text-center text-[18px] font-semibold text-[#2a2a2a]">
+              Leaderboard
+            </Text>
+          ),
           tabBarIcon: ({ size, color }) => (
             <MaterialIcons name="leaderboard" size={size} color={color} />
           ),
@@ -90,6 +94,30 @@ const TabLayout = () => {
           ),
           tabBarLabel: "Progress",
         }}
+        redirect={!isSignedIn}
+      />
+
+      <Tabs.Screen
+        name="profile"
+        options={({ route }) => ({
+          tabBarIcon: ({ size, color }) => (
+            <FontAwesome5 name="user-circle" size={size} color={color} />
+          ),
+          tabBarLabel: "Profile",
+          tabBarStyle: shouldTabBarBeVisible(route)
+            ? {
+                height: 56,
+                position: "absolute",
+                bottom: 10,
+                left: 8,
+                right: 8,
+                borderRadius: 15,
+                borderTopWidth: 0,
+                shadowColor: "#000",
+                elevation: 5,
+              }
+            : { display: "none" },
+        })}
         redirect={!isSignedIn}
       />
     </Tabs>

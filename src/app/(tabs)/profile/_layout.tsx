@@ -30,7 +30,7 @@ const ProfileLayout = () => {
         name="edit-profile"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-[18px] font-semibold text-[#2a2a2a]">
+            <Text className="text-center text-[18px] font-bold text-[#2a2a2a]">
               Edit Profile
             </Text>
           ),
@@ -41,7 +41,7 @@ const ProfileLayout = () => {
         name="share-feedback"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-[18px] font-semibold text-[#2a2a2a]">
+            <Text className="text-center text-[18px] font-bold text-[#2a2a2a]">
               Share Feedback
             </Text>
           ),
