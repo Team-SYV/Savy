@@ -11,9 +11,9 @@ const Profile = () => {
   const { user } = useUser();
 
   return (
-    <View className="pt-10 bg-white min-h-full">
+    <View className="pt-32 bg-white min-h-full">
       <View className="flex items-center justify-center> mb-4">
-        <Link href="/(profile)/edit-profile">
+        <Link href="/profile/edit-profile">
           <View style={{ position: "relative" }}>
             <Image
               source={{ uri: user?.imageUrl }}
