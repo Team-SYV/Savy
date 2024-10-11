@@ -9,16 +9,14 @@ const RecordLayout = () => {
   return (
     <Stack
       screenOptions={{
-        headerStyle: {
-          backgroundColor: "#008FAE",
-        },
         headerTitleAlign: "center",
+        headerShadowVisible: false,
         headerLeft: () => (
           <TouchableOpacity
             style={{ padding: 1 }}
             onPress={() => router.back()}
           >
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Ionicons name="arrow-back" size={23} color="black" />
           </TouchableOpacity>
         ),
       }}
@@ -27,7 +25,7 @@ const RecordLayout = () => {
         name="job-information"
         options={{
           headerTitle: () => (
-            <Text className="text-center font-medium text-xl text-white">
+            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
               Record Yourself
             </Text>
           ),
@@ -38,20 +36,19 @@ const RecordLayout = () => {
         name="file-upload"
         options={{
           headerTitle: () => (
-            <Text className="text-center font-medium text-xl text-white">
-              Record Yourself
+            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
+              File Upload
             </Text>
           ),
           headerBackVisible: false,
         }}
       />
 
-
       <Stack.Screen
         name="record"
         options={{
           headerTitle: () => (
-            <Text className="text-center font-medium text-xl text-white">
+            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
               Record Yourself
             </Text>
           ),
