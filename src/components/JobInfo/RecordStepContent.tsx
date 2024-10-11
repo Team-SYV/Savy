@@ -9,6 +9,7 @@ import { View, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { StepContentProps } from "@/types/StepContent";
 import Spinner from "react-native-loading-spinner-overlay";
+import JobDescriptionTextArea from "../TextArea/JobDescriptionTextArea";
 
 const RecordStepContent: React.FC<StepContentProps> = ({
   activeStep,
@@ -145,7 +146,7 @@ const RecordStepContent: React.FC<StepContentProps> = ({
       );
     case 5:
       return (
-        <TextArea
+        <JobDescriptionTextArea
           value={formData.jobDescription}
           onChangeText={(text) => updateFormData("jobDescription", text)}
           placeholder="Fill in your job description"
@@ -164,8 +165,8 @@ const RecordStepContent: React.FC<StepContentProps> = ({
             <CustomButton
               title="Skip"
               onPress={onSkip}
-              containerStyles="bg-gray-200 h-12 rounded-xl mb-4 mx-2 w-1/2"
-              textStyles="text-[#00AACE] text-[16px] font-semibold text-base"
+              containerStyles="bg-[#EEEEEE] h-12 rounded-xl mb-4 mx-2 w-1/2"
+              textStyles="text-[#656565] text-[16px] font-semibold text-base"
               disabled={loading}
             />
             <CustomButton

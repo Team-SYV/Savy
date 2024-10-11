@@ -9,6 +9,7 @@ import { View, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { StepContentProps } from "@/types/StepContent";
 import Spinner from "react-native-loading-spinner-overlay";
+import JobDescriptionTextArea from "../TextArea/JobDescriptionTextArea";
 
 const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
   activeStep,
@@ -145,39 +146,39 @@ const VirtualInterviewStepContent: React.FC<StepContentProps> = ({
       );
     case 5:
       return (
-        <TextArea
+        <JobDescriptionTextArea
           value={formData.jobDescription}
           onChangeText={(text) => updateFormData("jobDescription", text)}
           placeholder="Fill in your job description"
           textInputStyles="ml-12"
         />
       );
-      case 6:
-        return (
-          <View>
-            <Spinner visible={loading} color="#00AACE" />
-            <Text className="ml-12 mr-3 text-base">
-              Do you wish to customize your interview based on your resume by
-              uploading a file? If not, please skip.
-            </Text>
-            <View className="flex-row items-center justify-center px-6 mt-4 ml-7">
-              <CustomButton
-                title="Skip"
-                onPress={onSkip}
-                containerStyles="bg-gray-200 h-12 rounded-xl mb-4 mx-2 w-1/2"
-                textStyles="text-[#00AACE] text-[16px] font-semibold text-base"
-                disabled={loading}
-              />
-              <CustomButton
-                title="Proceed"
-                onPress={onProceed}
-                containerStyles="bg-[#00AACE] h-12 rounded-xl mb-4 w-1/2 mx-2"
-                textStyles="text-white text-[16px] font-semibold text-base"
-                disabled={loading}
-              />
-            </View>
+    case 6:
+      return (
+        <View>
+          <Spinner visible={loading} color="#00AACE" />
+          <Text className="ml-12 mr-3 text-base">
+            Do you wish to customize your interview based on your resume by
+            uploading a file? If not, please skip.
+          </Text>
+          <View className="flex-row items-center justify-center px-6 mt-4 ml-7">
+            <CustomButton
+              title="Skip"
+              onPress={onSkip}
+              containerStyles="bg-[#EEEEEE] h-12 rounded-xl mb-4 mx-2 w-1/2"
+              textStyles="text-[#656565] text-[16px] font-semibold text-base"
+              disabled={loading}
+            />
+            <CustomButton
+              title="Proceed"
+              onPress={onProceed}
+              containerStyles="bg-[#00AACE] h-12 rounded-xl mb-4 w-1/2 mx-2"
+              textStyles="text-white text-[16px] font-semibold text-base"
+              disabled={loading}
+            />
           </View>
-        );
+        </View>
+      );
     default:
       return null;
   }
