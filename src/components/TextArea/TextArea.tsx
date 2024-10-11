@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextInput, View } from "react-native";
 
 interface TextAreaProps {
@@ -16,6 +16,8 @@ const TextArea: React.FC<TextAreaProps> = ({
   containerStyles = "",
   textInputStyles = "",
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <View className={`${containerStyles}`}>
       <TextInput
@@ -24,8 +26,11 @@ const TextArea: React.FC<TextAreaProps> = ({
         onChangeText={onChangeText}
         multiline
         textAlignVertical="top"
-        className={`border border-[#5D5D5D] rounded-lg text-base p-3 h-32
-          ${textInputStyles}`}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        className={`rounded-lg text-base p-3 bg-[#FBFBFB] border ${
+          isFocused ? "border-[#B5B5B5]" : "border-[#DFDFDF]"
+        } ${textInputStyles}`}
       />
     </View>
   );
