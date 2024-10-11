@@ -9,16 +9,14 @@ const VILayout = () => {
   return (
     <Stack
       screenOptions={{
-        headerStyle: {
-          backgroundColor: "#008FAE",
-        },
         headerTitleAlign: "center",
+        headerShadowVisible: false,
         headerLeft: () => (
           <TouchableOpacity
             style={{ padding: 1 }}
             onPress={() => router.back()}
           >
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Ionicons name="arrow-back" size={23} color="black" />
           </TouchableOpacity>
         ),
       }}
@@ -27,10 +25,11 @@ const VILayout = () => {
         name="job-information"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-lg font-medium text-white">
+            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
               Talk with Virtual Interviewer
             </Text>
           ),
+          headerBackVisible: false,
         }}
       />
 
@@ -38,8 +37,8 @@ const VILayout = () => {
         name="file-upload"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-lg font-medium text-white">
-              Talk with Virtual Interviewer
+            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
+              File Upload
             </Text>
           ),
           headerBackVisible: false,
@@ -50,7 +49,7 @@ const VILayout = () => {
         name="virtual-interview"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-lg font-medium text-white">
+            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
               Practice Area
             </Text>
           ),
@@ -62,7 +61,7 @@ const VILayout = () => {
         name="feedback"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-lg font-medium text-white">
+            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
               Feedback
             </Text>
           ),

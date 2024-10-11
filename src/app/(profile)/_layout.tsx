@@ -16,7 +16,7 @@ const ProfileLayout = () => {
             style={{ padding: 1 }}
             onPress={() => router.back()}
           >
-            <Ionicons name="arrow-back" size={20} color="black" />
+            <Ionicons name="arrow-back" size={23} color="#2a2a2a" />
           </TouchableOpacity>
         ),
       }}
@@ -25,7 +25,7 @@ const ProfileLayout = () => {
         name="profile"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-black">
+            <Text className="text-center text-[18px] font-bold text-[#2a2a2a]">
               Profile
             </Text>
           ),
@@ -35,7 +35,7 @@ const ProfileLayout = () => {
         name="edit-profile"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-black">
+            <Text className="text-center text-[18px] font-bold text-[#2a2a2a]">
               Edit Profile
             </Text>
           ),
@@ -47,7 +47,7 @@ const ProfileLayout = () => {
         name="share-feedback"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-black">
+            <Text className="text-center text-[18px] font-bold text-[#2a2a2a]">
               Share Feedback
             </Text>
           ),
