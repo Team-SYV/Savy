@@ -6,7 +6,7 @@ import { router } from "expo-router";
 
 const ShareFeedback = () => {
   const navigateToFeedback = () => {
-    router.push("/(profile)/share-feedback");
+    router.push("/profile/share-feedback");
   };
 
   return (
