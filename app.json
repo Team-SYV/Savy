@@ -32,15 +32,13 @@
     "slug": "savy",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/svy.png",
+    "icon": "./src/assets/images/app-icon.png",
     "splash": {
-      "image": "./src/assets/images/sss.png",
+      "image": "./src/assets/images/splash-screen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "updates": {
       "fallbackToCacheTimeout": 0
     },
