@@ -4,7 +4,7 @@ import { useAuth } from "@clerk/clerk-expo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
-import { Text } from "react-native";
+import { Text, View, Image } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 
 const TabLayout = () => {
@@ -75,13 +75,21 @@ const TabLayout = () => {
           headerTitleAlign: "center",
           headerShadowVisible: true,
           headerStyle: {
-            backgroundColor: "#009CBD", 
+            backgroundColor: "#009CBD",
             height: 72,
           },
           headerTitle: () => (
-            <Text className="text-center text-[18px] font-semibold text-[#FFFFFF]">
-              Leaderboard
-            </Text>
+            <View className="flex items-center justify-center">
+              <View className="flex-row items-center justify-center">
+                <Text className="text-[18px] font-semibold text-[#FFFFFF] mr-2">
+                  Leaderboard
+                </Text>
+                <Image
+                  source={require("@/assets/icons/trophy.png")}
+                  style={{ width: 20, height: 16 }}
+                />
+              </View>
+            </View>
           ),
           tabBarIcon: ({ size, color }) => (
             <MaterialIcons name="leaderboard" size={size} color={color} />
