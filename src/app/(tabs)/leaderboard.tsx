@@ -22,7 +22,7 @@ const Leaderboard = () => {
         source={{
           uri: user.imageUrl || "https://via.placeholder.com/150",
         }}
-        className="w-[80px] h-[80px] rounded-full mt-2 mx-auto"
+        className="w-[80px] h-[80px] rounded-full mt-5 mx-auto"
         style={{ zIndex: 1 }}
       />
 

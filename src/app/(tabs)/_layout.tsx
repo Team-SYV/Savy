@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useAuth } from "@clerk/clerk-expo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -36,13 +36,13 @@ const TabLayout = () => {
         },
         tabBarLabelStyle: {
           fontSize: 11,
-          marginBottom: 6, 
+          marginBottom: 6,
         },
         tabBarIconStyle: {
-          marginTop: 6, 
+          marginTop: 6,
         },
         tabBarItemStyle: {
-          marginHorizontal: 8, 
+          marginHorizontal: 8,
         },
       }}
     >
@@ -73,8 +73,13 @@ const TabLayout = () => {
         options={{
           headerShown: true,
           headerTitleAlign: "center",
+          headerShadowVisible: true,
+          headerStyle: {
+            backgroundColor: "#009CBD", 
+            height: 72,
+          },
           headerTitle: () => (
-            <Text className="text-center text-[18px] font-semibold text-[#2a2a2a]">
+            <Text className="text-center text-[18px] font-semibold text-[#FFFFFF]">
               Leaderboard
             </Text>
           ),
