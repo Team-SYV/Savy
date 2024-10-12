@@ -10,10 +10,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
-  ScrollView,
 } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
 import Toast from "react-native-toast-message";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { router } from "expo-router";
 
 const ShareFeedback = () => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -63,6 +64,10 @@ const ShareFeedback = () => {
         text2: `Thank you for submitting your feedback`,
         topOffset: 0,
       });
+
+      setTimeout(() => {
+        router.push("/profile");
+      }, 2000);
     }, 2000);
   };
 
@@ -71,12 +76,14 @@ const ShareFeedback = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{ flex: 1 }}
     >
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        extraScrollHeight={20}
+      >
         <View className="flex-1 p-4 bg-white">
           <Image
             source={require("@/assets/images/give-feedback.png")}
-            className="w-36 h-36 mx-auto"
-            resizeMode="contain"
+            className="w-40 h-36 mx-auto"
           />
 
           <Text className="text-[20px] mt-2 text-center font-semibold">
@@ -125,7 +132,7 @@ const ShareFeedback = () => {
             />
           </View>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <View className="absolute bottom-1 left-0 right-0 flex-row items-center justify-center px-4">
         <CustomButton
