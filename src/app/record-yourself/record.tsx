@@ -170,7 +170,7 @@ const Record: React.FC = () => {
           headerLeft: () =>
             allQuestionsRecorded && (
               <TouchableOpacity onPress={() => router.push("/home")}>
-                <AntDesign name="arrowleft" size={24} color="white" />
+                <AntDesign name="arrowleft" size={24} color="2a2a2a" />
               </TouchableOpacity>
             ),
         }}

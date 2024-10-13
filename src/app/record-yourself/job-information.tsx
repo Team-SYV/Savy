@@ -212,7 +212,7 @@ const JobInformation = () => {
           console.error("Invalid question format:", question);
         }
       }
-      router.push(`/(record-yourself)/record?jobId=${jobId}`);
+      router.push(`/record-yourself/record?jobId=${jobId}`);
     } catch (err) {
       console.error("Error skipping file upload:", err.message);
     } finally {
@@ -232,7 +232,7 @@ const JobInformation = () => {
           options={{
             headerLeft: () => (
               <TouchableOpacity onPress={handleBackButtonPress}>
-                <Ionicons name="arrow-back" size={24} color="white" />
+                <Ionicons name="arrow-back" size={20} color="[#2a2a2a]" />
               </TouchableOpacity>
             ),
           }}
@@ -260,7 +260,7 @@ const JobInformation = () => {
                       updateFormData={updateFormData}
                       handleNextStep={handleNextStep}
                       handleSubmit={handleSubmit}
-                      handleSubmitRoute={`/(record-yourself)/file-upload?jobId=`}
+                      handleSubmitRoute={`/record-yourself/file-upload?jobId=`}
                       handleSkip={handleSkip}
                       jobInformationId={jobInformationId}
                     />
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
     paddingBottom: 120,
-    marginTop: 24,
+    marginTop: 8,
     padding: 15,
   },
 });

@@ -3,42 +3,54 @@ import { Stack, useRouter } from "expo-router";
 import { TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const ProfileLayout = () => {
+const VILayout = () => {
   const router = useRouter();
 
   return (
     <Stack
       screenOptions={{
-        headerStyle: {
-          backgroundColor: "#008FAE",
-        },
         headerTitleAlign: "center",
+        headerShadowVisible: false,
         headerLeft: () => (
           <TouchableOpacity
             style={{ padding: 1 }}
             onPress={() => router.back()}
           >
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Ionicons name="arrow-back" size={23} color="black" />
           </TouchableOpacity>
         ),
       }}
     >
       <Stack.Screen
-        name="profile"
+        name="job-information"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-white">
-              Profile
+            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
+              Talk with Virtual Interviewer
             </Text>
           ),
+          headerBackVisible: false,
         }}
       />
+
       <Stack.Screen
-        name="edit-profile"
+        name="file-upload"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-white">
-              Edit Profile
+            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
+              File Upload
+            </Text>
+          ),
+          headerBackVisible: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="index"
+        options={{
+          headerTitle: () => (
+            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
+              Practice Area
             </Text>
           ),
           headerBackVisible: false,
@@ -49,7 +61,7 @@ const ProfileLayout = () => {
         name="feedback"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-xl font-bold text-white">
+            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
               Feedback
             </Text>
           ),
@@ -60,4 +72,4 @@ const ProfileLayout = () => {
   );
 };
 
-export default ProfileLayout;
+export default VILayout;

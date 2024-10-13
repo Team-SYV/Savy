@@ -108,7 +108,7 @@ describe('FileUpload Component', () => {
       expect(generateQuestions).toHaveBeenCalled();
       expect(createQuestions).toHaveBeenCalledWith(expect.anything(), { question: 'What is your experience with React?' });
       expect(createQuestions).toHaveBeenCalledWith(expect.anything(), { question: 'Why do you want to work here?' });
-      expect(mockRouter.push).toHaveBeenCalledWith('/(record-yourself)/record?jobId=123');
+      expect(mockRouter.push).toHaveBeenCalledWith('/record-yourself/record?jobId=123');
     });
   });
 });

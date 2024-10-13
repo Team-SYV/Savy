@@ -98,7 +98,7 @@ const FileUpload = () => {
       formData.append("job_description", job_description);
       formData.append("company_name", company_name);
       formData.append("job_role", role);
-      formData.append("type", "RECORD");
+      formData.append("type", "VIRTUAL");
 
       console.log("form Data:", formData);
 
@@ -115,7 +115,7 @@ const FileUpload = () => {
         }
       }
 
-      router.push(`/(record-yourself)/record?jobId=${jobId}`);
+      router.push(`/virtual-interview?jobId=${jobId}`);
     } catch (error) {
       Alert.alert("Upload Failed", error.message);
     } finally {
@@ -127,7 +127,7 @@ const FileUpload = () => {
     <View className="flex-1 bg-white">
       <Spinner visible={loading} color="#00AACE" />
 
-      <View className="flex-1 mt-28 px-4">
+      <View className="flex-1 mt-24 px-4">
         <Text className="text-xl text-gray-800 font-medium mb-4">
           Upload Your Resume
         </Text>
@@ -193,7 +193,7 @@ const FileUpload = () => {
           title="Start Interview"
           onPress={handleStartInterview}
           containerStyles="bg-[#00AACE] h-[55px] w-full rounded-2xl"
-          textStyles="text-white text-[17px]"
+          textStyles="text-white text-[17px] font-semibold"
           disabled={loading}
         />
       </View>

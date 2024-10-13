@@ -149,7 +149,7 @@ const ResetPasswordForm = () => {
 
         {!successfulCreation ? (
           <View className="mt-32">
-            <View className="w-60 h-60 self-center">
+            <View className="w-56 h-56 self-center">
               <Image
                 source={require("@/assets/icons/password.png")}
                 className="w-full h-full"
@@ -157,7 +157,7 @@ const ResetPasswordForm = () => {
               />
             </View>
 
-            <Text className="text-3xl text-center font-medium mt-6">
+            <Text className="text-[24px] text-center font-semibold mt-5">
               Forgot Password?
             </Text>
 
@@ -183,15 +183,15 @@ const ResetPasswordForm = () => {
             <CustomButton
               title="Reset Password"
               onPress={onRequestReset}
-              containerStyles="bg-[#00AACE] h-16 w-full rounded-2xl mt-6 mb-1"
-              textStyles="text-white text-[17px]"
+              containerStyles="bg-[#00AACE] h-[50px] w-full rounded-2xl mt-6 mb-1"
+              textStyles="text-white text-[16px] font-semibold"
               isLoading={loading}
             />
 
             <BackToLogin />
           </View>
         ) : (
-          <View className="mt-32">
+          <View className="mt-24">
             <View className="w-60 h-60 self-center">
               <Image
                 source={require("@/assets/icons/password.png")}
@@ -200,7 +200,7 @@ const ResetPasswordForm = () => {
               />
             </View>
 
-            <Text className="text-3xl text-center font-medium mt-6">
+            <Text className="text-[24px] text-center font-semibold mt-5">
               Set New Password
             </Text>
 
@@ -237,8 +237,8 @@ const ResetPasswordForm = () => {
             <CustomButton
               title="Request Code"
               onPress={openModal}
-              containerStyles="bg-[#00AACE] h-16 w-full rounded-2xl mt-6 mb-1"
-              textStyles="text-white text-[17px]"
+              containerStyles="bg-[#00AACE] h-[50px] w-full rounded-2xl mt-6 mb-1"
+              textStyles="text-white text-[16px] font-semibold"
               isLoading={loading}
             />
 
@@ -260,7 +260,7 @@ const ResetPasswordForm = () => {
             />
           </View>
           <View className="items-center">
-            <Text className="text-3xl font-semibold"> Verify Email</Text>
+            <Text className="text-[24px] font-semibold"> Verify Email</Text>
             <Text className="mt-2 text-center text-lg">
               Please enter the 6-digit code that {"\n"}
               was sent to your email.
@@ -279,7 +279,7 @@ const ResetPasswordForm = () => {
             title="Reset Password"
             onPress={onReset}
             containerStyles="bg-[#00AACE] h-16 mx-4 rounded-2xl mt-6 mb-1"
-            textStyles="text-white text-[18px] font-medium"
+            textStyles="text-white text-[16px] font-semibold"
             isLoading={loading}
           />
         </View>

@@ -17,21 +17,12 @@ const Leaderboard = () => {
   const { user } = useUser();
 
   return (
-    <View className="flex-1">
-      <View className="flex-row items-center mt-4 mx-auto">
-        <Text className="text-xl font-medium mr-2">Leaderboard</Text>
-        <Image
-          source={require("@/assets/images/trophy.png")}
-          className="w-5 h-5"
-          resizeMode="contain"
-        />
-      </View>
-
+    <View className="flex-1 bg-white">
       <Image
         source={{
           uri: user.imageUrl || "https://via.placeholder.com/150",
         }}
-        className="w-24 h-24 rounded-full mt-5 mx-auto"
+        className="w-[80px] h-[80px] rounded-full mt-5 mx-auto"
         style={{ zIndex: 1 }}
       />
 
@@ -81,7 +72,7 @@ const Leaderboard = () => {
             source={{
               uri: "https://imgcdn.stablediffusionweb.com/2024/2/24/4abb7f5d-c625-4f72-88dc-3da18e45aad9.jpg",
             }}
-            className="w-36 h-36 rounded-full mt-6 mx-auto"
+            className="w-36 h-36 rounded-full mt-4 mx-auto"
             style={{ zIndex: 1 }}
           />
           <Text className="text-sm">Dave Alivio</Text>
@@ -109,7 +100,7 @@ const Leaderboard = () => {
       </View>
 
       {/* Scrollable list */}
-      <View className="flex-1 mt-3 py-2">
+      <View className="flex-1 py-2 mt-1">
         <ScrollView
           style={{ flex: 1 }}
           className="max-h-[270px] border border-gray-500 mx-4 py-2 rounded-xl"

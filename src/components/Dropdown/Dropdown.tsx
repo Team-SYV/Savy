@@ -7,6 +7,7 @@ interface DropdownProps {
   defaultOption?: { key: string; value: string };
   dropdownStyles?: object;
   boxStyles?: object;
+  inputStyles?: object;
   onSelect?: (value: string) => void;
 }
 
@@ -16,6 +17,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   defaultOption,
   dropdownStyles = {},
   boxStyles = {},
+  inputStyles = {},
   onSelect,
 }) => {
   const handleSelect = (key: string) => {
@@ -36,6 +38,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         marginRight: 12,
         marginLeft: 40,
         marginTop: 0,
+
         ...dropdownStyles,
       }}
       boxStyles={{
@@ -44,9 +47,14 @@ const Dropdown: React.FC<DropdownProps> = ({
         marginBottom: 8,
         ...boxStyles,
       }}
+      inputStyles={{
+        fontSize: 14,
+        ...inputStyles,
+      }}
       dropdownTextStyles={{
         marginBottom: 0.5,
         marginTop: 0.5,
+        fontSize: 14,
       }}
     />
   );
