@@ -205,7 +205,7 @@ const Record: React.FC = () => {
               className={`text-center mb-4 px-4 py-4 rounded-xl ${
                 isRecording
                   ? "text-red-600 font-medium text-2xl"
-                  : "bg-black/80 text-white text-lg font-light"
+                  : "bg-black/80 text-white text-base font-light"
               }`}
             >
               {isRecording
