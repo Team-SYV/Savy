@@ -46,7 +46,7 @@ const VILayout = () => {
       />
 
       <Stack.Screen
-        name="virtual-interview"
+        name="index"
         options={{
           headerTitle: () => (
             <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
