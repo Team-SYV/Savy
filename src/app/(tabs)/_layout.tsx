@@ -16,6 +16,16 @@ const TabLayout = () => {
     return !(routeName === "edit-profile" || routeName === "share-feedback");
   };
 
+  const HeaderLeft = () => (
+    <View className="flex-row items-center">
+      <Image
+        source={require("@/assets/images/syv.png")}
+        className="w-9 h-9 ml-3"
+      />
+      <Text className="text-white text-xl font-semibold"> Savy </Text>
+    </View>
+  );
+
   return (
     <Tabs
       screenOptions={{
@@ -53,6 +63,19 @@ const TabLayout = () => {
             <FontAwesome name="home" size={size} color={color} />
           ),
           tabBarLabel: "Home",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: "#009CBD",
+            height: 75,
+          },
+          headerLeft: () => <HeaderLeft />,
+          headerRight: () => (
+            <Image
+              source={require("@/assets/images/streak.png")}
+              style={{ width: 28, height: 28, marginRight: 12 }}
+            />
+          ),
+          headerTitle: () => null,
         }}
         redirect={!isSignedIn}
       />
@@ -76,7 +99,7 @@ const TabLayout = () => {
           headerShadowVisible: true,
           headerStyle: {
             backgroundColor: "#009CBD",
-            height: 72,
+            height: 75,
           },
           headerTitle: () => (
             <View className="flex items-center justify-center">
