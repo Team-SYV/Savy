@@ -24,7 +24,7 @@ const JobDescriptionTextArea: React.FC<TextAreaProps> = ({
         onChangeText={onChangeText}
         multiline
         textAlignVertical="top"
-        className={`border border-[#6e6e6e] rounded-lg text-base p-3 h-36
+        className={`border border-[#6e6e6e] rounded-lg text-[13px] p-3 h-36
           ${textInputStyles}`}
       />
     </View>

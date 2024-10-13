@@ -28,13 +28,13 @@ const HorizontalCard = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
-          <View className="mr-5 w-[135px]">
+          <View className="mr-5 w-[140px]">
             <Image
               source={{ uri: item.image }}
-              className="h-[135px] rounded-2xl"
+              className="h-[140px] rounded-2xl"
               resizeMode="cover"
             />
-            <Text className="text-[12px] p-1">{item.title}</Text>
+            <Text className="text-[11px] p-1">{item.title}</Text>
           </View>
         )}
       />

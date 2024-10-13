@@ -31,14 +31,14 @@ const InterviewTypeCard: React.FC<InterviewTypeCardProps> = ({
       >
         <Image
           source={imageSource}
-          className="h-9 w-9 mx-auto mt-3"
+          className="h-9 w-9 mx-auto mt-4"
           resizeMode="cover"
         />
         <View className="p-1">
           <Text className="text-base font-semibold mb-1 text-center text-black">
             {title}
           </Text>
-          <Text className="text-xs mx-3 font-light">{description}</Text>
+          <Text className="text-[9px] mx-3 font-light">{description}</Text>
         </View>
       </View>
     </TouchableOpacity>

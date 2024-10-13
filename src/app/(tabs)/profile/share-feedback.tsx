@@ -86,11 +86,11 @@ const ShareFeedback = () => {
             className="w-40 h-36 mx-auto"
           />
 
-          <Text className="text-[20px] mt-2 text-center font-semibold">
+          <Text className="text-[19px] mt-2 text-center font-semibold">
             Help us improve!
           </Text>
 
-          <Text className="text-lg mt-1 text-center">
+          <Text className="text-[14px] mt-1 text-center">
             How was your experience using Savy?
           </Text>
 
@@ -119,7 +119,7 @@ const ShareFeedback = () => {
           </View>
 
           <View className="mt-8">
-            <Text className="mb-4 text-base text-center">
+            <Text className="mb-4 text-[13px] text-center">
               Did Savy help you feel more confident and improve your interview
               performance?
             </Text>
