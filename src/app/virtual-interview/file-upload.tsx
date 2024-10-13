@@ -115,7 +115,7 @@ const FileUpload = () => {
         }
       }
 
-      router.push(`/virtual-interview/virtual-interview?jobId=${jobId}`);
+      router.push(`/virtual-interview?jobId=${jobId}`);
     } catch (error) {
       Alert.alert("Upload Failed", error.message);
     } finally {
