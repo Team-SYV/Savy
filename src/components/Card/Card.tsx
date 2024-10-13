@@ -38,7 +38,7 @@ const Card: React.FC<CardProps> = ({
       <View className="flex-row items-center justify-center">
         <View className="flex-col items-center justify-center mr-5 ml-5">
           <Text
-            className={`text-[#006277] font-bold max-w-[120px] text-center mb-3 ${textClassName}`}
+            className={`text-[#006277] font-semibold max-w-[120px] text-center mb-3 ${textClassName}`}
           >
             {text}
           </Text>
