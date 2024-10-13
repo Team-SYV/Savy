@@ -194,7 +194,7 @@ const VirtualInterview = () => {
             <Text className="text-sm"> Savy </Text>
           </View>
           <View className="bg-[#CDF1F8] p-4 rounded-lg max-w-[315px] border border-[#ADE3ED]">
-            <Text className="text-base">{item.content}</Text>
+            <Text className="text-sm">{item.content}</Text>
           </View>
         </View>
       )}
@@ -211,7 +211,7 @@ const VirtualInterview = () => {
             />
           </View>
           <View className="bg-[#ecebeb] p-4 rounded-lg max-w-[315px] border border-[#D8D8D8]">
-            <Text className="text-base">{item.content}</Text>
+            <Text className="text-sm">{item.content}</Text>
           </View>
         </View>
       )}
