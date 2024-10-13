@@ -26,7 +26,7 @@ const Home = () => {
         <Card
           imageSource={require("@/assets/images/virtual-interview.png")}
           text="Talk with Virtual Interviewer"
-          textClassName="text-[15px]"
+          textClassName="text-[14px]"
           buttonLink="/virtual-interview/job-information"
         />
       </View>
@@ -34,7 +34,7 @@ const Home = () => {
       <Card
         imageSource={require("@/assets/images/record-yourself.png")}
         text="Record Yourself"
-        textClassName="text-[16px]"
+        textClassName="text-[15px]"
         buttonLink="/record-yourself/job-information"
       />
 
