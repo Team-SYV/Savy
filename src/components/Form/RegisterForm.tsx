@@ -194,7 +194,7 @@ const RegisterForm = () => {
         placeholder="First Name"
         value={firstName}
         onChangeText={(text) => handleInputChange(text, "firstName")}
-        otherStyles="mt-7 mb-1 bg-white rounded-xl"
+        otherStyles="mt-6 mb-1 bg-white rounded-xl"
       />
       {errors.firstName && (
         <Text className="text-red-500 text-sm ml-1">{errors.firstName}</Text>
@@ -205,7 +205,7 @@ const RegisterForm = () => {
         placeholder="Last Name"
         value={lastName}
         onChangeText={(text) => handleInputChange(text, "lastName")}
-        otherStyles="mt-5 mb-1 bg-white rounded-xl"
+        otherStyles="mt-4 mb-1 bg-white rounded-xl"
       />
       {errors.lastName && (
         <Text className="text-red-500 text-sm ml-1">{errors.lastName}</Text>
@@ -216,7 +216,7 @@ const RegisterForm = () => {
         placeholder="Email"
         value={emailAddress}
         onChangeText={(text) => handleInputChange(text, "emailAddress")}
-        otherStyles="mt-5 mb-1 bg-white rounded-xl"
+        otherStyles="mt-4 mb-1 bg-white rounded-xl"
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -229,7 +229,7 @@ const RegisterForm = () => {
         placeholder="Password"
         value={password}
         onChangeText={(text) => handleInputChange(text, "password")}
-        otherStyles="mt-5 mb-1 bg-white rounded-xl"
+        otherStyles="mt-4 mb-1 bg-white rounded-xl"
       />
       {errors.password && (
         <Text className="text-red-500 text-sm ml-1">{errors.password}</Text>
@@ -240,7 +240,7 @@ const RegisterForm = () => {
         placeholder="Confirm Password"
         value={confirmPassword}
         onChangeText={(text) => handleInputChange(text, "confirmPassword")}
-        otherStyles="mt-5 mb-1 bg-white rounded-xl"
+        otherStyles="mt-4 mb-1 bg-white rounded-xl"
       />
       {errors.confirmPassword && (
         <Text className="text-red-500 text-sm ml-1">
@@ -251,8 +251,8 @@ const RegisterForm = () => {
       <CustomButton
         title="Sign Up"
         onPress={onSignUpPress}
-        containerStyles="bg-[#00AACE] h-16 w-full rounded-2xl mt-6 mb-1"
-        textStyles="text-white text-[20px]"
+        containerStyles="bg-[#00AACE] h-[50px] w-full rounded-2xl mt-6 mb-1"
+        textStyles="text-white text-[16px] font-semibold"
         isLoading={loading}
       />
 
@@ -290,8 +290,8 @@ const RegisterForm = () => {
             <CustomButton
               title="Verify Email"
               onPress={onPressVerify}
-              containerStyles="bg-[#00AACE] h-16 mx-4 rounded-2xl mt-6 "
-              textStyles="text-white text-[18px] font-medium"
+              containerStyles="bg-[#00AACE] h-[50px] mx-4 rounded-2xl mt-6 "
+              textStyles="text-white text-[16px] font-semibold"
               isLoading={loading}
             />
           </View>

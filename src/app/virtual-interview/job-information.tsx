@@ -9,8 +9,8 @@ import { JobInfoData } from "@/types/JobInfo";
 import * as Haptics from "expo-haptics";
 import { steps } from "@/constants/constants";
 import { useUser } from "@clerk/clerk-expo";
-import RecordStepContent from "@/components/JobInfo/RecordStepContent";
 import Spinner from "react-native-loading-spinner-overlay";
+import VirtualInterviewStepContent from "@/components/JobInfo/VirtualInterviewStepContent";
 import {
   createJobInformation,
   createQuestions,
@@ -212,7 +212,7 @@ const JobInformation = () => {
           console.error("Invalid question format:", question);
         }
       }
-      router.push(`/(virtual-interview)/virtual-interview?jobId=${jobId}`);
+      router.push(`/virtual-interview?jobId=${jobId}`);
     } catch (err) {
       console.error("Error skipping file upload:", err.message);
     } finally {
@@ -232,7 +232,7 @@ const JobInformation = () => {
           options={{
             headerLeft: () => (
               <TouchableOpacity onPress={handleBackButtonPress}>
-                <Ionicons name="arrow-back" size={24} color="white" />
+                <Ionicons name="arrow-back" size={20} color="[#2a2a2a]" />
               </TouchableOpacity>
             ),
           }}
@@ -254,13 +254,13 @@ const JobInformation = () => {
                 />
                 {index === activeStep && (
                   <>
-                    <RecordStepContent
+                    <VirtualInterviewStepContent
                       activeStep={activeStep}
                       formData={formData}
                       updateFormData={updateFormData}
                       handleNextStep={handleNextStep}
                       handleSubmit={handleSubmit}
-                      handleSubmitRoute={`/(virtual-interview)/file-upload?jobId=`}
+                      handleSubmitRoute={`/virtual-interview/file-upload?jobId=`}
                       handleSkip={handleSkip}
                       jobInformationId={jobInformationId}
                     />
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
     paddingBottom: 120,
-    marginTop: 24,
+    marginTop: 8,
     padding: 15,
   },
 });

@@ -223,12 +223,12 @@ const VirtualInterview = () => {
   };
 
   return (
-    <View className="flex-1 justify-between bg-gray-50">
+    <View className="flex-1 justify-between bg-white">
       <Stack.Screen
         options={{
           headerLeft: () => (
             <TouchableOpacity onPress={handleBackButtonPress}>
-              <Ionicons name="arrow-back" size={24} color="white" />
+              <Ionicons name="arrow-back" size={24} color="#2a2a2a" />
             </TouchableOpacity>
           ),
         }}

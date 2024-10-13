@@ -33,7 +33,7 @@ const Stepper = ({
         <View className="flex-row items-center">
           <TouchableOpacity
             onPress={() => onStepPress(index)}
-            className={`w-9 h-9 rounded-full flex items-center justify-center ${
+            className={`w-8 h-8 rounded-full flex items-center justify-center ${
               isCompleted
                 ? "bg-[#00AACE]"
                 : `border-2 ${

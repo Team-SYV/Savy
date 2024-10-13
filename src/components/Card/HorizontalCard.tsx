@@ -28,18 +28,13 @@ const HorizontalCard = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
-          <View className="border border-gray-200 rounded-2xl bg-[#BBEEF8] mr-5 h-[260px] w-[310px]">
+          <View className="mr-5 w-[135px]">
             <Image
               source={{ uri: item.image }}
-              className="h-[180px] rounded-t-2xl"
+              className="h-[135px] rounded-2xl"
               resizeMode="cover"
             />
-            <Text className="font-medium p-2 max-w-[200px]">{item.title}</Text>
-
-            <View className="flex flex-row items-center">
-              <Text className="text-sm pl-2">Read more</Text>
-              <Ionicons name="arrow-forward" size={15} className="pl-1" />
-            </View>
+            <Text className="text-[12px] p-1">{item.title}</Text>
           </View>
         )}
       />

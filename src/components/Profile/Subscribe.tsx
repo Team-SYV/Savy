@@ -6,9 +6,9 @@ import GetPro from "../Button/GetPro";
 const Subscribe = () => {
   return (
     <View>
-      <Pressable className="flex-row items-center justify-between p-4 border-b border-gray-500 rounded-lg mx-4 mt-12">
+      <Pressable className="flex-row items-center justify-between px-2 py-2 border border-gray-200 rounded-lg mx-6 mt-5">
         <View className="flex-row items-center">
-          <MaterialIcons name="subscriptions" size={20} className="mr-2" />
+          <MaterialIcons name="subscriptions" size={20} className="mr-2"/>
           <Text className="text-base">Subscribe to pro plan</Text>
         </View>
         <GetPro />

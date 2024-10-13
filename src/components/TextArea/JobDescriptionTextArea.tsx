@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { TextInput, View } from "react-native";
 
 interface TextAreaProps {
@@ -9,15 +9,13 @@ interface TextAreaProps {
   textInputStyles?: string;
 }
 
-const TextArea: React.FC<TextAreaProps> = ({
+const JobDescriptionTextArea: React.FC<TextAreaProps> = ({
   placeholder = "",
   value,
   onChangeText,
   containerStyles = "",
   textInputStyles = "",
 }) => {
-  const [isFocused, setIsFocused] = useState(false);
-
   return (
     <View className={`${containerStyles}`}>
       <TextInput
@@ -26,14 +24,11 @@ const TextArea: React.FC<TextAreaProps> = ({
         onChangeText={onChangeText}
         multiline
         textAlignVertical="top"
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        className={`rounded-lg text-base p-3 bg-[#FBFBFB] border ${
-          isFocused ? "border-[#B5B5B5]" : "border-[#DFDFDF]"
-        } ${textInputStyles}`}
+        className={`border border-[#6e6e6e] rounded-lg text-base p-3 h-36
+          ${textInputStyles}`}
       />
     </View>
   );
 };
 
-export default TextArea;
+export default JobDescriptionTextArea;
