@@ -20,7 +20,7 @@ const TabLayout = () => {
     <View className="flex-row items-center">
       <Image
         source={require("@/assets/images/syv.png")}
-        className="w-9 h-9 ml-3"
+        className="w-8 h-8 ml-3"
       />
       <Text className="text-white text-xl font-semibold"> Savy </Text>
     </View>
@@ -45,7 +45,7 @@ const TabLayout = () => {
           elevation: 5,
         },
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: 10,
           marginBottom: 6,
         },
         tabBarIconStyle: {
@@ -69,12 +69,6 @@ const TabLayout = () => {
             height: 75,
           },
           headerLeft: () => <HeaderLeft />,
-          headerRight: () => (
-            <Image
-              source={require("@/assets/images/streak.png")}
-              style={{ width: 28, height: 28, marginRight: 12 }}
-            />
-          ),
           headerTitle: () => null,
         }}
         redirect={!isSignedIn}
@@ -104,7 +98,7 @@ const TabLayout = () => {
           headerTitle: () => (
             <View className="flex items-center justify-center">
               <View className="flex-row items-center justify-center">
-                <Text className="text-[18px] font-semibold text-[#FFFFFF] mr-2">
+                <Text className="text-[16px] font-semibold text-[#FFFFFF] mr-2">
                   Leaderboard
                 </Text>
                 <Image
