@@ -128,7 +128,7 @@ const FileUpload = () => {
       <Spinner visible={loading} color="#00AACE" />
 
       <View className="flex-1 mt-24 px-4">
-        <Text className="text-xl text-gray-800 font-medium mb-4">
+        <Text className="text-[17px] text-gray-800 font-medium mb-4">
           Upload Your Resume
         </Text>
 
@@ -144,7 +144,7 @@ const FileUpload = () => {
             color={fileName ? "green" : "gray"}
             className="mb-4"
           />
-          <Text className="text-xl text-center font-medium mb-2">
+          <Text className="text-[17px] text-center font-medium mb-2">
             {fileName ? "Change File" : "Tap to Upload File"}
           </Text>
           <Text className="text-base text-center">*Supported format: .pdf</Text>
@@ -179,11 +179,11 @@ const FileUpload = () => {
           <Text className="text-lg font-medium">Reminder:</Text>
           <Image
             source={require("@/assets/icons/notif.png")}
-            className="h-8 w-8 ml-2"
+            className="h-7 w-7 ml-2"
             resizeMode="contain"
           />
         </View>
-        <Text className="mt-2 text-lg font-light">
+        <Text className="mt-2 text-base font-light">
           You will be interviewed based on the resume you've uploaded.
         </Text>
       </View>
