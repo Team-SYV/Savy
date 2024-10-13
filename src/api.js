@@ -99,11 +99,7 @@ export const generateAnswerFeedback = async (formData) => {
       }
     );
 
-<<<<<<< HEAD
     return response.data.feedback;
-=======
-    return response.data.feedback; 
->>>>>>> ad66cd2 (avatar)
   } catch (error) {
     console.error("Error response from server:", error.response);
 
@@ -115,22 +111,24 @@ export const generateAnswerFeedback = async (formData) => {
   }
 };
 
-export const generateViseme = async (text) => {
-  try {
-    const formData = new FormData();
-    formData.append("text", text);
+  export const generateViseme = async (text) => {
+    try {
+      const formData = new FormData();
+      formData.append("text", text);
+      formData.append("text", text);
 
-    const response = await api.post("/api/viseme/generate", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+      const response = await api.post("/api/viseme/generate", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-    return response.data;
-  } catch (error) {
-    console.error("Error response from server:", error.response);
-    throw new Error(
-      error.response?.data?.detail || "Failed to generate speech"
-    );
-  }
+      return response.data;
+    } catch (error) {
+      console.error("Error response from server:", error.response);
+      throw new Error(
+        error.response?.data?.detail || "Failed to generate speech"
+      );
+    }
+  };
 };
