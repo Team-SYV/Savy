@@ -7,11 +7,6 @@ import React, { useEffect, useRef, useState } from "react";
 import ConfirmationModal from "@/components/Modal/ConfirmationModal";
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack, useLocalSearchParams } from "expo-router";
-import { Asset } from "expo-asset"; 
-import { GLView } from "expo-gl";
-import { Renderer } from "expo-three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import * as THREE from "three";
 import {
   View,
   Text,
@@ -20,7 +15,7 @@ import {
   Image,
   Alert,
 } from "react-native";
-import { generateAnswerFeedback, getQuestions, transcribeAudio } from "@/api";
+import { generateAnswerFeedback, generateViseme, getQuestions, transcribeAudio } from "@/api";
 
 const VirtualInterview = () => {
   const { user } = useUser();
@@ -34,10 +29,7 @@ const VirtualInterview = () => {
   const [questions, setQuestions] = useState<string[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
-  const [avatarSpeak, setAvatarSpeak] = useState(false);
-  const [avatarText, setAvatarText] = useState("");
-  const [audioSource, setAudioSource] = useState(null);
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [visemeData, setVisemeData] = useState(null);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -48,6 +40,7 @@ const VirtualInterview = () => {
         );
         setQuestions(allQuestions);
 
+        // Display the first question only initially
         if (allQuestions.length > 0) {
           setMessages((prevMessages) => [
             ...prevMessages,
@@ -65,33 +58,31 @@ const VirtualInterview = () => {
     fetchQuestions();
   }, [jobId]);
 
+  // Scroll to the bottom whenever messages update
   useEffect(() => {
     flatListRef.current?.scrollToEnd({ animated: true });
   }, [messages]);
 
+  // Automatically read the bot's message when it gets added to the chat
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
     if (lastMessage && lastMessage.role === Role.Bot) {
       speak(lastMessage.content);
-      handleBotMessage(lastMessage.content);
     }
   }, [messages]);
 
-  const speak = (message: string) => {
-    Speech.speak(message, {
-      rate: 1.0,
-    });
+  const speak = async (message: string) => {
+    try {
+      const visemeResponse = await generateViseme(message); 
+      setVisemeData(visemeResponse); 
+
+      Speech.speak(message, { rate: 1.0 });
+    } catch (error) {
+      console.error("Failed to generate visemes:", error.message || error);
+    }
   };
 
-  const handleBotMessage = (feedback: string) => {
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { id: uuid.v4() as string, role: Role.Bot, content: feedback },
-    ]);
-    setAvatarText(feedback);
-    setAvatarSpeak(true);
-  };
-
+  // Request permission
   const requestPermissions = async () => {
     const { status } = await Audio.requestPermissionsAsync();
     if (status !== "granted") {
@@ -103,8 +94,10 @@ const VirtualInterview = () => {
     requestPermissions();
   }, []);
 
+  // Start recording
   const startRecording = async () => {
     Speech.stop();
+
     try {
       if (recording) {
         await stopRecording();
@@ -125,6 +118,7 @@ const VirtualInterview = () => {
     if (!recording) return;
 
     await recording.stopAndUnloadAsync();
+
     const uri = recording.getURI();
 
     try {
@@ -134,8 +128,10 @@ const VirtualInterview = () => {
         type: "audio/m4a",
       };
 
+      // Call the API to transcribe audio
       const transcription = await transcribeAudio(file);
 
+      // Add the user's transcription to messages
       setMessages((prevMessages) => [
         ...prevMessages,
         { id: uuid.v4() as string, role: Role.User, content: transcription },
@@ -145,12 +141,21 @@ const VirtualInterview = () => {
       form.append("previous_question", questions[currentQuestionIndex]);
       form.append("previous_answer", transcription);
 
+      // Get feedback on the user's answer
       const feedback = await generateAnswerFeedback(form);
-      handleBotMessage(feedback);
 
+      console.log(feedback);
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { id: uuid.v4() as string, role: Role.Bot, content: feedback },
+      ]);
+
+      // Display the next question after the feedback
       const nextQuestionIndex = currentQuestionIndex + 1;
       if (nextQuestionIndex < questions.length) {
         setCurrentQuestionIndex(nextQuestionIndex);
+
         setMessages((prevMessages) => [
           ...prevMessages,
           {
@@ -179,7 +184,6 @@ const VirtualInterview = () => {
 
     setRecording(undefined);
   };
-
   const renderMessage = ({ item }: { item: Message }) => (
     <View
       className={`flex-row my-2 mx-4 ${
@@ -224,33 +228,6 @@ const VirtualInterview = () => {
     setIsConfirmationVisible(true);
   };
 
-  const handleContextCreate = async (gl) => {
-    const asset = Asset.fromModule(require("@/assets/model.glb"));
-    await asset.downloadAsync();
-
-    const renderer = new Renderer({ gl });
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      gl.drawingBufferWidth / gl.drawingBufferHeight,
-      0.1,
-      1000
-    );
-
-    const loader = new GLTFLoader();
-    loader.load(asset.localUri, (gltf) => {
-      scene.add(gltf.scene);
-    });
-
-    const animate = () => {
-      requestAnimationFrame(animate);
-      renderer.render(scene, camera);
-      gl.endFrameEXP();
-    };
-
-    animate();
-  };
-
   return (
     <View className="flex-1 justify-between bg-gray-50">
       <Stack.Screen
@@ -262,16 +239,16 @@ const VirtualInterview = () => {
           ),
         }}
       />
-
-      <GLView style={{ flex: 1 }} onContextCreate={handleContextCreate} />
-
+      <Image
+        source={require("@/assets/images/avatar.png")}
+        className="w-[96%] h-56 rounded-xl mx-auto mt-4 mb-2"
+      />
       <FlatList
         ref={flatListRef}
         data={messages}
         renderItem={renderMessage}
         keyExtractor={(item) => item.id}
       />
-
       <View className="flex-row p-2 bg-white shadow-md justify-center border-gray-300 border">
         {isRecording ? (
           <TouchableOpacity className="p-3" onPress={stopRecording}>
@@ -292,15 +269,19 @@ const VirtualInterview = () => {
 
       <ConfirmationModal
         isVisible={isConfirmationVisible}
-        onClose={() => setIsConfirmationVisible(false)}
-        onConfirm={() => router.back()}
-        title={"Discard Interview?"}
+        title="Discard Interview?"
         message={
           <Text>
             Exiting now will discard your progress.{"\n"}
             Are you sure you want to leave?
           </Text>
         }
+        onConfirm={() => {
+          Speech.stop();
+          setIsConfirmationVisible(false);
+          router.push("/home");
+        }}
+        onClose={() => setIsConfirmationVisible(false)}
       />
     </View>
   );

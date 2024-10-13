@@ -9,6 +9,7 @@ export const createJobInformation = async (jobData) => {
     const response = await api.post("/api/job_information/create/", jobData);
     return response.data.id;
   } catch (error) {
+    console.error("API Error:", error);
     throw new Error(
       error.response?.data?.detail || "Failed to create job information"
     );
@@ -98,7 +99,7 @@ export const generateAnswerFeedback = async (formData) => {
       }
     );
 
-    return response.data.feedback; 
+    return response.data.feedback;
   } catch (error) {
     console.error("Error response from server:", error.response);
 
@@ -110,18 +111,18 @@ export const generateAnswerFeedback = async (formData) => {
   }
 };
 
-export const generateSpeech = async (text) => {
+export const generateViseme = async (text) => {
   try {
     const formData = new FormData();
-    formData.append("text", text); 
+    formData.append("text", text);
 
-    const response = await api.post("/api/tts/", formData, {
+    const response = await api.post("/api/viseme/generate", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
 
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error("Error response from server:", error.response);
     throw new Error(

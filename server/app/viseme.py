@@ -1,7 +1,5 @@
 import os
 import json
-import random
-import uuid
 from azure.cognitiveservices.speech import SpeechConfig, SpeechSynthesizer, AudioConfig, ResultReason
 
 # Load blendShapeNames (same as blendShapeNames.js)
@@ -30,24 +28,23 @@ SSML_TEMPLATE = '''
 </speak>
 '''
 
-def text_to_speech(text):
-    speech_config = SpeechConfig(subscription=AZURE_KEY, region=AZURE_REGION)
-    speech_config.speech_synthesis_output_format = 5  # MP3 output format
-    
-    random_string = str(uuid.uuid4())    
-    filename = f"./static/speech-{random_string}.mp3"
-    audio_config = AudioConfig(filename=filename)
+def generate_visemes(text):
+    """Generate viseme data for the input text using Azure Speech API."""
 
-    synthesizer = SpeechSynthesizer(speech_config=speech_config, audio_config=audio_config)
+    # Configure the Azure speech synthesizer (no audio output, just viseme tracking)
+    speech_config = SpeechConfig(subscription=AZURE_KEY, region=AZURE_REGION)
+
+    synthesizer = SpeechSynthesizer(speech_config=speech_config, audio_config=None)
 
     ssml = SSML_TEMPLATE.replace("__TEXT__", text)
 
-    blend_data = []
-    time_step = 1/60  
+    blend_data = []  # To store viseme data
+    time_step = 1 / 60  # 60 FPS timing
     time_stamp = 0
 
+    # Callback function to handle viseme events
     def viseme_callback(evt):
-        nonlocal time_stamp 
+        nonlocal time_stamp
         animation = json.loads(evt.animation)
         for blend_array in animation['BlendShapes']:
             blend = {blendShapeNames[i]: blend_array[i] for i in range(len(blendShapeNames))}
@@ -59,9 +56,11 @@ def text_to_speech(text):
 
     synthesizer.viseme_received.connect(viseme_callback)
 
+    # Perform speech synthesis (without actual audio generation)
     result = synthesizer.speak_ssml_async(ssml).get()
+
+    # Check if the synthesis was successful
     if result.reason == ResultReason.SynthesizingAudioCompleted:
-        return {'blendData': blend_data, 'filename': f'/static/speech-{random_string}.mp3'}
+        return blend_data  
     else:
         raise Exception(f"Speech synthesis failed: {result.reason}")
-
