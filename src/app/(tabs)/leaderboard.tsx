@@ -113,19 +113,19 @@ const Leaderboard = () => {
               }`}
             >
               <View className="items-center flex-row">
-                <Text className="mr-3">{item.rank}</Text>
+                <Text className="mr-3 text-[13px]">{item.rank}</Text>
                 <Image
                   source={{ uri: item.imageUrl }}
                   className="w-6 h-6 rounded-full mr-2"
                   style={{ zIndex: 1 }}
                 />
-                <Text>
+                <Text className="text-[13px]">
                   {item.firstName} {item.lastName}
                 </Text>
               </View>
 
               <View className="flex-row items-center">
-                <Text className="mr-1">{item.score}</Text>
+                <Text className="mr-1 text-[13px]">{item.score}</Text>
                 <FontAwesome5 name="medal" size={14} color="gray" />
               </View>
             </View>

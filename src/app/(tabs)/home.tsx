@@ -5,9 +5,9 @@ import HorizontalCard from "@/components/Card/HorizontalCard";
 
 const Home = () => {
   return (
-    <View className="p-5 bg-white min-h-full">
-      <View className="flex flex-row items-center mt-4">
-        <Text className="text-[23px] font-semibold">Welcome</Text>
+    <View className="p-4 bg-white min-h-full">
+      <View className="flex flex-row items-center mt-8">
+        <Text className="text-[20px] font-semibold">Welcome</Text>
         <Image
           source={require("@/assets/icons/hand.png")}
           className="ml-1 w-7 h-7"
@@ -18,7 +18,7 @@ const Home = () => {
         Get ready to ace interviews and advance your career with ease.
       </Text>
 
-      <Text className="text-[14px] font-medium mt-7 mb-3">
+      <Text className="text-[13px] font-medium mt-7 mb-3">
         Practice Interview
       </Text>
 
@@ -38,7 +38,7 @@ const Home = () => {
         buttonLink="/record-yourself/job-information"
       />
 
-      <Text className="text-text-[14px] font-medium mt-7 mb-3">
+      <Text className="text-[13px] font-medium mt-7 mb-3">
         Read Interview Tips
       </Text>
 

@@ -28,7 +28,7 @@ const TextArea: React.FC<TextAreaProps> = ({
         textAlignVertical="top"
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        className={`rounded-lg text-base p-3 bg-[#FBFBFB] border ${
+        className={`rounded-lg text-sm p-3 bg-[#FBFBFB] border ${
           isFocused ? "border-[#B5B5B5]" : "border-[#DFDFDF]"
         } ${textInputStyles}`}
       />

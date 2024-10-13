@@ -24,7 +24,7 @@ const CompanyFormField: React.FC<CompanyInputProps> = ({
           value={value}
           onChangeText={onChangeText}
           keyboardType="default"
-          className="flex-1 px-2 bg-white text-base text-[#5D5D5D] placeholder:text-[#5D5D5D]"
+          className="flex-1 px-2 bg-white text-[13px] text-[#5D5D5D] placeholder:text-[#5D5D5D]"
           {...props}
         />
       </View>

@@ -13,19 +13,19 @@ const Profile = () => {
     <View className="flex-1 bg-white">
       <Image
         source={require("@/assets/images/job-interview.png")}
-        className="h-[170px]"
+        className="h-[160px]"
       />
 
       <View className="p-4">
         <View className="flex items-center justify-center mb-4 -mt-20">
           <Image
             source={{ uri: user?.imageUrl }}
-            className="w-[110px] h-[110px] rounded-full border-2 border-[#008FAE]"
+            className="w-[105px] h-[105px] rounded-full border-2 border-[#008FAE]"
           />
         </View>
 
         <View className="flex-col">
-          <Text className="text-[22px] font-medium text-center mb-1">
+          <Text className="text-[20px] font-medium text-center mb-1">
             {user?.firstName} {user?.lastName}
           </Text>
           <Text className="font-normal text-center">

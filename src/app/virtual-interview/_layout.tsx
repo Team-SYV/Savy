@@ -25,7 +25,7 @@ const VILayout = () => {
         name="job-information"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
+            <Text className="text-center text-[15px] font-semibold text-[#2a2a2a]">
               Talk with Virtual Interviewer
             </Text>
           ),
@@ -37,7 +37,7 @@ const VILayout = () => {
         name="file-upload"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
+            <Text className="text-center text-[15px] font-semibold text-[#2a2a2a]">
               File Upload
             </Text>
           ),
@@ -49,7 +49,7 @@ const VILayout = () => {
         name="index"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
+            <Text className="text-center text-[15px] font-semibold text-[#2a2a2a]">
               Practice Area
             </Text>
           ),
@@ -61,7 +61,7 @@ const VILayout = () => {
         name="feedback"
         options={{
           headerTitle: () => (
-            <Text className="text-center text-[16px] font-semibold text-[#2a2a2a]">
+            <Text className="text-center text-[15px] font-semibold text-[#2a2a2a]">
               Feedback
             </Text>
           ),

@@ -38,14 +38,14 @@ const Card: React.FC<CardProps> = ({
       <View className="flex-row items-center justify-center">
         <View className="flex-col items-center justify-center mr-5 ml-5">
           <Text
-            className={`text-[#006277] font-semibold max-w-[120px] text-center mb-3 ${textClassName}`}
+            className={`text-[#006277] font-bold max-w-[120px] text-center mb-3 text-[13px] ${textClassName}`}
           >
             {text}
           </Text>
 
           <TouchableOpacity onPress={handlePress}>
             <View className={`bg-[#00AACE] rounded-lg px-4 py-3`}>
-              <Text className="text-white text-[11px] font-semibold">
+              <Text className="text-white text-[9px] font-semibold">
                 START INTERVIEW
               </Text>
             </View>
