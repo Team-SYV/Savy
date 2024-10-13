@@ -9,8 +9,8 @@ import { JobInfoData } from "@/types/JobInfo";
 import * as Haptics from "expo-haptics";
 import { steps } from "@/constants/constants";
 import { useUser } from "@clerk/clerk-expo";
-import RecordStepContent from "@/components/JobInfo/RecordStepContent";
 import Spinner from "react-native-loading-spinner-overlay";
+import VirtualInterviewStepContent from "@/components/JobInfo/VirtualInterviewStepContent";
 import {
   createJobInformation,
   createQuestions,
@@ -254,7 +254,7 @@ const JobInformation = () => {
                 />
                 {index === activeStep && (
                   <>
-                    <RecordStepContent
+                    <VirtualInterviewStepContent
                       activeStep={activeStep}
                       formData={formData}
                       updateFormData={updateFormData}
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
     paddingBottom: 120,
-    marginTop: 24,
+    marginTop: 8,
     padding: 15,
   },
 });
