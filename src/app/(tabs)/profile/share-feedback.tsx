@@ -86,11 +86,11 @@ const ShareFeedback = () => {
             className="w-40 h-36 mx-auto"
           />
 
-          <Text className="text-[20px] mt-2 text-center font-semibold">
+          <Text className="text-[19px] mt-2 text-center font-semibold">
             Help us improve!
           </Text>
 
-          <Text className="text-lg mt-1 text-center">
+          <Text className="text-[15px] mt-1 text-center">
             How was your experience using Savy?
           </Text>
 
