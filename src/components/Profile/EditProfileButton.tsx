@@ -14,13 +14,13 @@ const EditProfileButton = () => {
 
       <Pressable
         onPress={navigateToEditProfile}
-        className="flex-row items-center justify-between p-4  rounded-lg mx-4 mt-3"
+        className="flex-row items-center justify-between p-4  rounded-lg mx-4 mt-4"
       >
         <View className="flex-row items-center">
-          <AntDesign name="edit" size={18} className="mr-2" />
-          <Text className="text-base"> Edit Profile </Text>
+          <AntDesign name="edit" size={17} className="mr-2" />
+          <Text className="text-[13px]"> Edit Profile </Text>
         </View>
-        <AntDesign name="right" size={18} />
+        <AntDesign name="right" size={17} />
       </Pressable>
     </View>
   );

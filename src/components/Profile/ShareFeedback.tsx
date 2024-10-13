@@ -16,10 +16,10 @@ const ShareFeedback = () => {
         className="flex-row items-center justify-between p-4 rounded-lg mx-4 mt-3"
       >
         <View className="flex-row items-center">
-          <Entypo name="text-document" size={18} className="mr-2" />
-          <Text className="text-base">Share Your Feedback</Text>
+          <Entypo name="text-document" size={17} className="mr-2" />
+          <Text className="text-[13px]">Share Your Feedback</Text>
         </View>
-        <AntDesign name="right" size={18} />
+        <AntDesign name="right" size={17} />
       </Pressable>
     </View>
   );
