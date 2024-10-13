@@ -169,7 +169,7 @@ const VirtualInterview = () => {
           },
         ]);
         setTimeout(() => {
-          router.push("(virtual-interview)/feedback");
+          router.push("virtual-interview/feedback");
         }, 12000);
       }
     } catch (error) {
