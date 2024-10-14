@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://savy-4ceq.onrender.com/",
+  baseURL:process.env.EXPO_PUBLIC_BASE_URL,
 });
 
 export const createJobInformation = async (jobData) => {
