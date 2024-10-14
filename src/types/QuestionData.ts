@@ -1,0 +1,3 @@
+interface QuestionData{
+    question: string;
+}

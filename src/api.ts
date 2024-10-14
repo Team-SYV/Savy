@@ -1,10 +1,11 @@
 import axios from "axios";
+import { InterviewData } from "./types/interviewData";
 
 const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_BASE_URL,
 });
 
-export const createInterview = async (interviewData) => {
+export const createInterview = async (interviewData: InterviewData) => {
   try {
     const response = await api.post("/api/interview/create/", interviewData);
     return response.data;
@@ -15,9 +16,9 @@ export const createInterview = async (interviewData) => {
   }
 };
 
-export const createJobInformation = async (jobData) => {
+export const createJobInformation = async (jobInformationData: JobInformationData) => {
   try {
-    const response = await api.post("/api/job_information/create/", jobData);
+    const response = await api.post("/api/job_information/create/", jobInformationData);
     return response.data.id;
   } catch (error) {
     throw new Error(
@@ -26,7 +27,7 @@ export const createJobInformation = async (jobData) => {
   }
 };
 
-export const getJobInformation = async (jobId) => {
+export const getJobInformation = async (jobId: string | string[]) => {
   try {
     const response = await api.get(`/api/job_information/${jobId}/`);
     return response.data;
@@ -37,7 +38,7 @@ export const getJobInformation = async (jobId) => {
   }
 };
 
-export const generateQuestions = async (formData) => {
+export const generateQuestions = async (formData: FormData) => {
   try {
     const response = await api.post("/api/generate-questions/", formData, {
       headers: {
@@ -52,7 +53,7 @@ export const generateQuestions = async (formData) => {
   }
 };
 
-export const createQuestions = async (jobId, questionData) => {
+export const createQuestions = async (jobId: string | string[], questionData: QuestionData) => {
   try {
     const response = await api.post(
       `/api/questions/create/${jobId}`,
@@ -66,7 +67,7 @@ export const createQuestions = async (jobId, questionData) => {
   }
 };
 
-export const getQuestions = async (jobId) => {
+export const getQuestions = async (jobId: string | string[]) => {
   try {
     const response = await api.get(`/api/questions/${jobId}`);
     return response.data.questions;
@@ -77,7 +78,7 @@ export const getQuestions = async (jobId) => {
   }
 };
 
-export const transcribeAudio = async (file) => {
+export const transcribeAudio = async (file: string | Blob) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
@@ -97,7 +98,7 @@ export const transcribeAudio = async (file) => {
   }
 };
 
-export const generateAnswerFeedback = async (formData) => {
+export const generateAnswerFeedback = async (formData: FormData) => {
   try {
     const response = await api.post(
       "/api/generate-answer-feedback/",
@@ -121,7 +122,7 @@ export const generateAnswerFeedback = async (formData) => {
   }
 };
 
-export const createAnswer = async (answerData) => {
+export const createAnswer = async (answerData: AnswerData ) => {
   try {
     const response = await api.post("/api/answers/create/", answerData);
     return response.data.id;
