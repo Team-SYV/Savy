@@ -10,10 +10,12 @@ from app.question_generator import generate_answer_feedback, generate_interview_
 from app.questions import create_questions, get_questions
 from app.speech_to_text import transcribe_audio
 from app.answer import create_answer
+from app.user_feedback import create_user_feedback
 
 
 import os
 import logging
+
 
 logging.basicConfig(level=logging.DEBUG)
 app = FastAPI()
@@ -149,3 +151,8 @@ async def generate_answer_feedback_endpoint(
 async def create_answer_endpoint(request: Request):
     data = await request.json()
     return create_answer(data, supabase)
+
+@app.post("/api/user_feedback/create/")
+async def create_user_feedback_endpoint(request: Request):
+    data = await request.json()
+    return create_user_feedback(data, supabase)

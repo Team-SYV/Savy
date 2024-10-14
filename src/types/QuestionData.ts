@@ -1,3 +1,3 @@
-interface QuestionData{
+export interface QuestionData{
     question: string;
 }

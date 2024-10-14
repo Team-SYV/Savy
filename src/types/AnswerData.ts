@@ -1,4 +1,4 @@
-interface AnswerData {
+export interface AnswerData {
   question_id: string;
   answer: any;
 }

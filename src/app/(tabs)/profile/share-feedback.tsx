@@ -15,8 +15,11 @@ import Spinner from "react-native-loading-spinner-overlay";
 import Toast from "react-native-toast-message";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { router } from "expo-router";
+import { createUserFeedback } from "@/api";
+import { useUser } from "@clerk/clerk-expo";
 
 const ShareFeedback = () => {
+  const user = useUser()
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,7 +30,7 @@ const ShareFeedback = () => {
     setSelectedIndex(index);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (selectedIndex === null) {
       Toast.show({
         type: "error",
@@ -49,13 +52,14 @@ const ShareFeedback = () => {
 
     setLoading(true);
     const rating = selectedIndex + 1;
+    try {
+      const userFeedbackData = {
+        user_id: user.user.id,
+        rating,
+        description: feedback,
+      };
+      await createUserFeedback(userFeedbackData);
 
-    // Simulating a submission process
-    setTimeout(() => {
-      setLoading(false);
-      console.log({ feedback, rating });
-
-      // Reset form state
       setFeedback("");
       setSelectedIndex(null);
       Toast.show({
@@ -64,6 +68,28 @@ const ShareFeedback = () => {
         text2: `Thank you for submitting your feedback`,
         topOffset: 0,
       });
+
+      setTimeout(() => {
+        router.push("/profile");
+      }, 2000);
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      Toast.show({
+        type: "error",
+        text1: "Submission Failed",
+        text2: "Something went wrong, please try again later.",
+        topOffset: 0,
+      });
+    } finally {
+      setLoading(false);
+    }
+
+    // Simulating a submission process
+    setTimeout(() => {
+      setLoading(false);
+      console.log({ feedback, rating });
+
+      // Reset form state
 
       setTimeout(() => {
         router.push("/profile");

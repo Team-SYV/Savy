@@ -1,4 +1,4 @@
-interface JobInformationData {
+export interface JobInformationData {
   interview_id: string | string[];
   industry: string;
   job_role: string;

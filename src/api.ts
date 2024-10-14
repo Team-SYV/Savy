@@ -1,5 +1,9 @@
 import axios from "axios";
 import { InterviewData } from "./types/InterviewData";
+import { AnswerData } from "./types/AnswerData";
+import { UserFeedbackData } from "./types/UserFeedback";
+import { QuestionData } from "./types/QuestionData";
+import { JobInformationData } from "./types/JobInformationData";
 
 const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_BASE_URL,
@@ -129,6 +133,17 @@ export const createAnswer = async (answerData: AnswerData ) => {
   } catch (error) {
     throw new Error(
       error.response?.data?.detail || "Failed to create answer in the database"
+    );
+  }
+};
+
+export const createUserFeedback = async (userFeedbackData: UserFeedbackData) => {
+  try {
+    const response = await api.post("/api/user_feedback/create/", userFeedbackData);
+    return response.data.id;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.detail || "Failed to create user feedback"
     );
   }
 };
