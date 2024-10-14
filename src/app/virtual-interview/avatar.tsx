@@ -1,4 +1,3 @@
-import { generateSpeech } from "@/api";
 import { useAnimations, useFBX, useGLTF, useTexture } from "@react-three/drei";
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -11,16 +10,14 @@ import * as THREE from "three";
 import createAnimation from "./converter";
 import { useFrame } from "@react-three/fiber";
 import blinkData from "./blendDataBlink.json";
-
-const _ = require("lodash");
-const host = process.env.EXPO_PUBLIC_BASE_URL;
+import { generateViseme } from "@/api";
+import _ from "lodash";
 
 interface AvatarProps {
   avatar_url: string;
   speak: boolean;
   setSpeak: React.Dispatch<React.SetStateAction<boolean>>;
   text: string;
-  setAudioSource: React.Dispatch<React.SetStateAction<string | null>>;
   playing: boolean;
 }
 
@@ -29,7 +26,6 @@ const Avatar = ({
   speak,
   setSpeak,
   text,
-  setAudioSource,
   playing,
 }: AvatarProps) => {
   const gltf = useGLTF(avatar_url);
@@ -53,21 +49,21 @@ const Avatar = ({
     hairNormalTexture,
     hairRoughnessTexture,
   ] = useTexture([
-    "./images/body.webp",
-    "./images/eyes.webp",
-    "./images/teeth_diffuse.webp",
-    "./images/body_specular.webp",
-    "./images/body_roughness.webp",
-    "./images/body_normal.webp",
-    "./images/teeth_normal.webp",
-    // "./images/teeth_specular.webp",
-    "./images/h_color.webp",
-    "./images/tshirt_diffuse.webp",
-    "./images/tshirt_normal.webp",
-    "./images/tshirt_roughness.webp",
-    "./images/h_alpha.webp",
-    "./images/h_normal.webp",
-    "./images/h_roughness.webp",
+    ".@/assets/public/images/body.webp",
+    ".@/assets/public/images/eyes.webp",
+    ".@/assets/public/images/teeth_diffuse.webp",
+    ".@/assets/public/images/body_specular.webp",
+    ".@/assets/public/images/body_roughness.webp",
+    ".@/assets/public/images/body_normal.webp",
+    ".@/assets/public/images/teeth_normal.webp",
+    // ".@/assets/public/images/teeth_specular.webp",
+    ".@/assets/public/images/h_color.webp",
+    ".@/assets/public/images/tshirt_diffuse.webp",
+    ".@/assets/public/images/tshirt_normal.webp",
+    ".@/assets/public/images/tshirt_roughness.webp",
+    ".@/assets/public/images/h_alpha.webp",
+    ".@/assets/public/images/h_normal.webp",
+    ".@/assets/public/images/h_roughness.webp",
   ]);
   _.each(
     [
@@ -159,9 +155,9 @@ const Avatar = ({
   useEffect(() => {
     if (speak === false) return;
 
-    generateSpeech(text)
+    generateViseme(text)
       .then((response) => {
-        let { blendData, filename } = response.data;
+        let { blendData } = response.data;
 
         let newClips = [
           createAnimation(blendData, morphTargetDictionaryBody, "HG_Body"),
@@ -172,10 +168,7 @@ const Avatar = ({
           ),
         ];
 
-        filename = host + filename;
-
         setClips(newClips);
-        setAudioSource(filename);
       })
       .catch((err) => {
         console.error(err);

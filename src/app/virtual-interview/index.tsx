@@ -15,7 +15,9 @@ import {
   Image,
   Alert,
 } from "react-native";
-import { generateAnswerFeedback, generateViseme, getQuestions, transcribeAudio } from "@/api";
+import { generateAnswerFeedback, getQuestions, transcribeAudio } from "@/api";
+import Avatar from "./avatar";
+import { loadGLTFAsync } from "./loader";
 
 const VirtualInterview = () => {
   const { user } = useUser();
@@ -29,7 +31,32 @@ const VirtualInterview = () => {
   const [questions, setQuestions] = useState<string[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
-  const [visemeData, setVisemeData] = useState(null);
+
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
+  // useEffect(() => {
+  //   const loadAvatar = async () => {
+  //     try {
+  //       const result = await loadGLTFAsync({
+  //         asset: "@/assets/public/model.glb", // Make sure the path is correct
+  //         onAssetRequested: () => {
+  //           // Placeholder for asset request handling
+  //         },
+  //       });
+
+  //       if (typeof result === "string") {
+  //         setAvatarUrl(result); // Ensure the result is a string before setting it
+  //       } else {
+  //         console.error("Expected a string URL for the avatar, got:", result);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error loading avatar:", error);
+  //     }
+  //   };
+
+  //   loadAvatar();
+  // }, []);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -72,14 +99,11 @@ const VirtualInterview = () => {
   }, [messages]);
 
   const speak = async (message: string) => {
-    try {
-      const visemeResponse = await generateViseme(message); 
-      setVisemeData(visemeResponse); 
-
-      Speech.speak(message, { rate: 1.0 });
-    } catch (error) {
-      console.error("Failed to generate visemes:", error.message || error);
-    }
+    Speech.speak(message, { rate: 1.0 });
+    setIsSpeaking(true);
+    setTimeout(() => {
+      setIsSpeaking(false);
+    }, 5000);
   };
 
   // Request permission
@@ -239,10 +263,24 @@ const VirtualInterview = () => {
           ),
         }}
       />
-      <Image
+      {/* <Image
         source={require("@/assets/images/avatar.png")}
         className="w-[96%] h-56 rounded-xl mx-auto mt-4 mb-2"
-      />
+      /> */}
+
+      {/* <Avatar
+        avatar_url={avatarUrl}
+        speak={isSpeaking}
+        setSpeak={setIsSpeaking}
+        text={
+          messages
+            .slice()
+            .reverse()
+            .find((msg) => msg.role === Role.Bot)?.content || ""
+        }
+        playing={isSpeaking}
+      /> */}
+
       <FlatList
         ref={flatListRef}
         data={messages}
