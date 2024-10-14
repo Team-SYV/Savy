@@ -1,4 +1,3 @@
-import logging
 from fastapi import HTTPException, Request, Response, status
 from supabase import Client
 from svix.webhooks import Webhook, WebhookVerificationError
@@ -10,44 +9,29 @@ async def clerk_webhook_handler(request: Request, response: Response, supabase: 
     payload = await request.body()
     payload_str = payload.decode('utf-8')
 
-    # Log headers and payload for debugging
-    logging.debug(f"Received headers: {headers}")
-    logging.debug(f"Received payload: {payload_str}")
-    logging.debug(f"Webhook secret used for verification: {webhook_secret}")
-
     required_headers = ["svix-id", "svix-signature", "svix-timestamp"]
     for header in required_headers:
         if header not in headers:
             response.status_code = status.HTTP_400_BAD_REQUEST
-            logging.error(f"Missing required header: {header}")
             return {"error": "Missing required headers"}
 
-    # Log signature before processing
-    logging.debug(f"Svix signature: {headers.get('svix-signature')}")
-
     try:
-        # Verifying signature
         wh = Webhook(webhook_secret)
-        wh.verify(payload_str, headers)  # This line checks the signature
+        wh.verify(payload_str, headers) 
     except WebhookVerificationError as e:
         response.status_code = status.HTTP_400_BAD_REQUEST
-        logging.error(f"Invalid webhook signature: {str(e)}")
         return {"error": "Invalid webhook signature", "details": str(e)}
 
     event = json.loads(payload_str)
     event_type = event.get("type")
     data = event.get("data")
 
-    logging.debug(f"Webhook event type: {event_type}")
 
     if event_type == "user.created":
-        logging.info(f"Handling user created event for data: {data}")
         handle_user_created(data, supabase)
     elif event_type == "user.updated":
-        logging.info(f"Handling user updated event for data: {data}")
         handle_user_updated(data, supabase)
     elif event_type == "user.deleted":
-        logging.info(f"Handling user deleted event for user ID: {data.get('user_id')}")
         handle_user_deleted(data, supabase)
 
     return {"message": "Webhook handled successfully"}
