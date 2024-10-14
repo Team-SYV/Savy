@@ -1,8 +1,19 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL:process.env.EXPO_PUBLIC_BASE_URL,
+  baseURL: process.env.EXPO_PUBLIC_BASE_URL,
 });
+
+export const createInterview = async (interviewData) => {
+  try {
+    const response = await api.post("/api/interview/create/", interviewData);
+    return response.data; 
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.detail || "Failed to create interview"
+    );
+  }
+};
 
 export const createJobInformation = async (jobData) => {
   try {

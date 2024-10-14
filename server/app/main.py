@@ -31,6 +31,11 @@ app.add_middleware(
 async def webhook_handler(request: Request, response: Response):
     return await clerk_webhook_handler(request, response, supabase, webhook_secret)
 
+@app.post("/api/interview/create/")
+async def create_interview_endpoint(request: Request):
+    interview_data = await request.json()
+    return create_interview(interview_data, supabase)
+
 @app.post("/api/job_information/create/")
 async def create_job_information(request: Request):
     job_data = await request.json()

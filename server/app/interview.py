@@ -1,29 +1,26 @@
-from typing import Optional
-from pydantic import BaseModel
 from fastapi import HTTPException
 from supabase import Client
-
-class InterviewCreate(BaseModel):
-    user_id: str
-    video: Optional[str] = None
+from app.models import InterviewCreate
 
 def create_interview(interview_data: dict, supabase: Client):
-    required_fields = ['user_id']
+    required_fields = ['user_id', 'type']
     for field in required_fields:
         if not interview_data.get(field):
             raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
 
     interview_info = InterviewCreate(
         user_id=interview_data['user_id'],
-        video=interview_data.get('video')  
+        type=interview_data['type'],
+        streak_count=interview_data.get('streak_count', 0) 
     )
 
-    response = supabase.table('interviews').insert({
+    response = supabase.table('interview').insert({
         'user_id': interview_info.user_id,
-        'video': interview_info.video
+        'type': interview_info.type,
+        'streak_count': interview_info.streak_count  
     }).execute()
 
     if hasattr(response, 'error') and response.error:
         raise HTTPException(status_code=500, detail="Failed to create interview")
 
-    return {"message": "Interview created successfully", "id": response.data[0]['id']}
+    return response.data[0]['interview_id']
