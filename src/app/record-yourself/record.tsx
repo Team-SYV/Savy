@@ -107,10 +107,23 @@ const Record: React.FC = () => {
       setIsRecording(true);
       setRecordingTime(60);
 
+      const startTime = Date.now(); 
+
       try {
         const recordedVideo = await cameraRef.current.recordAsync();
-        setRecordedVideos((prev) => [...prev, recordedVideo.uri]);
-        setIsModalVisible(true);
+
+        const endTime = Date.now();
+        const videoDuration = (endTime - startTime) / 1000;
+
+        if (videoDuration < 10) {
+          Alert.alert(
+            "Recording Too Short",
+            "Please record for at least 10 seconds."
+          );
+        } else {
+          setRecordedVideos((prev) => [...prev, recordedVideo.uri]);
+          setIsModalVisible(true);
+        }
       } catch (error) {
         console.error("Error recording video:", error);
       } finally {
@@ -124,9 +137,8 @@ const Record: React.FC = () => {
   // Stop recording
   const stopRecording = () => {
     if (cameraRef.current) {
-      setIsRecording(false);
       cameraRef.current.stopRecording();
-      setIsModalVisible(true);
+      setIsRecording(false);
     }
   };
 
@@ -167,10 +179,13 @@ const Record: React.FC = () => {
       <Stack.Screen
         options={{
           headerShown: allQuestionsRecorded,
+          headerStyle: {
+            backgroundColor: "white",
+          },
           headerLeft: () =>
             allQuestionsRecorded && (
               <TouchableOpacity onPress={() => router.push("/home")}>
-                <AntDesign name="arrowleft" size={24} color="2a2a2a" />
+                <AntDesign name="arrowleft" size={24} color="#2a2a2a" />
               </TouchableOpacity>
             ),
         }}
