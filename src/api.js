@@ -7,7 +7,7 @@ const api = axios.create({
 export const createInterview = async (interviewData) => {
   try {
     const response = await api.post("/api/interview/create/", interviewData);
-    return response.data; 
+    return response.data;
   } catch (error) {
     throw new Error(
       error.response?.data?.detail || "Failed to create interview"
@@ -109,15 +109,25 @@ export const generateAnswerFeedback = async (formData) => {
       }
     );
 
-    return response.data.feedback; // Assuming feedback is structured correctly
+    return response.data.feedback;
   } catch (error) {
     console.error("Error response from server:", error.response);
 
-    // Log the entire error object for better debugging
     console.error("Full error object:", JSON.stringify(error, null, 2));
 
     throw new Error(
       error.response?.data?.detail || "Failed to generate answer feedback"
+    );
+  }
+};
+
+export const createAnswer = async (answerData) => {
+  try {
+    const response = await api.post("/api/answers/create/", answerData);
+    return response.data.id;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.detail || "Failed to create answer in the database"
     );
   }
 };

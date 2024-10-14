@@ -54,7 +54,7 @@ const CustomFormField: React.FC<CustomInputProps> = ({
             className="absolute right-4"
           >
             <Ionicons
-              name={showPassword ? "eye-off" : "eye"}
+              name={showPassword ? "eye" : "eye-off"}
               size={22}
               color="#4C4C4C"
             />

@@ -213,9 +213,6 @@ const JobInformation = () => {
       formPayload.append("company_name", company_name);
       formPayload.append("job_role", role);
 
-      console.log("Form Data (without file):", formPayload);
-
-      // Generate questions
       const questions = await generateQuestions(formPayload);
 
       for (const question of questions) {
