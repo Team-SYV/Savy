@@ -31,7 +31,7 @@ def create_job_information(job_data: dict, supabase: Client):
     if hasattr(response, 'error') and response.error:
         raise HTTPException(status_code=500, detail="Failed to create job description")
 
-    return  response.data[0]['job_information_id']
+    return  {'id':response.data[0]['job_information_id']}
 
 def get_job_information(job_id: str, supabase: Client):
     response = supabase.table('job_information').select('*').eq('job_information_id', job_id).execute()

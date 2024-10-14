@@ -44,10 +44,9 @@ const VirtualInterview = () => {
         const allQuestions = response.map((q) =>
           q.question.replace(/^\d+\.\s*/, "")
         );
-        const allQuestionIds = response.map((q) => q.id);
+        const allQuestionIds = response.map((q) => q.question_id);
         setQuestions(allQuestions);
         setQuestionIds(allQuestionIds);
-
         // Display the first question only initially
         if (allQuestions.length > 0) {
           setMessages((prevMessages) => [
@@ -152,7 +151,6 @@ const VirtualInterview = () => {
         ...prevMessages,
         { id: uuid.v4() as string, role: Role.User, content: transcription },
       ]);
-
       const answerData = {
         question_id: questionIds[currentQuestionIndex],
         answer: transcription,
@@ -166,7 +164,6 @@ const VirtualInterview = () => {
       // Get feedback on the user's answer
       const feedback = await generateAnswerFeedback(form);
 
-      console.log(feedback);
 
       setMessages((prevMessages) => [
         ...prevMessages,

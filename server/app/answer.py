@@ -20,8 +20,8 @@ def create_answer(data: dict, supabase: Client):
     }).execute()
 
     if hasattr(response, 'error') and response.error:
-        raise HTTPException(status_code=500, detail="Failed to create question")
+        raise HTTPException(status_code=500, detail="Failed to create answer")
 
-    return response.data[0]['question_id']
+    return {'id':response.data[0]['answer_id']}
 
 

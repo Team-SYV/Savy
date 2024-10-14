@@ -27,7 +27,7 @@ export const createJobInformation = async (jobInformationData: JobInformationDat
   }
 };
 
-export const getJobInformation = async (jobId) => {
+export const getJobInformation = async (jobId: string | string[]) => {
   try {
     const response = await api.get(`/api/job_information/${jobId}/`);
     return response.data;
@@ -59,7 +59,7 @@ export const createQuestions = async (jobId: string | string[], questionData: Qu
       `/api/questions/create/${jobId}`,
       questionData
     );
-    return response.data.message;
+    return response.data.id;
   } catch (error) {
     throw new Error(
       error.response?.data?.detail || "Failed to create questions"
@@ -78,7 +78,7 @@ export const getQuestions = async (jobId: string | string[]) => {
   }
 };
 
-export const transcribeAudio = async (file: string | Blob) => {
+export const transcribeAudio = async (file) => {
   try {
     const formData = new FormData();
     formData.append("file", file);

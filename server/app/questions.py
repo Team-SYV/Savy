@@ -23,7 +23,7 @@ def create_questions(data: dict, supabase: Client):
     if hasattr(response, 'error') and response.error:
         raise HTTPException(status_code=500, detail="Failed to create question")
     
-    return {"message": "Question created successfully"}
+    return {'id': response.data[0]['question_id']}
 def get_questions(job_information_id: str, supabase: Client):
     response = supabase.table('questions').select("*").eq('job_information_id', job_information_id).execute()
 

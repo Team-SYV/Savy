@@ -197,21 +197,22 @@ const JobInformation = () => {
       const jobInfo = await getJobInformation(jobId);
       const {
         industry,
-        experience,
-        type,
+        job_role,
+        interview_type,
+        experience_level,
         company_name,
-        role,
         job_description,
       } = jobInfo;
 
       const formPayload = new FormData();
       formPayload.append("type", "RECORD");
       formPayload.append("industry", industry);
-      formPayload.append("experience_level", experience);
-      formPayload.append("interview_type", type);
-      formPayload.append("job_description", job_description);
+      formPayload.append("job_role", job_role);
+      formPayload.append("interview_type", interview_type);
+      formPayload.append("experience_level", experience_level);
       formPayload.append("company_name", company_name);
-      formPayload.append("job_role", role);
+      formPayload.append("job_description", job_description);
+
 
       const questions = await generateQuestions(formPayload);
 
