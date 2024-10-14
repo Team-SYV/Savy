@@ -9,9 +9,13 @@ from app.pdf_to_text import convert_pdf_to_text
 from app.question_generator import generate_answer_feedback, generate_interview_questions
 from app.questions import create_questions, get_questions
 from app.speech_to_text import transcribe_audio
+from app.answer import create_answer
+from app.user_feedback import create_user_feedback
+
 
 import os
 import logging
+
 
 logging.basicConfig(level=logging.DEBUG)
 app = FastAPI()
@@ -30,6 +34,11 @@ app.add_middleware(
 @app.post("/api/webhooks/", status_code=status.HTTP_204_NO_CONTENT)
 async def webhook_handler(request: Request, response: Response):
     return await clerk_webhook_handler(request, response, supabase, webhook_secret)
+
+@app.post("/api/interview/create/")
+async def create_interview_endpoint(request: Request):
+    interview_data = await request.json()
+    return create_interview(interview_data, supabase)
 
 @app.post("/api/job_information/create/")
 async def create_job_information(request: Request):
@@ -137,3 +146,13 @@ async def generate_answer_feedback_endpoint(
     except Exception as e:
         logging.error(f"Error generating answer feedback: {e}")
         raise HTTPException(status_code=500, detail="Failed to generate answer feedback")
+
+@app.post("/api/answers/create/")
+async def create_answer_endpoint(request: Request):
+    data = await request.json()
+    return create_answer(data, supabase)
+
+@app.post("/api/user_feedback/create/")
+async def create_user_feedback_endpoint(request: Request):
+    data = await request.json()
+    return create_user_feedback(data, supabase)

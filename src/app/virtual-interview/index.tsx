@@ -16,7 +16,12 @@ import {
   Alert,
   BackHandler,
 } from "react-native";
-import { generateAnswerFeedback, getQuestions, transcribeAudio } from "@/api";
+import {
+  createAnswer,
+  generateAnswerFeedback,
+  getQuestions,
+  transcribeAudio,
+} from "@/api";
 
 const VirtualInterview = () => {
   const { user } = useUser();
@@ -28,6 +33,7 @@ const VirtualInterview = () => {
     undefined
   );
   const [questions, setQuestions] = useState<string[]>([]);
+  const [questionIds, setQuestionIds] = useState<string[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
 
@@ -38,8 +44,9 @@ const VirtualInterview = () => {
         const allQuestions = response.map((q) =>
           q.question.replace(/^\d+\.\s*/, "")
         );
+        const allQuestionIds = response.map((q) => q.question_id);
         setQuestions(allQuestions);
-
+        setQuestionIds(allQuestionIds);
         // Display the first question only initially
         if (allQuestions.length > 0) {
           setMessages((prevMessages) => [
@@ -99,7 +106,7 @@ const VirtualInterview = () => {
       }
     );
 
-    return () => backHandler.remove(); 
+    return () => backHandler.remove();
   }, []);
 
   // Start recording
@@ -144,6 +151,11 @@ const VirtualInterview = () => {
         ...prevMessages,
         { id: uuid.v4() as string, role: Role.User, content: transcription },
       ]);
+      const answerData = {
+        question_id: questionIds[currentQuestionIndex],
+        answer: transcription,
+      };
+      await createAnswer(answerData);
 
       const form = new FormData();
       form.append("previous_question", questions[currentQuestionIndex]);
@@ -152,7 +164,6 @@ const VirtualInterview = () => {
       // Get feedback on the user's answer
       const feedback = await generateAnswerFeedback(form);
 
-      console.log(feedback);
 
       setMessages((prevMessages) => [
         ...prevMessages,

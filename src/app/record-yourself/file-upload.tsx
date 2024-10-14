@@ -75,10 +75,10 @@ const FileUpload = () => {
       const jobInfo = await getJobInformation(jobId);
       const {
         industry,
-        experience,
-        type,
+        job_role,
+        interview_type,
+        experience_level,
         company_name,
-        role,
         job_description,
       } = jobInfo;
       const fileUri = selectedFile.uri;
@@ -93,11 +93,11 @@ const FileUpload = () => {
 
       // Append job info to formData for question generation
       formData.append("industry", industry);
-      formData.append("experience_level", experience);
-      formData.append("interview_type", type);
-      formData.append("job_description", job_description);
+      formData.append("job_role", job_role);
+      formData.append("interview_type", interview_type);
+      formData.append("experience_level", experience_level);
       formData.append("company_name", company_name);
-      formData.append("job_role", role);
+      formData.append("job_description", job_description);
       formData.append("type", "RECORD");
 
       console.log("form Data:", formData);
