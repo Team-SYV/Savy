@@ -43,13 +43,16 @@ const EditProfile = () => {
 
   // Handles the process of saving user profile updates.
   const handleSaveUser = async () => {
-    if (!firstName.trim()) {
-      showToast("error", "First name cannot be empty");
+    
+    // Check for valid first name
+    if (!isValidName(firstName)) {
+      showToast("error", "First name must contain at least one letter");
       return;
     }
 
-    if (!lastName.trim()) {
-      showToast("error", "Last name cannot be empty");
+    // Check for valid last name
+    if (!isValidName(lastName)) {
+      showToast("error", "Last name must contain at least one letter");
       return;
     }
 
@@ -77,6 +80,12 @@ const EditProfile = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Function to validate names
+  const isValidName = (name: string) => {
+    const regex = /[A-Za-z]/;
+    return regex.test(name);
   };
 
   // Opens the image picker to select a new image and updates the states for the new image URI and display image URI.

@@ -14,6 +14,7 @@ import {
   Image,
   FlatList,
   Alert,
+  BackHandler,
 } from "react-native";
 import { getQuestions } from "@/api";
 
@@ -54,9 +55,7 @@ const Record: React.FC = () => {
     const fetchQuestions = async () => {
       try {
         const fetchedQuestions = await getQuestions(jobId);
-
         const questionTexts = fetchedQuestions.map((q) => q.question);
-
         setQuestions(questionTexts);
       } catch (error) {
         Alert.alert("Error", error.message);
@@ -86,6 +85,23 @@ const Record: React.FC = () => {
     return () => clearInterval(timer);
   }, [isRecording]);
 
+  useEffect(() => {
+    const backAction = () => {
+      if (!allQuestionsRecorded) {
+        setIsConfirmationVisible(true);
+        return true;
+      }
+      return false; 
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [allQuestionsRecorded]);
+
   // Check if permission has been granted
   if (hasCameraPermission === null || hasMicrophonePermission === null) {
     return <LoadingSpinner />;
@@ -106,11 +122,22 @@ const Record: React.FC = () => {
     if (cameraRef.current) {
       setIsRecording(true);
       setRecordingTime(60);
+      const startTime = Date.now(); 
 
       try {
         const recordedVideo = await cameraRef.current.recordAsync();
-        setRecordedVideos((prev) => [...prev, recordedVideo.uri]);
-        setIsModalVisible(true);
+        const endTime = Date.now();
+        const videoDuration = (endTime - startTime) / 1000;
+
+        if (videoDuration < 10) {
+          Alert.alert(
+            "Recording Too Short",
+            "Please record for at least 10 seconds."
+          );
+        } else {
+          setRecordedVideos((prev) => [...prev, recordedVideo.uri]);
+          setIsModalVisible(true);
+        }
       } catch (error) {
         console.error("Error recording video:", error);
       } finally {
@@ -124,9 +151,8 @@ const Record: React.FC = () => {
   // Stop recording
   const stopRecording = () => {
     if (cameraRef.current) {
-      setIsRecording(false);
       cameraRef.current.stopRecording();
-      setIsModalVisible(true);
+      setIsRecording(false);
     }
   };
 
@@ -167,10 +193,13 @@ const Record: React.FC = () => {
       <Stack.Screen
         options={{
           headerShown: allQuestionsRecorded,
+          headerStyle: {
+            backgroundColor: "white",
+          },
           headerLeft: () =>
             allQuestionsRecorded && (
               <TouchableOpacity onPress={() => router.push("/home")}>
-                <AntDesign name="arrowleft" size={24} color="2a2a2a" />
+                <AntDesign name="arrowleft" size={24} color="#2a2a2a" />
               </TouchableOpacity>
             ),
         }}

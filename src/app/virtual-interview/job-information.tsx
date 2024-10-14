@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import CustomButton from "@/components/Button/CustomButton";
 import Stepper from "@/components/Stepper/Stepper";
 import { getErrorMessage, validateStep } from "@/utils/validateJobInfo";
@@ -26,6 +26,7 @@ import {
   Platform,
   StyleSheet,
   TouchableOpacity,
+  BackHandler,
 } from "react-native";
 import { cleanQuestion } from "@/utils/cleanQuestion";
 
@@ -47,6 +48,17 @@ const JobInformation = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
   const [jobInformationId, setJobInformationId] = useState<string | null>(null);
+
+  // Handle the hardware back button
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackButtonPress
+    );
+
+    // Cleanup listener on unmount
+    return () => backHandler.remove();
+  }, [hasChanges]);
 
   // Updates the active step when a step is pressed
   const handleStepPress = useCallback((index: number) => {
@@ -124,8 +136,10 @@ const JobInformation = () => {
   const handleBackButtonPress = () => {
     if (hasChanges) {
       setModalVisible(true);
+      return true;
     } else {
       router.back();
+      return true;
     }
   };
 
