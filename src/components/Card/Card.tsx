@@ -32,7 +32,7 @@ const Card: React.FC<CardProps> = ({
         ? "record"
         : "virtual";
       const interviewData = {
-        user_id: user.user.id,
+        user_id: user.user?.id,
         type: interviewType,
       };
       const interviewId = await createInterview(interviewData);

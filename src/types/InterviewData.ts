@@ -1,4 +1,4 @@
 export interface InterviewData {
-    user_id: string,
-    type: string,
+    user_id: string;
+    type: string;
   }

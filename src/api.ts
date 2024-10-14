@@ -1,5 +1,5 @@
 import axios from "axios";
-import { InterviewData } from "./types/interviewData";
+import { InterviewData } from "./types/InterviewData";
 
 const api = axios.create({
   baseURL: process.env.EXPO_PUBLIC_BASE_URL,
@@ -27,7 +27,7 @@ export const createJobInformation = async (jobInformationData: JobInformationDat
   }
 };
 
-export const getJobInformation = async (jobId: string | string[]) => {
+export const getJobInformation = async (jobId) => {
   try {
     const response = await api.get(`/api/job_information/${jobId}/`);
     return response.data;
