@@ -2,14 +2,35 @@ export const validateFirstName = (
   firstname: string,
   submitted: boolean
 ): string => {
-  return firstname ? "" : submitted ? "Firstname is required" : "Required";
+  // Check if the name is empty or contains only spaces, hyphens, or apostrophes
+  const isOnlySpacesOrSymbols = /^[\s'-]+$/.test(firstname);
+
+  if (!firstname.trim()) {
+    return submitted ? "Firstname is required" : "Required";
+  }
+
+  if (isOnlySpacesOrSymbols) {
+    return "Firstname cannot contain only spaces or symbols";
+  }
+  return "";
 };
 
 export const validateLastName = (
   lastname: string,
   submitted: boolean
 ): string => {
-  return lastname ? "" : submitted ? "Lastname is required" : "Required";
+  // Check if the name is empty or contains only spaces, hyphens, or apostrophes
+  const isOnlySpacesOrSymbols = /^[\s'-]+$/.test(lastname);
+
+  if (!lastname.trim()) {
+    return submitted ? "Lastname is required" : "Required";
+  }
+
+  if (isOnlySpacesOrSymbols) {
+    return "Lastname cannot contain only spaces or symbols";
+  }
+
+  return "";
 };
 
 export const validateEmail = (email: string, submitted: boolean): string => {

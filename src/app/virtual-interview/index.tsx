@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  BackHandler,
 } from "react-native";
 import { generateAnswerFeedback, getQuestions, transcribeAudio } from "@/api";
 
@@ -86,6 +87,19 @@ const VirtualInterview = () => {
 
   useEffect(() => {
     requestPermissions();
+  }, []);
+
+  // Handle hardware back button press
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        handleBackButtonPress();
+        return true;
+      }
+    );
+
+    return () => backHandler.remove(); 
   }, []);
 
   // Start recording
@@ -178,6 +192,7 @@ const VirtualInterview = () => {
 
     setRecording(undefined);
   };
+
   const renderMessage = ({ item }: { item: Message }) => (
     <View
       className={`flex-row my-2 mx-4 ${

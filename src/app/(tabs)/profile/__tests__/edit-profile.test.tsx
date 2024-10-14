@@ -55,7 +55,6 @@ describe("EditProfile", () => {
     expect(getByPlaceholderText("Last Name").props.value).toBe("Doe");
   });
 
-
   it("shows an error message if first name is empty", async () => {
     const { getByText, getByPlaceholderText } = render(
       <TestWrapper>
@@ -67,7 +66,7 @@ describe("EditProfile", () => {
     fireEvent.press(getByText("SAVE"));
 
     await waitFor(() => {
-      expect(getByText("First name cannot be empty")).toBeTruthy();
+      expect(getByText("First name must contain at least one letter")).toBeTruthy();
     });
   });
 
@@ -78,16 +77,45 @@ describe("EditProfile", () => {
       </TestWrapper>
     );
 
-    // Clear last name field
     fireEvent.changeText(getByPlaceholderText("Last Name"), ""); 
     fireEvent.press(getByText("SAVE"));
 
     await waitFor(() => {
-      expect(getByText("Last name cannot be empty")).toBeTruthy();
+      expect(getByText("Last name must contain at least one letter")).toBeTruthy();
     });
-});
+  });
 
-it("calls user update with first name and last name on save", async () => {
+  it("shows an error message if first name is only special characters", async () => {
+    const { getByText, getByPlaceholderText } = render(
+      <TestWrapper>
+        <EditProfile />
+      </TestWrapper>
+    );
+
+    fireEvent.changeText(getByPlaceholderText("First Name"), "----"); 
+    fireEvent.press(getByText("SAVE"));
+
+    await waitFor(() => {
+      expect(getByText("First name must contain at least one letter")).toBeTruthy();
+    });
+  });
+
+  it("shows an error message if last name is only special characters", async () => {
+    const { getByText, getByPlaceholderText } = render(
+      <TestWrapper>
+        <EditProfile />
+      </TestWrapper>
+    );
+
+    fireEvent.changeText(getByPlaceholderText("Last Name"), "'''''"); 
+    fireEvent.press(getByText("SAVE"));
+
+    await waitFor(() => {
+      expect(getByText("Last name must contain at least one letter")).toBeTruthy();
+    });
+  });
+
+  it("calls user update with first name and last name on save", async () => {
     const { getByText, getByPlaceholderText } = render(
       <TestWrapper>
         <EditProfile />
@@ -105,8 +133,7 @@ it("calls user update with first name and last name on save", async () => {
       });
       expect(mockUser.setProfileImage).not.toHaveBeenCalled(); 
     });
-});
-
+  });
 
   it("shows success message after saving changes", async () => {
     const { getByText, getByPlaceholderText } = render(

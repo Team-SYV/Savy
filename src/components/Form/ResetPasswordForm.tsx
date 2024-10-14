@@ -1,20 +1,23 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, Image, Alert } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
-import { Stack } from "expo-router";
-import { useSignIn } from "@clerk/clerk-expo";
+import { Stack, useRouter } from "expo-router";
+import { useAuth, useSignIn } from "@clerk/clerk-expo";
 import CustomFormField from "@/components/FormField/CustomFormField";
 import CustomButton from "@/components/Button/CustomButton";
 import BackToLogin from "@/components/Button/BackToLogin";
 import BottomHalfModal from "@/components/Modal/BottomHalfModal";
 import OTPTextInput from "react-native-otp-textinput";
+import Toast from "react-native-toast-message";
 import {
   validateConfirmPassword,
   validatePassword,
 } from "@/utils/validateRegister";
 
 const ResetPasswordForm = () => {
-  const { isLoaded, signIn, setActive } = useSignIn();
+  const { isLoaded, signIn } = useSignIn();
+  const { signOut } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [successfulCreation, setSuccessfulCreation] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -112,14 +115,27 @@ const ResetPasswordForm = () => {
     setLoading(true);
 
     try {
-      const result = await signIn.attemptFirstFactor({
+      // Attempt to reset the password
+      await signIn.attemptFirstFactor({
         strategy: "reset_password_email_code",
         code,
         password,
       });
-      Alert.alert("Success!", "Password has been reset successfully");
-      await setActive({ session: result.createdSessionId });
-      setIsModalVisible(false);
+
+      // Show success toast
+      Toast.show({
+        text1: "Success!",
+        text2: "Password has been reset successfully",
+        type: "success",
+        position: "top",
+        visibilityTime: 4000,
+        autoHide: true,
+      });
+
+      await signOut();
+
+      // Redirect to login page
+      router.push("/login");
     } catch (err: any) {
       const errorMessage =
         err.errors[0]?.message || "An unknown error occurred";
