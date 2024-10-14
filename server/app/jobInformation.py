@@ -3,27 +3,27 @@ from supabase import Client
 from .models import JobInformationCreate
 
 def create_job_information(job_data: dict, supabase: Client):
-    required_fields = ['user_id', 'industry', 'role', 'type', 'experience']
+    required_fields = ['interview_id', 'industry', 'job_role', 'interview_type', 'experience_level']
     for field in required_fields:
         if not job_data.get(field):
             raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
 
     job_info = JobInformationCreate(
-        user_id=job_data['user_id'],
+        interview_id=job_data['interview_id'],
         industry=job_data['industry'],
-        role=job_data['role'],
-        type=job_data['type'],
-        experience=job_data['experience'],
+        job_role=job_data['job_role'],
+        interview_type=job_data['interview_type'],
+        experience_level=job_data['experience_level'],
         company_name=job_data['company_name'],
         job_description=job_data['job_description']
     )
 
     response = supabase.table('job_information').insert({
-        'user_id': job_info.user_id,
+        'interview_id': job_info.interview_id,
         'industry': job_info.industry,
-        'role': job_info.role,
-        'type': job_info.type,
-        'experience': job_info.experience,
+        'job_role': job_info.job_role,
+        'interview_type': job_info.interview_type,
+        'experience_level': job_info.experience_level,
         'company_name': job_info.company_name,
         'job_description': job_info.job_description
     }).execute()
@@ -31,10 +31,10 @@ def create_job_information(job_data: dict, supabase: Client):
     if hasattr(response, 'error') and response.error:
         raise HTTPException(status_code=500, detail="Failed to create job description")
 
-    return {"message": "Job information created successfully", "id": response.data[0]['id']}
+    return  response.data[0]['job_information_id']
 
 def get_job_information(job_id: str, supabase: Client):
-    response = supabase.table('job_information').select('*').eq('id', job_id).execute()
+    response = supabase.table('job_information').select('*').eq('job_information_id', job_id).execute()
 
     if not response.data:
         raise HTTPException(status_code=404, detail="Job information not found")

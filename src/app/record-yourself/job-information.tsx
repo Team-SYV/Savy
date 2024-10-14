@@ -3,12 +3,11 @@ import CustomButton from "@/components/Button/CustomButton";
 import Stepper from "@/components/Stepper/Stepper";
 import { getErrorMessage, validateStep } from "@/utils/validateJobInfo";
 import { Ionicons } from "@expo/vector-icons";
-import { Stack, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import ConfirmationModal from "@/components/Modal/ConfirmationModal";
 import { JobInfoData } from "@/types/JobInfo";
 import * as Haptics from "expo-haptics";
 import { steps } from "@/constants/constants";
-import { useUser } from "@clerk/clerk-expo";
 import RecordStepContent from "@/components/JobInfo/RecordStepContent";
 import Spinner from "react-native-loading-spinner-overlay";
 import {
@@ -41,7 +40,7 @@ const JobInformation = () => {
   });
 
   const router = useRouter();
-  const user = useUser();
+  const {interviewId} = useLocalSearchParams();
   const [activeStep, setActiveStep] = useState<number>(0);
   const [errors, setErrors] = useState<{ [key: number]: string }>({});
   const [loading, setLoading] = useState(false);
@@ -156,11 +155,11 @@ const JobInformation = () => {
       setLoading(true);
 
       const jobData = {
-        user_id: user.user.id,
+        interview_id: interviewId,
         industry: formData.selectedIndustry,
-        role: formData.selectedJobRole,
-        type: formData.selectedInterviewType,
-        experience: formData.selectedExperienceLevel,
+        job_role: formData.selectedJobRole,
+        interview_type: formData.selectedInterviewType,
+        experience_level: formData.selectedExperienceLevel,
         company_name: formData.companyName || "None",
         job_description: formData.jobDescription || "None",
       };
@@ -180,11 +179,11 @@ const JobInformation = () => {
       setLoading(true);
 
       const jobData = {
-        user_id: user.user.id,
+        interview_id: interviewId,
         industry: formData.selectedIndustry,
-        role: formData.selectedJobRole,
-        type: formData.selectedInterviewType,
-        experience: formData.selectedExperienceLevel,
+        job_role: formData.selectedJobRole,
+        interview_type: formData.selectedInterviewType,
+        experience_level: formData.selectedExperienceLevel,
         company_name: formData.companyName || "None",
         job_description: formData.jobDescription || "None",
       };
