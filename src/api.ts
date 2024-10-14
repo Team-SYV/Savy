@@ -1,12 +1,28 @@
 import axios from "axios";
+import { InterviewData } from "./types/InterviewData";
+import { AnswerData } from "./types/AnswerData";
+import { UserFeedbackData } from "./types/UserFeedback";
+import { QuestionData } from "./types/QuestionData";
+import { JobInformationData } from "./types/JobInformationData";
 
 const api = axios.create({
-  baseURL: "https://savy-4ceq.onrender.com/",
+  baseURL: process.env.EXPO_PUBLIC_BASE_URL,
 });
 
-export const createJobInformation = async (jobData) => {
+export const createInterview = async (interviewData: InterviewData) => {
   try {
-    const response = await api.post("/api/job_information/create/", jobData);
+    const response = await api.post("/api/interview/create/", interviewData);
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.detail || "Failed to create interview"
+    );
+  }
+};
+
+export const createJobInformation = async (jobInformationData: JobInformationData) => {
+  try {
+    const response = await api.post("/api/job_information/create/", jobInformationData);
     return response.data.id;
   } catch (error) {
     throw new Error(
@@ -15,7 +31,7 @@ export const createJobInformation = async (jobData) => {
   }
 };
 
-export const getJobInformation = async (jobId) => {
+export const getJobInformation = async (jobId: string | string[]) => {
   try {
     const response = await api.get(`/api/job_information/${jobId}/`);
     return response.data;
@@ -26,7 +42,7 @@ export const getJobInformation = async (jobId) => {
   }
 };
 
-export const generateQuestions = async (formData) => {
+export const generateQuestions = async (formData: FormData) => {
   try {
     const response = await api.post("/api/generate-questions/", formData, {
       headers: {
@@ -41,13 +57,13 @@ export const generateQuestions = async (formData) => {
   }
 };
 
-export const createQuestions = async (jobId, questionData) => {
+export const createQuestions = async (jobId: string | string[], questionData: QuestionData) => {
   try {
     const response = await api.post(
       `/api/questions/create/${jobId}`,
       questionData
     );
-    return response.data.message;
+    return response.data.id;
   } catch (error) {
     throw new Error(
       error.response?.data?.detail || "Failed to create questions"
@@ -55,7 +71,7 @@ export const createQuestions = async (jobId, questionData) => {
   }
 };
 
-export const getQuestions = async (jobId) => {
+export const getQuestions = async (jobId: string | string[]) => {
   try {
     const response = await api.get(`/api/questions/${jobId}`);
     return response.data.questions;
@@ -86,7 +102,7 @@ export const transcribeAudio = async (file) => {
   }
 };
 
-export const generateAnswerFeedback = async (formData) => {
+export const generateAnswerFeedback = async (formData: FormData) => {
   try {
     const response = await api.post(
       "/api/generate-answer-feedback/",
@@ -98,15 +114,36 @@ export const generateAnswerFeedback = async (formData) => {
       }
     );
 
-    return response.data.feedback; // Assuming feedback is structured correctly
+    return response.data.feedback;
   } catch (error) {
     console.error("Error response from server:", error.response);
 
-    // Log the entire error object for better debugging
     console.error("Full error object:", JSON.stringify(error, null, 2));
 
     throw new Error(
       error.response?.data?.detail || "Failed to generate answer feedback"
+    );
+  }
+};
+
+export const createAnswer = async (answerData: AnswerData ) => {
+  try {
+    const response = await api.post("/api/answers/create/", answerData);
+    return response.data.id;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.detail || "Failed to create answer in the database"
+    );
+  }
+};
+
+export const createUserFeedback = async (userFeedbackData: UserFeedbackData) => {
+  try {
+    const response = await api.post("/api/user_feedback/create/", userFeedbackData);
+    return response.data.id;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.detail || "Failed to create user feedback"
     );
   }
 };

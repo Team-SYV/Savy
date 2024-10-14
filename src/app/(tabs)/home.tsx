@@ -27,7 +27,6 @@ const Home = () => {
           imageSource={require("@/assets/images/virtual-interview.png")}
           text="Talk with Virtual Interviewer"
           textClassName="text-[14px]"
-          buttonLink="/virtual-interview/job-information"
         />
       </View>
 
@@ -35,7 +34,6 @@ const Home = () => {
         imageSource={require("@/assets/images/record-yourself.png")}
         text="Record Yourself"
         textClassName="text-[15px]"
-        buttonLink="/record-yourself/job-information"
       />
 
       <Text className="text-[13px] font-medium mt-7 mb-3">

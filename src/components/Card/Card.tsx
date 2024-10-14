@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { createInterview } from "@/api";
+import { useUser } from "@clerk/clerk-expo";
 
 interface CardProps {
   imageSource: ImageSourcePropType;
   text: string;
   cardClassName?: string;
   textClassName?: string;
-  buttonLink?: string;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -21,13 +22,32 @@ const Card: React.FC<CardProps> = ({
   text,
   cardClassName = "",
   textClassName = "",
-  buttonLink = "",
 }) => {
   const router = useRouter();
+  const user = useUser();
 
-  const handlePress = () => {
-    if (buttonLink) {
-      router.push(buttonLink);
+  const handlePress = async () => {
+    try {
+      const interviewType = text.includes("Record Yourself")
+        ? "record"
+        : "virtual";
+      const interviewData = {
+        user_id: user.user?.id,
+        type: interviewType,
+      };
+      const interviewId = await createInterview(interviewData);
+
+      if (interviewType === "record") {
+        router.push(
+          `/record-yourself/job-information?interviewId=${interviewId}`
+        );
+      } else {
+        router.push(
+          `/virtual-interview/job-information?interviewId=${interviewId}`
+        );
+      }
+    } catch (error) {
+      console.error("Failed to create interview:", error);
     }
   };
 
