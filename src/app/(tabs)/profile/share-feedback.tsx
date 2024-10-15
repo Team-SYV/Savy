@@ -19,7 +19,7 @@ import { createUserFeedback } from "@/api";
 import { useUser } from "@clerk/clerk-expo";
 
 const ShareFeedback = () => {
-  const user = useUser()
+  const { user } = useUser();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,16 +52,16 @@ const ShareFeedback = () => {
 
     setLoading(true);
     const rating = selectedIndex + 1;
+
     try {
       const userFeedbackData = {
-        user_id: user.user.id,
+        user_id: user?.id,
         rating,
         description: feedback,
       };
+
       await createUserFeedback(userFeedbackData);
 
-      setFeedback("");
-      setSelectedIndex(null);
       Toast.show({
         type: "success",
         text1: "Feedback Submitted",
@@ -69,9 +69,12 @@ const ShareFeedback = () => {
         topOffset: 0,
       });
 
+      setFeedback("");
+      setSelectedIndex(null);
+
       setTimeout(() => {
         router.push("/profile");
-      }, 2000);
+      }, 1000);
     } catch (error) {
       console.error("Error submitting feedback:", error);
       Toast.show({
@@ -83,18 +86,6 @@ const ShareFeedback = () => {
     } finally {
       setLoading(false);
     }
-
-    // Simulating a submission process
-    setTimeout(() => {
-      setLoading(false);
-      console.log({ feedback, rating });
-
-      // Reset form state
-
-      setTimeout(() => {
-        router.push("/profile");
-      }, 2000);
-    }, 2000);
   };
 
   return (
