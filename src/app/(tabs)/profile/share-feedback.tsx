@@ -69,12 +69,12 @@ const ShareFeedback = () => {
         topOffset: 0,
       });
 
-      // Reset form and navigate after success
       setFeedback("");
       setSelectedIndex(null);
+
       setTimeout(() => {
         router.push("/profile");
-      }, 2000);
+      }, 1000);
     } catch (error) {
       console.error("Error submitting feedback:", error);
       Toast.show({
@@ -119,9 +119,17 @@ const ShareFeedback = () => {
                 className="mx-2"
               >
                 <AntDesign
-                  name={selectedIndex !== null && selectedIndex >= index ? "star" : "staro"}
+                  name={
+                    selectedIndex !== null && selectedIndex >= index
+                      ? "star"
+                      : "staro"
+                  }
                   size={35}
-                  color={selectedIndex !== null && selectedIndex >= index ? "orange" : "gray"}
+                  color={
+                    selectedIndex !== null && selectedIndex >= index
+                      ? "orange"
+                      : "gray"
+                  }
                 />
               </TouchableOpacity>
             ))}
@@ -129,7 +137,8 @@ const ShareFeedback = () => {
 
           <View className="mt-8">
             <Text className="mb-4 text-[13px] text-center">
-              Did Savy help you feel more confident and improve your interview performance?
+              Did Savy help you feel more confident and improve your interview
+              performance?
             </Text>
 
             <TextArea
